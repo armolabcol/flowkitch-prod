@@ -1,0 +1,30 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--kitch-bg);
+    color: var(--kitch-fg);
+    font-family: var(--kitch-font-stack);
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: rgba(230, 57, 70, 0.35);
+    color: #fff;
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}

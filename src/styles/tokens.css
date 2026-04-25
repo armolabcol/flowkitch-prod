@@ -1,0 +1,26 @@
+/* Kitch design tokens — By Armo */
+:root {
+  --kitch-bg: #1c1c1c;
+  --kitch-fg: #ffffff;
+  --kitch-accent: #e63946;
+  --kitch-surface: #242424;
+  --kitch-elevated: #2b2b2b;
+  --kitch-border: rgba(255, 255, 255, 0.1);
+  --kitch-muted: rgba(255, 255, 255, 0.72);
+  --kitch-subtle: rgba(255, 255, 255, 0.52);
+  --kitch-glow: rgba(230, 57, 70, 0.35);
+  --kitch-font-stack: "Sofia Pro", var(--font-inter), "Avenir Next", system-ui,
+    sans-serif;
+}
+
+@theme inline {
+  --color-kitch-bg: var(--kitch-bg);
+  --color-kitch-fg: var(--kitch-fg);
+  --color-kitch-accent: var(--kitch-accent);
+  --color-kitch-surface: var(--kitch-surface);
+  --color-kitch-elevated: var(--kitch-elevated);
+  --color-kitch-border: var(--kitch-border);
+  --color-kitch-muted: var(--kitch-muted);
+  --color-kitch-subtle: var(--kitch-subtle);
+  --font-kitch: var(--kitch-font-stack);
+}
