@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { WhatsAppFloatingButton } from "@/components/floating/WhatsAppFloatingButton";
 import { getDictionary } from "@/lib/dictionaries";
 import { defaultLocale, isLocale, locales, type Locale } from "@/lib/i18n";
 
@@ -52,6 +53,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <SiteHeader locale={locale} dictionary={dictionary} />
       <main className="flex-1">{children}</main>
       <SiteFooter locale={locale} dictionary={dictionary} />
+      <WhatsAppFloatingButton dictionary={dictionary} />
     </div>
   );
 }

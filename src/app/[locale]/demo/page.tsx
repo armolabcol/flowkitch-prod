@@ -30,6 +30,9 @@ export default async function DemoPage({ params }: Props) {
         <p className="mt-4 text-pretty text-lg leading-relaxed text-kitch-muted">
           {d.description}
         </p>
+        <p className="mt-3 text-pretty text-base leading-relaxed text-white/70">
+          {d.extra}
+        </p>
       </div>
       <div className="mt-12 max-w-3xl">
         <DemoRequestForm dictionary={dict} />

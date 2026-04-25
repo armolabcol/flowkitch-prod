@@ -174,7 +174,7 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
               initial={reduce ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.16 }}
-              className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+              className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
             >
               <Button
                 asChild
@@ -199,7 +199,24 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
                   </span>
                 </Link>
               </Button>
+              <Button
+                asChild
+                variant="ghost"
+                size="lg"
+                className="min-h-[3.25rem] px-8 text-base text-white/80 hover:bg-white/[0.05] hover:text-white"
+              >
+                <Link href={withLocale(locale, "/demo") + "?advisor=1"}>{d.ctaAdvisor}</Link>
+              </Button>
             </motion.div>
+
+            <motion.p
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.22 }}
+              className="mt-4 text-sm font-medium text-white/75"
+            >
+              {d.setupLine}
+            </motion.p>
           </div>
 
           <motion.div style={{ y: mockupsY }}>

@@ -68,7 +68,7 @@ export function SiteHeader({ locale, dictionary }: SiteHeaderProps) {
             asChild
             variant="primary"
             size="sm"
-            className="hidden font-semibold shadow-[0_0_28px_rgba(230,57,70,0.22)] ring-1 ring-white/10 sm:inline-flex sm:min-w-[7.5rem]"
+            className="hidden font-semibold shadow-[0_0_36px_rgba(230,57,70,0.28)] ring-1 ring-white/10 hover:bg-[#ff4d5c] sm:inline-flex sm:min-w-[8rem]"
           >
             <Link href={withLocale(locale, "/demo")}>
               {dictionary.header.requestDemo}

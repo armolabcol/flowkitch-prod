@@ -86,18 +86,21 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
           {/* reservado: endpoint, analytics, honeypot */}
           POST /api/demo — pendiente de integración
         </p>
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          disabled={status === "submitting" || status === "done"}
-        >
-          {status === "submitting"
-            ? d.submitting
-            : status === "done"
-              ? d.successTitle
-              : d.submit}
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            disabled={status === "submitting" || status === "done"}
+          >
+            {status === "submitting"
+              ? d.submitting
+              : status === "done"
+                ? d.successTitle
+                : d.submit}
+          </Button>
+          <p className="text-[11px] text-kitch-subtle">{d.noCommitment}</p>
+        </div>
       </div>
 
       {status === "done" && (

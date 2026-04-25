@@ -22,7 +22,7 @@ export const dictionaries = {
     header: {
       openMenu: "Abrir menú",
       closeMenu: "Cerrar menú",
-      requestDemo: "Solicitar demo",
+      requestDemo: "Agendar demo",
       portalLogin: "Portal",
     },
     home: {
@@ -32,8 +32,35 @@ export const dictionaries = {
         trace: "Del QR a cocina y administración, cada orden conserva su trazabilidad.",
         posLayer:
           "Kitch no es otro POS. Es la capa de flujo operativo que tu restaurante necesitaba.",
-        ctaPrimary: "Solicitar una demo",
+        ctaPrimary: "Agendar demo",
         ctaSecondary: "Ver cómo funciona el flujo",
+        ctaAdvisor: "Hablar con un asesor",
+        setupLine: "Implementación guiada para tu restaurante en días, no meses.",
+      },
+      socialProof: {
+        title: "Diseñado para operaciones reales de restaurante",
+        items: [
+          { metric: "+120", label: "mesas gestionadas en servicio real" },
+          { metric: "+3,000", label: "órdenes trazadas por día" },
+          { metric: "Multi‑rol", label: "flujo validado entre roles operativos" },
+        ],
+      },
+      beforeAfter: {
+        title: "Before Kitch vs With Kitch",
+        beforeTitle: "Before Kitch",
+        withTitle: "With Kitch",
+        before: [
+          "Órdenes dispersas",
+          "Presión para meseros",
+          "Confusión en cocina",
+          "Administración a ciegas",
+        ],
+        with: [
+          "Flujo trazable",
+          "Aprobaciones claras",
+          "Cocina organizada",
+          "Control en tiempo real",
+        ],
       },
       operations: {
         eyebrow: "Restaurante real",
@@ -116,6 +143,15 @@ export const dictionaries = {
         eyebrow: "Plataforma",
         title: "Capas de producto para operaciones que ya no caben en un chat.",
       },
+      midCta: {
+        title: "Descubre cómo funciona Kitch en tu restaurante.",
+        button: "Agendar demo",
+        bullets: [
+          "Sin riesgo de implementación",
+          "Sin contratos largos",
+          "Acompañamiento en todo el proceso",
+        ],
+      },
       mockups: {
         eyebrow: "Producto",
         title: "Mockups del flujo en acción",
@@ -149,7 +185,7 @@ export const dictionaries = {
         title: "Si tu restaurante ya creció, tu operación también necesita crecer.",
         support:
           "Agenda una demo y descubre cómo Kitch puede ordenar el flujo real de tu restaurante.",
-        ctaPrimary: "Solicitar demo",
+        ctaPrimary: "Agendar demo",
         ctaSecondary: "Hablar con un asesor",
       },
     },
@@ -173,11 +209,15 @@ export const dictionaries = {
       title: "Solicita una demo",
       description:
         "Cuéntanos sobre tu restaurante. Este formulario es visual en esta fase; pronto conectaremos con tu equipo.",
+      extra:
+        "Cuéntanos sobre tu restaurante y prepararemos una demo personalizada.",
       submit: "Enviar solicitud",
       submitting: "Enviando…",
       successTitle: "Listo",
       successBody:
         "Pronto integraremos el envío a CRM o email. Por ahora tu solicitud se registró solo en esta vista.",
+      noCommitment:
+        "Sin compromiso. Solo una visión real de cómo funciona Kitch.",
       fields: {
         name: "Nombre",
         restaurant: "Restaurante",
@@ -203,6 +243,9 @@ export const dictionaries = {
       login: "Iniciar sesión",
       notice:
         "El acceso al portal será activado para clientes Kitch.",
+    },
+    contact: {
+      whatsappCta: "Hablar con un asesor",
     },
     internalPages: {
       product: {
@@ -251,7 +294,7 @@ export const dictionaries = {
     header: {
       openMenu: "Open menu",
       closeMenu: "Close menu",
-      requestDemo: "Request demo",
+      requestDemo: "Schedule a demo",
       portalLogin: "Portal",
     },
     home: {
@@ -261,8 +304,35 @@ export const dictionaries = {
         trace: "From QR to kitchen to management, every order keeps its trace.",
         posLayer:
           "Kitch is not another POS. It is the operational flow layer your restaurant was missing.",
-        ctaPrimary: "Request a demo",
+        ctaPrimary: "Schedule a demo",
         ctaSecondary: "See how the flow works",
+        ctaAdvisor: "Talk to an advisor",
+        setupLine: "Guided setup for your restaurant in days, not months.",
+      },
+      socialProof: {
+        title: "Built for real restaurant operations",
+        items: [
+          { metric: "120+", label: "tables handled in live service" },
+          { metric: "3,000+", label: "orders tracked per day" },
+          { metric: "Multi‑role", label: "workflow validated" },
+        ],
+      },
+      beforeAfter: {
+        title: "Before Kitch vs With Kitch",
+        beforeTitle: "Before Kitch",
+        withTitle: "With Kitch",
+        before: [
+          "Scattered orders",
+          "Waiter pressure",
+          "Kitchen confusion",
+          "Blind management",
+        ],
+        with: [
+          "Traceable flow",
+          "Clear approvals",
+          "Organized kitchen",
+          "Real-time control",
+        ],
       },
       operations: {
         eyebrow: "Real restaurant",
@@ -345,6 +415,11 @@ export const dictionaries = {
         eyebrow: "Platform",
         title: "Product layers for operations that no longer fit in a chat thread.",
       },
+      midCta: {
+        title: "See how Kitch works in your restaurant.",
+        button: "Schedule a demo",
+        bullets: ["No setup risk", "No long-term contracts", "Guided onboarding"],
+      },
       mockups: {
         eyebrow: "Product",
         title: "Flow mockups in action",
@@ -402,11 +477,15 @@ export const dictionaries = {
       title: "Request a demo",
       description:
         "Tell us about your restaurant. This form is visual in this phase; we will connect with your team soon.",
+      extra:
+        "Tell us about your restaurant and we will prepare a personalized walkthrough.",
       submit: "Submit request",
       submitting: "Sending…",
       successTitle: "Received",
       successBody:
         "We will wire this to CRM or email later. For now your request is only reflected in this view.",
+      noCommitment:
+        "No commitment. Just a real look at how Kitch works.",
       fields: {
         name: "Name",
         restaurant: "Restaurant",
@@ -431,6 +510,9 @@ export const dictionaries = {
       password: "Password",
       login: "Sign in",
       notice: "Portal access will be activated for Kitch clients.",
+    },
+    contact: {
+      whatsappCta: "Talk to an advisor",
     },
     internalPages: {
       product: {
