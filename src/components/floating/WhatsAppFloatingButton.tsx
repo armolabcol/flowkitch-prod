@@ -34,7 +34,7 @@ export function WhatsAppFloatingButton({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex items-center gap-2 rounded-full bg-kitch-accent px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] ring-1 ring-white/10 transition-colors hover:bg-[#ff4d5c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kitch-accent sm:px-5"
+          className="group inline-flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-full bg-kitch-accent px-3 py-3 text-sm font-semibold text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] ring-1 ring-white/10 transition-colors hover:bg-[#ff4d5c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kitch-accent sm:px-5"
           aria-label={dictionary.contact.whatsappCta}
         >
           <MessageCircle

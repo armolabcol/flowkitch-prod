@@ -11,10 +11,13 @@ export function SocialProofSection({ dictionary }: { dictionary: Dictionary }) {
   return (
     <section className="border-b border-kitch-border/50 bg-kitch-bg py-12 lg:py-16">
       <Container className="max-w-7xl">
-        <SectionLabel>{dictionary.home.modules.eyebrow}</SectionLabel>
+        <SectionLabel>{dictionary.home.operations.eyebrow}</SectionLabel>
         <h2 className="max-w-3xl text-balance text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           {d.title}
         </h2>
+        <p className="mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-kitch-muted sm:text-base">
+          {dictionary.home.hero.posLayer} {dictionary.demoPage.trustLine}
+        </p>
 
         <motion.ul
           className="mt-8 grid gap-4 sm:grid-cols-3"
@@ -46,4 +49,3 @@ export function SocialProofSection({ dictionary }: { dictionary: Dictionary }) {
     </section>
   );
 }
-

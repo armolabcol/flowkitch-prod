@@ -4,12 +4,14 @@ import { useRef, useState, type FormEvent, type InputHTMLAttributes } from "reac
 import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/lib/dictionaries";
 import { cn } from "@/lib/cn";
+import type { Locale } from "@/lib/i18n";
 
 type DemoRequestFormProps = {
   dictionary: Dictionary;
+  locale: Locale;
 };
 
-type FormState = "idle" | "submitting" | "done";
+type FormState = "idle" | "submitting" | "done" | "error";
 
 type FieldErrors = Partial<
   Record<"name" | "restaurant" | "country" | "city" | "email" | "whatsapp" | "tables" | "uses_pos", string>
@@ -24,9 +26,10 @@ function isValidWhatsapp(value: string) {
   return digits.length >= 8;
 }
 
-export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
+export function DemoRequestForm({ dictionary, locale }: DemoRequestFormProps) {
   const d = dictionary.demoPage;
   const err = d.errors;
+  const isSpanish = locale === "es";
   const [status, setStatus] = useState<FormState>("idle");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const submitLockRef = useRef(false);
@@ -66,8 +69,13 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
     submitLockRef.current = true;
     const payload = Object.fromEntries(data.entries());
     setStatus("submitting");
-    console.log("[Kitch demo] form payload (integración futura):", payload);
-    setTimeout(() => setStatus("done"), 450);
+    // TODO lead integration: send `payload` to the CRM/email/WhatsApp API endpoint here.
+    console.log("[Kitch demo] form payload (future lead integration):", payload);
+    window.setTimeout(() => {
+      submitLockRef.current = false;
+      const shouldSimulateError = email.toLowerCase().includes("error");
+      setStatus(shouldSimulateError ? "error" : "done");
+    }, 650);
   }
 
   const fieldClass =
@@ -76,7 +84,7 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="grid gap-5 rounded-3xl border border-kitch-border bg-kitch-elevated/40 p-6 sm:grid-cols-2 sm:p-8"
+      className="grid gap-5 rounded-3xl border border-white/[0.08] bg-gradient-to-b from-kitch-elevated/70 to-kitch-surface/45 p-5 shadow-[0_24px_76px_rgba(0,0,0,0.34)] sm:grid-cols-2 sm:p-8"
       noValidate
     >
       <Field
@@ -141,14 +149,20 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
         onChange={() => setFieldErrors((p) => ({ ...p, tables: undefined }))}
       />
       <div className="sm:col-span-2">
-        <label className="text-xs font-medium uppercase tracking-wide text-kitch-subtle">
+        <label htmlFor="uses_pos" className="text-xs font-medium uppercase tracking-wide text-kitch-subtle">
           {d.fields.pos}
         </label>
         <select
+          id="uses_pos"
           name="uses_pos"
           className={cn(fieldClass, fieldErrors.uses_pos && "border-red-400/40")}
           defaultValue=""
-          onChange={() => setFieldErrors((p) => ({ ...p, uses_pos: undefined }))}
+          aria-invalid={Boolean(fieldErrors.uses_pos)}
+          aria-describedby={fieldErrors.uses_pos ? "uses_pos-error" : undefined}
+          onChange={() => {
+            setStatus("idle");
+            setFieldErrors((p) => ({ ...p, uses_pos: undefined }));
+          }}
         >
           <option value="" disabled>
             —
@@ -158,14 +172,20 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
           <option value="evaluating">{d.posOptions.evaluating}</option>
         </select>
         {fieldErrors.uses_pos ? (
-          <p className="mt-1 text-xs text-red-300/90">{fieldErrors.uses_pos}</p>
+          <p id="uses_pos-error" className="mt-1 text-xs text-red-300/90">{fieldErrors.uses_pos}</p>
         ) : null}
       </div>
       <div className="sm:col-span-2">
-        <label className="text-xs font-medium uppercase tracking-wide text-kitch-subtle">
+        <label htmlFor="improve" className="text-xs font-medium uppercase tracking-wide text-kitch-subtle">
           {d.fields.improve}
         </label>
-        <textarea name="improve" rows={4} className={`${fieldClass} resize-y`} />
+        <textarea
+          id="improve"
+          name="improve"
+          rows={4}
+          className={`${fieldClass} resize-y`}
+          onChange={() => setStatus("idle")}
+        />
       </div>
 
       <div className="sm:col-span-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -185,7 +205,9 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
                 ? d.successTitle
                 : d.submit}
           </Button>
-          <p className="text-center text-[11px] text-kitch-subtle sm:text-right">{d.noCommitment}</p>
+          <p className="text-center text-[11px] text-kitch-subtle sm:text-right">
+            {d.trustLine} {d.noCommitment}
+          </p>
         </div>
       </div>
 
@@ -195,6 +217,20 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
           aria-live="polite"
         >
           <strong className="text-kitch-fg">{d.successTitle}</strong> — {d.successBody}
+        </output>
+      )}
+      {status === "error" && (
+        <output
+          className="sm:col-span-2 rounded-2xl border border-red-400/25 bg-red-500/10 px-4 py-3 text-sm text-kitch-muted"
+          aria-live="polite"
+        >
+          <strong className="text-kitch-fg">
+            {isSpanish ? "No pudimos enviar la solicitud" : "We could not submit the request"}
+          </strong>{" "}
+          -{" "}
+          {isSpanish
+            ? "Intenta de nuevo en unos segundos o escríbenos por WhatsApp."
+            : "Please try again in a few seconds or message us on WhatsApp."}
         </output>
       )}
     </form>
@@ -211,14 +247,27 @@ function Field({
   className: string;
   error?: string;
 } & InputHTMLAttributes<HTMLInputElement>) {
+  const id = inputProps.id ?? inputProps.name;
+  const errorId = error && id ? `${id}-error` : undefined;
+
   return (
     <div>
-      <label className="text-xs font-medium uppercase tracking-wide text-kitch-subtle">
+      <label htmlFor={id} className="text-xs font-medium uppercase tracking-wide text-kitch-subtle">
         {label}
         {inputProps.required ? <span className="text-kitch-accent"> *</span> : null}
       </label>
-      <input className={className} {...inputProps} />
-      {error ? <p className="mt-1 text-xs text-red-300/90">{error}</p> : null}
+      <input
+        id={id}
+        className={className}
+        aria-invalid={Boolean(error)}
+        aria-describedby={errorId}
+        {...inputProps}
+      />
+      {error ? (
+        <p id={errorId} className="mt-1 text-xs text-red-300/90">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

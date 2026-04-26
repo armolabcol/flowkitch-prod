@@ -1,12 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/lib/dictionaries";
+import { withLocale, type Locale } from "@/lib/i18n";
 
-export function MarketsSection({ dictionary }: { dictionary: Dictionary }) {
+export function MarketsSection({
+  locale,
+  dictionary,
+}: {
+  locale: Locale;
+  dictionary: Dictionary;
+}) {
   const d = dictionary.home.markets;
+  const cta = locale === "es" ? "Pedir demo por país" : "Request country-specific demo";
 
   return (
     <section className="border-b border-kitch-border/50 py-14 lg:py-20">
@@ -28,6 +39,19 @@ export function MarketsSection({ dictionary }: { dictionary: Dictionary }) {
               <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-kitch-muted sm:text-lg">
                 {d.body}
               </p>
+              <Button
+                asChild
+                variant="secondary"
+                size="md"
+                className="mt-6 border-kitch-accent/25 bg-kitch-accent/10 text-white hover:border-kitch-accent/45 hover:bg-kitch-accent/15"
+              >
+                <Link href={withLocale(locale, "/demo")} className="group">
+                  <span className="inline-flex items-center gap-2">
+                    {cta}
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </Link>
+              </Button>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">

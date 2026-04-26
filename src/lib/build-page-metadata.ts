@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { defaultLocale, isLocale, locales, withLocale, type Locale } from "@/lib/i18n";
 
 const siteUrl = "https://flowkitch.com";
+const metadataBase = new URL(siteUrl);
 
 type BuildPageMetadataArgs = {
   locale: Locale;
@@ -24,6 +25,7 @@ export function buildPageMetadata({
       : `${siteUrl}${withLocale(locale, normalized)}`;
 
   return {
+    metadataBase,
     title: {
       absolute: title,
     },
@@ -31,12 +33,20 @@ export function buildPageMetadata({
     alternates: {
       canonical: url,
       languages: Object.fromEntries(
-        locales.map((l) => [
-          l,
-          normalized === "/"
-            ? `${siteUrl}/${l}`
-            : `${siteUrl}${withLocale(l, normalized)}`,
-        ]),
+        [
+          ...locales.map((l) => [
+            l,
+            normalized === "/"
+              ? `${siteUrl}/${l}`
+              : `${siteUrl}${withLocale(l, normalized)}`,
+          ]),
+          [
+            "x-default",
+            normalized === "/"
+              ? `${siteUrl}/${defaultLocale}`
+              : `${siteUrl}${withLocale(defaultLocale, normalized)}`,
+          ],
+        ],
       ),
     },
     openGraph: {
@@ -46,6 +56,11 @@ export function buildPageMetadata({
       title,
       description,
       locale: locale === "es" ? "es_CO" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
     },
   };
 }

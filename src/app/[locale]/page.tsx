@@ -48,7 +48,7 @@ export default async function HomePage({ params }: Props) {
       <ModuleCardsSection locale={locale} dictionary={dictionary} />
       <MidDemoCTASection locale={locale} dictionary={dictionary} />
       <MockupShowcaseSection locale={locale} dictionary={dictionary} />
-      <MarketsSection dictionary={dictionary} />
+      <MarketsSection locale={locale} dictionary={dictionary} />
       <HomeTrustCredibilitySection dictionary={dictionary} />
       <FinalCTASection locale={locale} dictionary={dictionary} />
       <HomeSalesClosingSection locale={locale} dictionary={dictionary} />
