@@ -35,8 +35,11 @@ export default async function DemoPage({ params }: Props) {
           {d.title}
         </h1>
         <p className="mt-4 text-pretty text-lg leading-relaxed text-kitch-muted">{d.description}</p>
-        <div className="mt-6 rounded-2xl border border-kitch-accent/20 bg-kitch-accent/[0.07] px-4 py-3 text-sm text-kitch-muted">
-          <span className="font-medium text-kitch-fg">{d.trustLine}</span>
+        <div className="mt-6 space-y-3">
+          <div className="rounded-2xl border border-kitch-accent/20 bg-kitch-accent/[0.07] px-4 py-3 text-sm text-kitch-muted">
+            <span className="font-medium text-kitch-fg">{d.trustLine}</span>
+          </div>
+          <p className="text-sm leading-relaxed text-white/80">{d.directToTeam}</p>
         </div>
       </div>
       <div className="mt-10 max-w-3xl">

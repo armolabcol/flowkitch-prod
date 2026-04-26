@@ -189,6 +189,24 @@ export const dictionaries = {
         ctaPrimary: "Agendar demo",
         ctaSecondary: "Hablar con un asesor",
       },
+      urgency: {
+        line: "Capacidad limitada de implementación por mes.",
+      },
+      trustSales: {
+        title: "Diseñado con operación real de restaurantes en mente",
+        items: [
+          "Experiencia en Horeca y picos de servicio reales.",
+          "Enfoque en operación de sala, cocina y control — no en pantallas aisladas.",
+          "No es una herramienta genérica: está construido para el ritmo de un restaurante.",
+        ],
+      },
+      closing: {
+        title: "¿Listo para llevar control real a tu restaurante?",
+        body:
+          "Descubre cómo Kitch puede ordenar el flujo real de tu servicio, desde la mesa hasta la cocina y la administración.",
+        ctaDemo: "Agendar demo",
+        ctaAdvisor: "Hablar con un asesor",
+      },
     },
     footer: {
       legal:
@@ -200,6 +218,11 @@ export const dictionaries = {
       title: "Kitch | The flow behind great service",
       description:
         "Kitch conecta clientes, meseros, cocina y administración en un flujo digital trazable para restaurantes que necesitan velocidad, claridad y control.",
+    },
+    seoHome: {
+      title: "Software de operación para restaurantes | Kitch",
+      description:
+        "Convierte mesa, mesero, cocina y administración en un solo flujo trazable. Agenda demo y habla con un asesor.",
     },
     placeholder: {
       backHome: "Volver al inicio",
@@ -214,6 +237,7 @@ export const dictionaries = {
       extra:
         "Sin compromiso: usamos estos datos solo para coordinar la sesión y responder por el canal que elijas.",
       trustLine: "Te contactaremos en menos de 24 horas.",
+      directToTeam: "Tu solicitud llega directamente a nuestro equipo comercial.",
       submit: "Enviar solicitud",
       submitting: "Enviando…",
       successTitle: "Listo",
@@ -469,6 +493,24 @@ export const dictionaries = {
         ctaPrimary: "Request a demo",
         ctaSecondary: "Talk to an advisor",
       },
+      urgency: {
+        line: "Limited onboarding capacity per month.",
+      },
+      trustSales: {
+        title: "Designed with real restaurant operations in mind",
+        items: [
+          "Horeca experience and real peak-service dynamics.",
+          "Built around floor, kitchen and control — not disconnected screens.",
+          "Not a generic tool: shaped for how restaurants actually run.",
+        ],
+      },
+      closing: {
+        title: "Ready to bring control to your restaurant?",
+        body:
+          "See how Kitch can organize your real service flow, from table to kitchen to management.",
+        ctaDemo: "Schedule a demo",
+        ctaAdvisor: "Talk to an advisor",
+      },
     },
     footer: {
       legal:
@@ -480,6 +522,11 @@ export const dictionaries = {
       title: "Kitch | The flow behind great service",
       description:
         "Kitch connects guests, waiters, kitchen teams and managers in one traceable digital flow built for restaurants that need speed, clarity and control.",
+    },
+    seoHome: {
+      title: "Restaurant operation software | Kitch",
+      description:
+        "Turn table, waiters, kitchen and management into one traceable flow. Book a demo or talk to an advisor.",
     },
     placeholder: {
       backHome: "Back to home",
@@ -494,6 +541,7 @@ export const dictionaries = {
       extra:
         "No commitment — we use this information only to coordinate the session and reply on your preferred channel.",
       trustLine: "We will contact you within 24 hours.",
+      directToTeam: "Your request goes directly to our commercial team.",
       submit: "Submit request",
       submitting: "Sending…",
       successTitle: "Received",

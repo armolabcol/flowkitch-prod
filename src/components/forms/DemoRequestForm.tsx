@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent, type InputHTMLAttributes } from "react";
+import { useRef, useState, type FormEvent, type InputHTMLAttributes } from "react";
 import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/lib/dictionaries";
 import { cn } from "@/lib/cn";
@@ -29,9 +29,12 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
   const err = d.errors;
   const [status, setStatus] = useState<FormState>("idle");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const submitLockRef = useRef(false);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (status === "submitting" || status === "done" || submitLockRef.current) return;
+
     const form = e.currentTarget;
     const data = new FormData(form);
     const next: FieldErrors = {};
@@ -60,6 +63,7 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
     setFieldErrors(next);
     if (Object.keys(next).length > 0) return;
 
+    submitLockRef.current = true;
     const payload = Object.fromEntries(data.entries());
     setStatus("submitting");
     console.log("[Kitch demo] form payload (integración futura):", payload);
@@ -173,6 +177,7 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
             size="lg"
             className="w-full font-semibold sm:w-auto"
             disabled={status === "submitting" || status === "done"}
+            aria-busy={status === "submitting"}
           >
             {status === "submitting"
               ? d.submitting

@@ -58,7 +58,7 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[min(92vh,880px)] overflow-hidden border-b border-kitch-border/40"
+      className="relative min-h-0 overflow-hidden border-b border-kitch-border/40 lg:min-h-[min(92vh,880px)]"
     >
       <div className="pointer-events-none absolute inset-0">
         {/* Video background (fallback friendly) */}
@@ -125,7 +125,7 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
         </svg>
       </div>
 
-      <Container className="relative max-w-7xl pt-10 pb-16 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24">
+      <Container className="relative max-w-7xl pt-8 pb-12 sm:pt-10 sm:pb-16 lg:pt-14 lg:pb-24">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -142,13 +142,13 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
           </p>
         </motion.div>
 
-        <div className="mt-10 grid gap-12 lg:mt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] lg:items-center lg:gap-16">
-          <div>
+        <div className="mt-8 grid gap-10 lg:mt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] lg:items-center lg:gap-16">
+          <div className="flex flex-col">
             <motion.h1
               initial={reduce ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.04 }}
-              className="text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[3.65rem]"
+              className="order-1 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[3.65rem]"
             >
               {d.headline}
             </motion.h1>
@@ -157,12 +157,12 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
               initial={reduce ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.1 }}
-              className="mt-6 space-y-4 border-l-2 border-kitch-accent/35 pl-5 sm:pl-6"
+              className="order-3 mt-6 space-y-3 border-l-2 border-kitch-accent/35 pl-5 sm:mt-6 sm:space-y-4 sm:pl-6 lg:order-2 lg:mt-6"
             >
               <p className="max-w-xl text-pretty text-base font-medium leading-relaxed text-white/88 sm:text-lg">
                 {d.lead}
               </p>
-              <p className="max-w-xl text-pretty text-sm leading-relaxed text-kitch-muted sm:text-base">
+              <p className="max-w-xl text-pretty text-sm leading-relaxed text-kitch-muted max-sm:hidden sm:text-base">
                 {d.trace}
               </p>
               <p className="max-w-xl text-pretty text-sm font-medium leading-relaxed text-kitch-muted sm:text-base">
@@ -174,13 +174,13 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
               initial={reduce ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.16 }}
-              className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+              className="order-2 mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center lg:order-3 lg:mt-8"
             >
               <Button
                 asChild
                 variant="primary"
                 size="lg"
-                className="min-h-[3.25rem] min-w-[200px] px-8 text-base shadow-[0_0_40px_rgba(230,57,70,0.22)] ring-1 ring-white/10"
+                className="min-h-[3.35rem] w-full min-w-0 px-8 text-base font-semibold shadow-[0_0_48px_rgba(230,57,70,0.38)] ring-1 ring-white/15 hover:bg-[#ff4d5c] hover:shadow-[0_0_56px_rgba(230,57,70,0.5)] sm:w-auto sm:min-w-[200px]"
               >
                 <Link href={withLocale(locale, "/demo")}>{d.ctaPrimary}</Link>
               </Button>
@@ -188,7 +188,7 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
                 asChild
                 variant="secondary"
                 size="lg"
-                className="min-h-[3.25rem] border-white/10 bg-transparent px-8 text-base text-kitch-muted backdrop-blur-sm hover:bg-white/[0.05] hover:text-white"
+                className="min-h-[3.35rem] w-full border-white/10 bg-transparent px-8 text-base text-kitch-muted backdrop-blur-sm hover:bg-white/[0.05] hover:text-white sm:w-auto sm:min-w-0"
               >
                 <Link href={withLocale(locale, "#flow")} className="group">
                   <span className="inline-flex items-center gap-2">
@@ -203,17 +203,21 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
                 asChild
                 variant="ghost"
                 size="lg"
-                className="min-h-[3.25rem] px-8 text-base text-white/80 hover:bg-white/[0.05] hover:text-white"
+                className="min-h-[3.35rem] w-full px-8 text-base text-white/80 hover:bg-white/[0.05] hover:text-white sm:w-auto"
               >
                 <Link href={withLocale(locale, "/demo") + "?advisor=1"}>{d.ctaAdvisor}</Link>
               </Button>
             </motion.div>
 
+            <p className="order-4 mt-2 text-center text-[11px] font-medium uppercase tracking-wide text-kitch-subtle sm:text-left">
+              {dictionary.home.urgency.line}
+            </p>
+
             <motion.p
               initial={reduce ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.22 }}
-              className="mt-4 text-sm font-medium text-white/75"
+              className="order-5 mt-3 text-sm font-medium text-white/75 sm:mt-4"
             >
               {d.setupLine}
             </motion.p>

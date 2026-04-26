@@ -15,6 +15,7 @@ export function FinalCTASection({
   dictionary: Dictionary;
 }) {
   const d = dictionary.home.finalCta;
+  const urgencyLine = dictionary.home.urgency.line;
 
   return (
     <section className="py-14 lg:py-20">
@@ -33,12 +34,12 @@ export function FinalCTASection({
           <p className="relative mx-auto mt-4 max-w-2xl text-pretty text-base leading-relaxed text-kitch-muted sm:text-lg">
             {d.support}
           </p>
-          <div className="relative mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="relative mx-auto mt-8 flex max-w-lg flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:justify-center">
             <Button
               asChild
               variant="primary"
               size="lg"
-              className="min-w-[220px] px-10 text-base shadow-[0_0_36px_rgba(230,57,70,0.2)] ring-1 ring-white/10"
+              className="min-h-[3.25rem] w-full min-w-0 px-10 text-base font-semibold shadow-[0_0_44px_rgba(230,57,70,0.38)] ring-1 ring-white/12 hover:bg-[#ff4d5c] hover:shadow-[0_0_52px_rgba(230,57,70,0.48)] sm:w-auto sm:min-w-[220px]"
             >
               <Link href={withLocale(locale, "/demo")}>{d.ctaPrimary}</Link>
             </Button>
@@ -46,11 +47,14 @@ export function FinalCTASection({
               asChild
               variant="secondary"
               size="lg"
-              className="min-w-[220px] border-white/10 bg-transparent px-10 text-base text-kitch-muted hover:bg-white/[0.06] hover:text-white"
+              className="min-h-[3.25rem] w-full min-w-0 border-white/10 bg-transparent px-10 text-base text-kitch-muted hover:bg-white/[0.06] hover:text-white sm:w-auto sm:min-w-[220px]"
             >
               <Link href={withLocale(locale, "/demo") + "?advisor=1"}>{d.ctaSecondary}</Link>
             </Button>
           </div>
+          <p className="relative mx-auto mt-3 max-w-xl text-center text-[11px] font-medium uppercase tracking-wide text-kitch-subtle">
+            {urgencyLine}
+          </p>
         </motion.div>
       </Container>
     </section>

@@ -53,7 +53,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <SiteHeader locale={locale} dictionary={dictionary} />
       <main className="flex-1">{children}</main>
       <SiteFooter locale={locale} dictionary={dictionary} />
-      <WhatsAppFloatingButton dictionary={dictionary} />
+      <WhatsAppFloatingButton locale={locale} dictionary={dictionary} />
     </div>
   );
 }

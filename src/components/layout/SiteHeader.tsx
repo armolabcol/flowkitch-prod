@@ -89,9 +89,19 @@ export function SiteHeader({ locale, dictionary }: SiteHeaderProps) {
             asChild
             variant="primary"
             size="sm"
-            className="hidden font-semibold shadow-[0_0_36px_rgba(230,57,70,0.28)] ring-1 ring-white/10 hover:bg-[#ff4d5c] sm:inline-flex sm:min-w-[8rem]"
+            className="hidden min-h-10 bg-kitch-accent font-bold shadow-[0_0_40px_rgba(230,57,70,0.45)] ring-1 ring-white/15 hover:bg-[#ff4d5c] hover:shadow-[0_0_52px_rgba(230,57,70,0.55)] sm:inline-flex sm:min-w-[9rem]"
           >
             <Link href={withLocale(locale, "/demo")}>
+              {dictionary.header.requestDemo}
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="primary"
+            size="sm"
+            className="inline-flex max-h-10 min-h-10 max-w-[9.5rem] truncate px-3 text-xs font-bold shadow-[0_0_36px_rgba(230,57,70,0.42)] ring-1 ring-white/15 hover:bg-[#ff4d5c] hover:shadow-[0_0_48px_rgba(230,57,70,0.52)] sm:hidden"
+          >
+            <Link href={withLocale(locale, "/demo")} className="truncate">
               {dictionary.header.requestDemo}
             </Link>
           </Button>
@@ -162,7 +172,7 @@ export function SiteHeader({ locale, dictionary }: SiteHeaderProps) {
                   asChild
                   variant="primary"
                   size="md"
-                  className="font-semibold shadow-[0_0_24px_rgba(230,57,70,0.2)]"
+                  className="min-h-12 bg-kitch-accent font-bold shadow-[0_0_40px_rgba(230,57,70,0.45)] ring-1 ring-white/15 hover:bg-[#ff4d5c] hover:shadow-[0_0_52px_rgba(230,57,70,0.55)]"
                 >
                   <Link
                     href={withLocale(locale, "/demo")}

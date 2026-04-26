@@ -43,15 +43,18 @@ export function MidDemoCTASection({
                 ))}
               </ul>
             </div>
-            <div className="flex flex-col items-start gap-3 lg:items-end">
+            <div className="flex w-full flex-col items-stretch gap-2 sm:max-w-md lg:max-w-none lg:items-end">
               <Button
                 asChild
                 variant="primary"
                 size="lg"
-                className="min-w-[220px] px-10 text-base shadow-[0_0_36px_rgba(230,57,70,0.2)] ring-1 ring-white/10"
+                className="min-h-[3.25rem] w-full px-10 text-base font-semibold shadow-[0_0_44px_rgba(230,57,70,0.38)] ring-1 ring-white/12 hover:bg-[#ff4d5c] hover:shadow-[0_0_52px_rgba(230,57,70,0.48)] lg:w-auto lg:min-w-[240px]"
               >
                 <Link href={withLocale(locale, "/demo")}>{d.button}</Link>
               </Button>
+              <p className="text-center text-[11px] font-medium uppercase tracking-wide text-kitch-subtle lg:text-right">
+                {dictionary.home.urgency.line}
+              </p>
             </div>
           </div>
         </motion.div>
