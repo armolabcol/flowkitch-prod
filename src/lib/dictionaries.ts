@@ -1,4 +1,5 @@
 import type { Locale } from "./i18n";
+import { marketingEn, marketingEs } from "@/data/marketing-dictionaries";
 
 export type Dictionary = (typeof dictionaries)[Locale];
 
@@ -205,19 +206,28 @@ export const dictionaries = {
       seeDemo: "Ir a demo",
       learnMore: "Más información próximamente",
     },
+    marketing: marketingEs,
     demoPage: {
       title: "Solicita una demo",
       description:
-        "Cuéntanos sobre tu restaurante. Este formulario es visual en esta fase; pronto conectaremos con tu equipo.",
+        "Completa el formulario y nuestro equipo revisará tu operación para preparar una demo enfocada.",
       extra:
-        "Cuéntanos sobre tu restaurante y prepararemos una demo personalizada.",
+        "Sin compromiso: usamos estos datos solo para coordinar la sesión y responder por el canal que elijas.",
+      trustLine: "Te contactaremos en menos de 24 horas.",
       submit: "Enviar solicitud",
       submitting: "Enviando…",
       successTitle: "Listo",
       successBody:
-        "Pronto integraremos el envío a CRM o email. Por ahora tu solicitud se registró solo en esta vista.",
+        "Recibimos tu solicitud. Te escribiremos pronto con próximos pasos.",
       noCommitment:
         "Sin compromiso. Solo una visión real de cómo funciona Kitch.",
+      errors: {
+        required: "Este campo es obligatorio.",
+        email: "Introduce un email válido.",
+        whatsapp: "Introduce un número de WhatsApp válido.",
+        tablesMin: "Indica al menos 1 mesa o deja el campo vacío.",
+        pos: "Selecciona una opción de POS.",
+      },
       fields: {
         name: "Nombre",
         restaurant: "Restaurante",
@@ -238,6 +248,9 @@ export const dictionaries = {
     portal: {
       title: "Portal Kitch",
       subtitle: "Acceso para equipos y clientes Kitch.",
+      clientsOnly: "Acceso exclusivo para clientes Kitch",
+      seoDescription:
+        "Inicia sesión en el portal Kitch: acceso exclusivo para clientes y equipos con operación activa.",
       email: "Email",
       password: "Contraseña",
       login: "Iniciar sesión",
@@ -473,19 +486,28 @@ export const dictionaries = {
       seeDemo: "Go to demo",
       learnMore: "More details coming soon",
     },
+    marketing: marketingEn,
     demoPage: {
       title: "Request a demo",
       description:
-        "Tell us about your restaurant. This form is visual in this phase; we will connect with your team soon.",
+        "Share a few details about your restaurant so we can prepare a focused walkthrough.",
       extra:
-        "Tell us about your restaurant and we will prepare a personalized walkthrough.",
+        "No commitment — we use this information only to coordinate the session and reply on your preferred channel.",
+      trustLine: "We will contact you within 24 hours.",
       submit: "Submit request",
       submitting: "Sending…",
       successTitle: "Received",
       successBody:
-        "We will wire this to CRM or email later. For now your request is only reflected in this view.",
+        "We received your request and will follow up shortly with next steps.",
       noCommitment:
         "No commitment. Just a real look at how Kitch works.",
+      errors: {
+        required: "This field is required.",
+        email: "Enter a valid email address.",
+        whatsapp: "Enter a valid WhatsApp number.",
+        tablesMin: "Enter at least 1 table or leave the field empty.",
+        pos: "Please select a POS option.",
+      },
       fields: {
         name: "Name",
         restaurant: "Restaurant",
@@ -506,6 +528,9 @@ export const dictionaries = {
     portal: {
       title: "Kitch Portal",
       subtitle: "Access for Kitch teams and clients.",
+      clientsOnly: "Access for Kitch clients only",
+      seoDescription:
+        "Sign in to the Kitch portal — exclusive access for active clients and internal teams.",
       email: "Email",
       password: "Password",
       login: "Sign in",

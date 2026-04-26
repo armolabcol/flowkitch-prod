@@ -3,6 +3,7 @@
 import { useState, type FormEvent, type InputHTMLAttributes } from "react";
 import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/lib/dictionaries";
+import { cn } from "@/lib/cn";
 
 type DemoRequestFormProps = {
   dictionary: Dictionary;
@@ -10,17 +11,57 @@ type DemoRequestFormProps = {
 
 type FormState = "idle" | "submitting" | "done";
 
+type FieldErrors = Partial<
+  Record<"name" | "restaurant" | "country" | "city" | "email" | "whatsapp" | "tables" | "uses_pos", string>
+>;
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function isValidWhatsapp(value: string) {
+  const digits = value.replace(/\D/g, "");
+  return digits.length >= 8;
+}
+
 export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
   const d = dictionary.demoPage;
+  const err = d.errors;
   const [status, setStatus] = useState<FormState>("idle");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
+    const next: FieldErrors = {};
+
+    const name = String(data.get("name") ?? "").trim();
+    const restaurant = String(data.get("restaurant") ?? "").trim();
+    const country = String(data.get("country") ?? "").trim();
+    const city = String(data.get("city") ?? "").trim();
+    const email = String(data.get("email") ?? "").trim();
+    const whatsapp = String(data.get("whatsapp") ?? "").trim();
+    const tablesRaw = String(data.get("tables") ?? "").trim();
+    const usesPos = String(data.get("uses_pos") ?? "");
+    if (!name) next.name = err.required;
+    if (!restaurant) next.restaurant = err.required;
+    if (!country) next.country = err.required;
+    if (!city) next.city = err.required;
+    if (!email) next.email = err.required;
+    else if (!isValidEmail(email)) next.email = err.email;
+    if (whatsapp && !isValidWhatsapp(whatsapp)) next.whatsapp = err.whatsapp;
+    if (!usesPos) next.uses_pos = err.pos;
+    if (tablesRaw) {
+      const n = Number(tablesRaw);
+      if (!Number.isFinite(n) || n < 1) next.tables = err.tablesMin;
+    }
+
+    setFieldErrors(next);
+    if (Object.keys(next).length > 0) return;
+
     const payload = Object.fromEntries(data.entries());
     setStatus("submitting");
-    // Fase 1: sin backend — listo para integrar POST /api/demo u otro servicio
     console.log("[Kitch demo] form payload (integración futura):", payload);
     setTimeout(() => setStatus("done"), 450);
   }
@@ -32,35 +73,79 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
     <form
       onSubmit={handleSubmit}
       className="grid gap-5 rounded-3xl border border-kitch-border bg-kitch-elevated/40 p-6 sm:grid-cols-2 sm:p-8"
+      noValidate
     >
-      <Field label={d.fields.name} name="name" required className={fieldClass} />
+      <Field
+        label={d.fields.name}
+        name="name"
+        required
+        className={cn(fieldClass, fieldErrors.name && "border-red-400/40")}
+        error={fieldErrors.name}
+        onChange={() => setFieldErrors((p) => ({ ...p, name: undefined }))}
+      />
       <Field
         label={d.fields.restaurant}
         name="restaurant"
         required
-        className={fieldClass}
+        className={cn(fieldClass, fieldErrors.restaurant && "border-red-400/40")}
+        error={fieldErrors.restaurant}
+        onChange={() => setFieldErrors((p) => ({ ...p, restaurant: undefined }))}
       />
-      <Field label={d.fields.country} name="country" required className={fieldClass} />
-      <Field label={d.fields.city} name="city" required className={fieldClass} />
+      <Field
+        label={d.fields.country}
+        name="country"
+        required
+        className={cn(fieldClass, fieldErrors.country && "border-red-400/40")}
+        error={fieldErrors.country}
+        onChange={() => setFieldErrors((p) => ({ ...p, country: undefined }))}
+      />
+      <Field
+        label={d.fields.city}
+        name="city"
+        required
+        className={cn(fieldClass, fieldErrors.city && "border-red-400/40")}
+        error={fieldErrors.city}
+        onChange={() => setFieldErrors((p) => ({ ...p, city: undefined }))}
+      />
       <Field
         label={d.fields.whatsapp}
         name="whatsapp"
         type="tel"
-        className={fieldClass}
+        autoComplete="tel"
+        className={cn(fieldClass, fieldErrors.whatsapp && "border-red-400/40")}
+        error={fieldErrors.whatsapp}
+        onChange={() => setFieldErrors((p) => ({ ...p, whatsapp: undefined }))}
       />
-      <Field label={d.fields.email} name="email" type="email" required className={fieldClass} />
+      <Field
+        label={d.fields.email}
+        name="email"
+        type="email"
+        autoComplete="email"
+        required
+        className={cn(fieldClass, fieldErrors.email && "border-red-400/40")}
+        error={fieldErrors.email}
+        onChange={() => setFieldErrors((p) => ({ ...p, email: undefined }))}
+      />
       <Field
         label={d.fields.tables}
         name="tables"
         type="number"
         min={1}
-        className={fieldClass}
+        inputMode="numeric"
+        className={cn(fieldClass, fieldErrors.tables && "border-red-400/40")}
+        error={fieldErrors.tables}
+        onChange={() => setFieldErrors((p) => ({ ...p, tables: undefined }))}
       />
       <div className="sm:col-span-2">
         <label className="text-xs font-medium uppercase tracking-wide text-kitch-subtle">
           {d.fields.pos}
         </label>
-        <select name="uses_pos" className={fieldClass} defaultValue="">
+        <select
+          name="uses_pos"
+          className={cn(fieldClass, fieldErrors.uses_pos && "border-red-400/40")}
+          defaultValue=""
+          onChange={() => setFieldErrors((p) => ({ ...p, uses_pos: undefined }))}
+        >
           <option value="" disabled>
             —
           </option>
@@ -68,29 +153,25 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
           <option value="no">{d.posOptions.no}</option>
           <option value="evaluating">{d.posOptions.evaluating}</option>
         </select>
+        {fieldErrors.uses_pos ? (
+          <p className="mt-1 text-xs text-red-300/90">{fieldErrors.uses_pos}</p>
+        ) : null}
       </div>
       <div className="sm:col-span-2">
         <label className="text-xs font-medium uppercase tracking-wide text-kitch-subtle">
           {d.fields.improve}
         </label>
-        <textarea
-          name="improve"
-          rows={4}
-          className={`${fieldClass} resize-y`}
-          placeholder="…"
-        />
+        <textarea name="improve" rows={4} className={`${fieldClass} resize-y`} />
       </div>
 
-      <div className="sm:col-span-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-kitch-subtle">
-          {/* reservado: endpoint, analytics, honeypot */}
-          POST /api/demo — pendiente de integración
-        </p>
-        <div className="flex flex-col items-end gap-2">
+      <div className="sm:col-span-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <p className="max-w-md text-xs leading-relaxed text-kitch-subtle">{d.extra}</p>
+        <div className="flex flex-col items-stretch gap-2 sm:items-end">
           <Button
             type="submit"
             variant="primary"
             size="lg"
+            className="w-full font-semibold sm:w-auto"
             disabled={status === "submitting" || status === "done"}
           >
             {status === "submitting"
@@ -99,7 +180,7 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
                 ? d.successTitle
                 : d.submit}
           </Button>
-          <p className="text-[11px] text-kitch-subtle">{d.noCommitment}</p>
+          <p className="text-center text-[11px] text-kitch-subtle sm:text-right">{d.noCommitment}</p>
         </div>
       </div>
 
@@ -118,17 +199,21 @@ export function DemoRequestForm({ dictionary }: DemoRequestFormProps) {
 function Field({
   label,
   className,
+  error,
   ...inputProps
 }: {
   label: string;
   className: string;
+  error?: string;
 } & InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
       <label className="text-xs font-medium uppercase tracking-wide text-kitch-subtle">
         {label}
+        {inputProps.required ? <span className="text-kitch-accent"> *</span> : null}
       </label>
       <input className={className} {...inputProps} />
+      {error ? <p className="mt-1 text-xs text-red-300/90">{error}</p> : null}
     </div>
   );
 }

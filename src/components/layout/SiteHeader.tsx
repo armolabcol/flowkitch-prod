@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
@@ -10,15 +11,26 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { mainNav } from "@/data/navigation";
 import type { Dictionary } from "@/lib/dictionaries";
-import { withLocale, type Locale } from "@/lib/i18n";
+import { stripLocaleFromPathname, withLocale, type Locale } from "@/lib/i18n";
+import { cn } from "@/lib/cn";
 
 type SiteHeaderProps = {
   locale: Locale;
   dictionary: Dictionary;
 };
 
+function navItemActive(currentPath: string, href: string) {
+  const normalized = href.startsWith("/") ? href : `/${href}`;
+  if (normalized.startsWith("/portal")) {
+    return currentPath.startsWith("/portal");
+  }
+  return currentPath === normalized;
+}
+
 export function SiteHeader({ locale, dictionary }: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const currentPath = stripLocaleFromPathname(pathname);
 
   const navLabel = (key: (typeof mainNav)[number]["key"]) => {
     const map = dictionary.nav;
@@ -51,15 +63,24 @@ export function SiteHeader({ locale, dictionary }: SiteHeaderProps) {
           className="hidden items-center gap-1.5 lg:flex"
           aria-label="Primary"
         >
-          {mainNav.map((item) => (
-            <Link
-              key={item.key}
-              href={withLocale(locale, item.href)}
-              className="rounded-lg px-3.5 py-2 text-[13px] font-medium text-kitch-muted transition-colors hover:bg-white/[0.05] hover:text-white"
-            >
-              {navLabel(item.key)}
-            </Link>
-          ))}
+          {mainNav.map((item) => {
+            const active = navItemActive(currentPath, item.href);
+            return (
+              <Link
+                key={item.key}
+                href={withLocale(locale, item.href)}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "rounded-lg px-3.5 py-2 text-[13px] font-medium transition-colors",
+                  active
+                    ? "bg-white/[0.08] text-white"
+                    : "text-kitch-muted hover:bg-white/[0.05] hover:text-white",
+                )}
+              >
+                {navLabel(item.key)}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
@@ -112,22 +133,29 @@ export function SiteHeader({ locale, dictionary }: SiteHeaderProps) {
           >
             <Container className="max-w-7xl py-4">
               <div className="flex flex-col gap-1">
-                {mainNav.map((item, i) => (
-                  <motion.div
-                    key={item.key}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.04 * i, duration: 0.2 }}
-                  >
-                    <Link
-                      href={withLocale(locale, item.href)}
-                      className="block rounded-xl px-3 py-3 text-sm font-medium text-kitch-fg hover:bg-white/[0.05]"
-                      onClick={() => setOpen(false)}
+                {mainNav.map((item, i) => {
+                  const active = navItemActive(currentPath, item.href);
+                  return (
+                    <motion.div
+                      key={item.key}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.04 * i, duration: 0.2 }}
                     >
-                      {navLabel(item.key)}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        href={withLocale(locale, item.href)}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "block rounded-xl px-3 py-3 text-sm font-medium hover:bg-white/[0.05]",
+                          active ? "bg-white/[0.08] text-white" : "text-kitch-fg",
+                        )}
+                        onClick={() => setOpen(false)}
+                      >
+                        {navLabel(item.key)}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </div>
               <div className="mt-4 flex flex-col gap-2 border-t border-white/[0.06] pt-4">
                 <Button

@@ -1,30 +1,28 @@
 import type { Metadata } from "next";
-import { SubPage, SubPageVisualBlock } from "@/components/marketing/SubPage";
+import { ManagerPageView } from "@/components/marketing/ManagerPageView";
 import { getDictionary } from "@/lib/dictionaries";
-import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
+import { buildPageMetadata, localeFromParams } from "@/lib/build-page-metadata";
+import type { Locale } from "@/lib/i18n";
 
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale: raw } = await params;
-  const locale: Locale = isLocale(raw) ? raw : defaultLocale;
+  const locale = localeFromParams(raw);
   const dict = getDictionary(locale);
-  return { title: dict.internalPages.manager.title };
+  const seo = dict.marketing.manager.seo;
+  return buildPageMetadata({
+    locale,
+    path: "/manager",
+    title: seo.title,
+    description: seo.description,
+  });
 }
 
 export default async function ManagerPage({ params }: Props) {
   const { locale: raw } = await params;
-  const locale: Locale = isLocale(raw) ? raw : defaultLocale;
+  const locale: Locale = localeFromParams(raw);
   const dict = getDictionary(locale);
-  const p = dict.internalPages.manager;
 
-  return (
-    <SubPage
-      locale={locale}
-      dictionary={dict}
-      title={p.title}
-      description={p.description}
-      visual={<SubPageVisualBlock />}
-    />
-  );
+  return <ManagerPageView locale={locale} dictionary={dict} />;
 }
