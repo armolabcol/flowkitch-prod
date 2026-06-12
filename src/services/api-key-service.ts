@@ -1,53 +1,51 @@
-import {
+export {
+  getInstallationByApiKey,
+  recordLicenseCheck,
+} from "@/services/saas/installations-service";
+
+export {
   apiKeyLast4,
   generateApiKey,
   hashApiKey,
   maskApiKey,
 } from "@/lib/security/api-keys";
+
 import {
-  getInstallationWithDetails,
-  mockApiKeyHashIndex,
-  mockInstallations,
-} from "@/data/saas-mock";
-import type { PluginInstallation } from "@/types/saas";
-
-export { maskApiKey, hashApiKey };
-
-/**
- * Look up installation by API key.
- * TODO: Replace with Supabase query on api_keys.key_hash
- */
-export function getInstallationByApiKey(
-  apiKey: string,
-): PluginInstallation | null {
-  const keyHash = hashApiKey(apiKey);
-  const installationId = mockApiKeyHashIndex[keyHash];
-  if (!installationId) return null;
-
-  return mockInstallations.find((i) => i.id === installationId) ?? null;
-}
-
-export function getInstallationDetailsByApiKey(apiKey: string) {
-  const installation = getInstallationByApiKey(apiKey);
-  if (!installation) return null;
-  return getInstallationWithDetails(installation.id);
-}
+  apiKeyLast4,
+  generateApiKey,
+  hashApiKey,
+} from "@/lib/security/api-keys";
+import { getServiceSaasClient } from "@/services/saas/db";
+import type { Database } from "@/lib/supabase/types";
 
 /**
- * Generate a new API key record (mock).
- * TODO: Persist hashed key via Supabase service client.
+ * Generate and persist a new API key for an installation (admin operation).
  */
-export function createApiKeyRecord(_installationId: string): {
+export async function createApiKeyRecord(installationId: string): Promise<{
   apiKey: string;
   publicView: { last4: string; created_at: string; status: "active" };
-} {
+} | null> {
+  const supabase = getServiceSaasClient();
+  if (!supabase) return null;
+
   const apiKey = generateApiKey();
+  const keyHash = hashApiKey(apiKey);
+  const last4 = apiKeyLast4(apiKey);
+  const created_at = new Date().toISOString();
+
+  const row: Database["public"]["Tables"]["api_keys"]["Insert"] = {
+    installation_id: installationId,
+    key_hash: keyHash,
+    last4,
+    status: "active",
+  };
+
+  const { error } = await supabase.from("api_keys").insert(row as never);
+
+  if (error) return null;
+
   return {
     apiKey,
-    publicView: {
-      last4: apiKeyLast4(apiKey),
-      created_at: new Date().toISOString(),
-      status: "active",
-    },
+    publicView: { last4, created_at, status: "active" },
   };
 }

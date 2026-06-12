@@ -1,4 +1,5 @@
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
+import { getServerSaasClient } from "@/services/saas/db";
 import { isSupabaseConfigured, isHmacConfigured, env } from "@/lib/env";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
@@ -10,16 +11,34 @@ export default async function AdminSettingsPage({ params }: Props) {
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
 
+  let dbStats = "—";
+  if (isSupabaseConfigured()) {
+    const supabase = await getServerSaasClient();
+    if (supabase) {
+      const [clients, installations] = await Promise.all([
+        supabase.from("clients").select("*", { count: "exact", head: true }),
+        supabase
+          .from("plugin_installations")
+          .select("*", { count: "exact", head: true }),
+      ]);
+      dbStats = `${clients.count ?? 0} clients / ${installations.count ?? 0} inst.`;
+    }
+  }
+
   const settings = [
     {
       label: "Supabase",
       value: isSupabaseConfigured()
         ? locale === "es"
-          ? "Configurado"
-          : "Configured"
+          ? "Conectado"
+          : "Connected"
         : locale === "es"
           ? "Pendiente"
           : "Pending",
+    },
+    {
+      label: locale === "es" ? "Registros DB" : "DB records",
+      value: dbStats,
     },
     {
       label: "HMAC",
@@ -43,8 +62,8 @@ export default async function AdminSettingsPage({ params }: Props) {
         title={dict.admin.nav.settings}
         description={
           locale === "es"
-            ? "Configuración del entorno SaaS (mock en esta fase)."
-            : "SaaS environment settings (mock in this phase)."
+            ? "Estado del entorno SaaS y conexión a Supabase."
+            : "SaaS environment and Supabase connection status."
         }
       />
       <div className="space-y-3">

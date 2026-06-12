@@ -75,10 +75,9 @@ Recomendación: MP4 H.264, 1600×900 o 1920×1080, 8–15s, loop suave, sin audi
 
 1. **Fase 1 (completada):** Web comercial visual — marketing, i18n, SEO base, placeholders portal/demo.
 2. **Fase SaaS (actual):** Base técnica de licenciamiento — admin, portal cliente, API plugin, mock data, Supabase preparado.
-3. **Fase 2 Auth (actual):** Login real Supabase, protección por rol, migración `profiles`.
-4. **Fase 3:** Base de datos completa + datos reales (sin mock).
-5. **Fase 4:** Pagos y membresías (Colombia / USA).
-6. **Fase 5:** Integración plugin WordPress + telemetría.
+3. **Fase 3 (actual):** Base de datos Supabase — schema, RLS, servicios reales, seed dev.
+4. **Fase 4:** Pagos y membresías (Colombia / USA).
+5. **Fase 5:** Integración plugin WordPress + telemetría.
 
 ## SaaS licensing architecture
 

@@ -1,5 +1,5 @@
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { mockMaintenanceLogs } from "@/data/saas-mock";
+import { listMaintenanceLogs } from "@/services/saas/admin-service";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -9,6 +9,7 @@ export default async function AdminMaintenancePage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
+  const logs = await listMaintenanceLogs();
 
   return (
     <>
@@ -20,7 +21,7 @@ export default async function AdminMaintenancePage({ params }: Props) {
           locale === "es" ? "Programado" : "Scheduled",
           locale === "es" ? "Notas" : "Notes",
         ]}
-        rows={mockMaintenanceLogs.map((m) => [
+        rows={logs.map((m) => [
           m.title,
           m.status,
           formatSaasDate(m.scheduled_at, locale),

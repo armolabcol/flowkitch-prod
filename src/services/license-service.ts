@@ -1,4 +1,7 @@
-import { getInstallationByApiKey } from "@/services/api-key-service";
+import {
+  getInstallationByApiKey,
+  recordLicenseCheck,
+} from "@/services/saas/installations-service";
 import type {
   LicenseCheckRequest,
   LicenseCheckResponse,
@@ -18,9 +21,6 @@ const STATUS_MESSAGES: Record<LicenseStatus, string> = {
   license_unknown: "Invalid or unknown API key",
 };
 
-/**
- * Build standardized license check response for the WordPress plugin.
- */
 export function buildLicenseResponse(
   installation: PluginInstallation,
 ): LicenseCheckResponse {
@@ -42,18 +42,10 @@ export function buildUnknownLicenseResponse(): LicenseCheckResponse {
   };
 }
 
-/**
- * Validate a license check request from the WordPress plugin.
- *
- * Security notes:
- * - Never log full API keys (use maskApiKey)
- * - TODO: Verify HMAC signature when KITCH_API_HMAC_SECRET is set
- * - TODO: Rate limit per IP + per key hash (see docs/saas-data-model.md)
- */
-export function validateLicenseCheck(
+export async function validateLicenseCheck(
   body: LicenseCheckRequest,
-): LicenseCheckResponse {
-  const installation = getInstallationByApiKey(body.api_key);
+): Promise<LicenseCheckResponse> {
+  const installation = await getInstallationByApiKey(body.api_key);
 
   if (!installation) {
     return buildUnknownLicenseResponse();
@@ -63,18 +55,15 @@ export function validateLicenseCheck(
     return buildLicenseResponse(installation);
   }
 
-  // TODO: Validate site_url matches installation.site_url (with normalization)
-  // TODO: Record license_checks row in Supabase
-  // TODO: Update last_license_check_at and plugin_version
+  await recordLicenseCheck(
+    installation.id,
+    body.plugin_version,
+    body.site_url,
+  );
 
   return buildLicenseResponse(installation);
 }
 
-/**
- * TODO: Rate limiting placeholder.
- * Recommended: 60 req/min per IP, 10 req/min per key hash.
- * Implement with Upstash Redis or Supabase edge function.
- */
 export function checkRateLimit(_identifier: string): boolean {
   return true;
 }

@@ -35,7 +35,7 @@ export const saasDictionaries = {
         ordersMonth: "Órdenes mes",
         revenueMonth: "Volumen mes",
       },
-      mockBadge: "Datos mock — Fase SaaS",
+      mockBadge: "Supabase",
     },
     portal: {
       title: "Portal Kitch",
@@ -124,7 +124,7 @@ export const saasDictionaries = {
         ordersMonth: "Orders / mo",
         revenueMonth: "Volume / mo",
       },
-      mockBadge: "Mock data — SaaS phase",
+      mockBadge: "Supabase",
     },
     portal: {
       title: "Kitch Portal",

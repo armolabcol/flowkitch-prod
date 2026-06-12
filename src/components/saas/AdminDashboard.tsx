@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { StatCard } from "@/components/saas/StatCard";
-import { getAdminDashboardStats } from "@/data/saas-mock";
+import { getAdminDashboardStats } from "@/services/saas/admin-service";
 import {
   formatSaasCurrency,
   formatSaasDate,
@@ -15,14 +15,14 @@ import {
 } from "@/lib/saas-dictionaries";
 import type { Locale } from "@/lib/i18n";
 
-export function AdminDashboard({
+export async function AdminDashboard({
   locale,
   dictionary,
 }: {
   locale: Locale;
   dictionary: SaasDictionary;
 }) {
-  const stats = getAdminDashboardStats();
+  const stats = await getAdminDashboardStats();
   const d = dictionary.admin;
 
   const formatRevenue = (amount: number, country: string) => {

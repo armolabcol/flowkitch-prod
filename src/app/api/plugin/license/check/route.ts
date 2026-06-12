@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 
   // TODO: Verify X-Kitch-Signature HMAC when KITCH_API_HMAC_SECRET is set
 
-  const response = validateLicenseCheck(body);
+  const response = await validateLicenseCheck(body);
   const statusCode = response.status === "license_unknown" ? 401 : 200;
 
   return NextResponse.json(response, { status: statusCode });

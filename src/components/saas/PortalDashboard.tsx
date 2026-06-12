@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
-import { getClientPortalData } from "@/data/saas-mock";
+import { getClientPortalData } from "@/services/saas/portal-service";
 import {
   formatSaasCurrency,
   formatSaasDate,
@@ -9,7 +9,7 @@ import {
 } from "@/lib/saas-dictionaries";
 import { withLocale, type Locale } from "@/lib/i18n";
 
-export function PortalDashboard({
+export async function PortalDashboard({
   locale,
   dictionary,
   clientId,
@@ -18,20 +18,19 @@ export function PortalDashboard({
   dictionary: SaasDictionary;
   clientId?: string | null;
 }) {
-  const { client, installation, subscription, payments } =
-    getClientPortalData(clientId);
+  const { client, installation, subscription } =
+    await getClientPortalData(clientId ?? null);
   const d = dictionary.portal;
 
-  if (!client || !installation || !subscription) {
+  if (!client || !installation) {
     return (
       <p className="text-kitch-muted">
-        {locale === "es" ? "Sin datos de cliente." : "No client data."}
+        {locale === "es"
+          ? "Sin datos de cliente. Contacta a soporte ARMO para vincular tu cuenta."
+          : "No client data. Contact ARMO support to link your account."}
       </p>
     );
   }
-
-  const currency = subscription.currency;
-  const recentPayments = payments.slice(0, 3);
 
   return (
     <div className="space-y-8">
@@ -52,12 +51,20 @@ export function PortalDashboard({
               status={installation.license_status}
               label={dictionary.licenseStatus[installation.license_status]}
             />
-            <span className="text-sm text-kitch-muted">{subscription.plan_name}</span>
+            {subscription && (
+              <span className="text-sm text-kitch-muted">
+                {subscription.plan_name}
+              </span>
+            )}
           </div>
           <p className="mt-4 text-sm text-kitch-muted">
             {d.membership.expiresAt}:{" "}
             <span className="text-white">
-              {formatSaasDate(subscription.current_period_end, locale)}
+              {formatSaasDate(
+                subscription?.current_period_end ??
+                  installation.license_expires_at,
+                locale,
+              )}
             </span>
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
@@ -101,38 +108,32 @@ export function PortalDashboard({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/[0.08] bg-kitch-surface/60 p-6">
-        <h3 className="font-medium text-white">{d.billing.title}</h3>
-        <ul className="mt-4 divide-y divide-white/[0.06]">
-          {recentPayments.map((payment) => (
-            <li
-              key={payment.id}
-              className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
-            >
-              <div>
-                <p className="text-white">{payment.description}</p>
-                <p className="text-xs text-kitch-subtle">
-                  {formatSaasDate(payment.paid_at, locale)}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-kitch-muted">
-                  {formatSaasCurrency(payment.amount_cents, currency, locale)}
-                </p>
-                <p className="text-xs text-kitch-subtle">
-                  {d.paymentStatus[payment.status]}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <Link
-          href={withLocale(locale, "/portal/billing")}
-          className="mt-4 inline-block text-sm text-kitch-accent hover:underline"
-        >
-          {locale === "es" ? "Ver historial completo" : "View full history"} →
-        </Link>
-      </div>
+      {subscription && (
+        <div className="rounded-2xl border border-white/[0.08] bg-kitch-surface/60 p-6">
+          <h3 className="font-medium text-white">{d.billing.title}</h3>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm">
+            <div>
+              <p className="text-white">{subscription.plan_name}</p>
+              <p className="text-xs text-kitch-subtle">
+                {formatSaasDate(subscription.current_period_end, locale)}
+              </p>
+            </div>
+            <p className="text-kitch-muted">
+              {formatSaasCurrency(
+                subscription.amount_cents,
+                subscription.currency,
+                locale,
+              )}
+            </p>
+          </div>
+          <Link
+            href={withLocale(locale, "/portal/billing")}
+            className="mt-4 inline-block text-sm text-kitch-accent hover:underline"
+          >
+            {locale === "es" ? "Ver membresía completa" : "View full membership"} →
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

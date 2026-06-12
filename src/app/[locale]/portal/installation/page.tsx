@@ -1,5 +1,6 @@
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { getClientPortalData } from "@/data/saas-mock";
+import { getPortalClientId } from "@/lib/auth/guards";
+import { getClientPortalData } from "@/services/saas/portal-service";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -9,7 +10,8 @@ export default async function PortalInstallationPage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const { installation } = getClientPortalData();
+  const clientId = await getPortalClientId();
+  const { installation } = await getClientPortalData(clientId);
   const d = dict.portal.installation;
 
   if (!installation) return null;

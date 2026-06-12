@@ -1,6 +1,6 @@
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { getAllInstallationsWithDetails } from "@/data/saas-mock";
+import { listInstallationsWithDetails } from "@/services/saas/admin-service";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -10,7 +10,7 @@ export default async function AdminLicensesPage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const installations = getAllInstallationsWithDetails();
+  const installations = await listInstallationsWithDetails();
 
   return (
     <>

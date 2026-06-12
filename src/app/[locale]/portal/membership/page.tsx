@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { getClientPortalData } from "@/data/saas-mock";
+import { getPortalClientId } from "@/lib/auth/guards";
+import { getClientPortalData } from "@/services/saas/portal-service";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import { withLocale, defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -12,10 +13,11 @@ export default async function PortalMembershipPage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const { subscription, installation } = getClientPortalData();
+  const clientId = await getPortalClientId();
+  const { subscription, installation } = await getClientPortalData(clientId);
   const d = dict.portal.membership;
 
-  if (!subscription || !installation) return null;
+  if (!installation) return null;
 
   return (
     <>
@@ -26,15 +28,21 @@ export default async function PortalMembershipPage({ params }: Props) {
             status={installation.license_status}
             label={dict.licenseStatus[installation.license_status]}
           />
-          <span className="text-lg text-white">{subscription.plan_name}</span>
+          {subscription && (
+            <span className="text-lg text-white">{subscription.plan_name}</span>
+          )}
         </div>
         <p className="mt-6 text-kitch-muted">
           {d.expiresAt}:{" "}
           <span className="text-white">
-            {formatSaasDate(subscription.current_period_end, locale)}
+            {formatSaasDate(
+              subscription?.current_period_end ??
+                installation.license_expires_at,
+              locale,
+            )}
           </span>
         </p>
-        {subscription.grace_until && (
+        {subscription?.grace_until && (
           <p className="mt-2 text-sm text-amber-300/90">
             {locale === "es" ? "Periodo de gracia hasta" : "Grace period until"}:{" "}
             {formatSaasDate(subscription.grace_until, locale)}

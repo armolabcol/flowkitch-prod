@@ -1,6 +1,6 @@
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { getAllInstallationsWithDetails } from "@/data/saas-mock";
+import { listInstallationsWithDetails } from "@/services/saas/admin-service";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -10,7 +10,7 @@ export default async function AdminInstallationsPage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const installations = getAllInstallationsWithDetails();
+  const installations = await listInstallationsWithDetails();
 
   return (
     <>
@@ -24,7 +24,7 @@ export default async function AdminInstallationsPage({ params }: Props) {
           `API Key (${locale === "es" ? "últimos 4" : "last 4"})`,
         ]}
         rows={installations.map((i) => [
-          i.id,
+          i.id.slice(0, 8) + "…",
           i.restaurant.name,
           <LicenseStatusBadge
             key={i.id}

@@ -1,5 +1,5 @@
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { mockClients, mockRestaurants } from "@/data/saas-mock";
+import { getClientsMap, listRestaurants } from "@/services/saas/admin-service";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -10,7 +10,10 @@ export default async function AdminRestaurantsPage({ params }: Props) {
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
 
-  const clientMap = Object.fromEntries(mockClients.map((c) => [c.id, c.name]));
+  const [restaurants, clientMap] = await Promise.all([
+    listRestaurants(),
+    getClientsMap(),
+  ]);
 
   return (
     <>
@@ -22,9 +25,9 @@ export default async function AdminRestaurantsPage({ params }: Props) {
           locale === "es" ? "Ciudad" : "City",
           locale === "es" ? "País" : "Country",
         ]}
-        rows={mockRestaurants.map((r) => [
+        rows={restaurants.map((r) => [
           r.name,
-          clientMap[r.client_id] ?? r.client_id,
+          clientMap[r.client_id] ?? r.client_id.slice(0, 8) + "…",
           r.city,
           dict.countries[r.country] ?? r.country,
         ])}
