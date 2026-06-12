@@ -2,12 +2,9 @@
 
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/env";
-import { isAdminRole } from "@/lib/auth/roles";
 import { cn } from "@/lib/cn";
 import { withLocale, type Locale } from "@/lib/i18n";
-import type { UserRole } from "@/types/saas";
 
 type SaasLoginFormProps = {
   locale: Locale;
@@ -19,6 +16,34 @@ type SaasLoginFormProps = {
   notice: string;
   mockNotice: string;
 };
+
+function mapSignInError(
+  code: string | undefined,
+  message: string,
+  locale: Locale,
+): string {
+  if (code === "profile_missing") {
+    return locale === "es"
+      ? "Tu perfil no está vinculado. Verifica que profiles.id = auth.users.id en Supabase."
+      : "Your profile is not linked. Ensure profiles.id = auth.users.id in Supabase.";
+  }
+  if (code === "wrong_audience") {
+    return locale === "es"
+      ? "Esta cuenta no tiene acceso al panel admin."
+      : "This account does not have admin access.";
+  }
+  if (code === "email_not_confirmed" || message.toLowerCase().includes("confirm")) {
+    return locale === "es"
+      ? "Confirma tu email en Supabase Auth antes de ingresar."
+      : "Confirm your email in Supabase Auth before signing in.";
+  }
+  if (message.toLowerCase().includes("invalid login credentials")) {
+    return locale === "es"
+      ? "Email o contraseña incorrectos."
+      : "Incorrect email or password.";
+  }
+  return message;
+}
 
 export function SaasLoginForm({
   locale,
@@ -37,14 +62,6 @@ export function SaasLoginForm({
   const inputClass =
     "mt-2 w-full rounded-xl border border-white/[0.12] bg-kitch-bg/90 px-3.5 py-3 text-sm text-kitch-fg outline-none transition-colors placeholder:text-kitch-subtle/80 focus:border-kitch-accent/55 focus:ring-1 focus:ring-kitch-accent/25";
 
-  async function redirectByRole(role: UserRole | null) {
-    if (role && isAdminRole(role)) {
-      window.location.href = withLocale(locale, "/admin");
-      return;
-    }
-    window.location.href = withLocale(locale, "/portal");
-  }
-
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
@@ -62,46 +79,41 @@ export function SaasLoginForm({
       return;
     }
 
-    const supabase = createBrowserSupabaseClient();
-    if (!supabase) {
-      setError("Supabase no configurado.");
-      setLoading(false);
-      return;
-    }
+    try {
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, audience }),
+      });
 
-    const { data: authData, error: signInError } =
-      await supabase.auth.signInWithPassword({ email, password });
+      const payload = (await res.json()) as {
+        error?: string;
+        code?: string;
+        redirect?: "admin" | "portal";
+      };
 
-    if (signInError || !authData.user) {
+      if (!res.ok) {
+        setError(
+          mapSignInError(payload.code, payload.error ?? "Error", locale),
+        );
+        setLoading(false);
+        return;
+      }
+
+      const target =
+        payload.redirect === "admin"
+          ? withLocale(locale, "/admin")
+          : withLocale(locale, "/portal");
+
+      window.location.href = target;
+    } catch {
       setError(
         locale === "es"
-          ? "Credenciales inválidas o usuario no encontrado."
-          : "Invalid credentials or user not found.",
+          ? "Error de conexión. Intenta de nuevo."
+          : "Connection error. Please try again.",
       );
       setLoading(false);
-      return;
     }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", authData.user.id)
-      .maybeSingle<{ role: string }>();
-
-    const role = (profile?.role as UserRole | undefined) ?? null;
-
-    if (!role) {
-      setError(
-        locale === "es"
-          ? "Tu perfil aún no está configurado. Contacta a soporte ARMO."
-          : "Your profile is not configured yet. Contact ARMO support.",
-      );
-      await supabase.auth.signOut();
-      setLoading(false);
-      return;
-    }
-
-    await redirectByRole(role);
   }
 
   return (

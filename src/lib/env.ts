@@ -8,11 +8,21 @@ function readEnv(key: string): string | undefined {
   return value && value.trim().length > 0 ? value.trim() : undefined;
 }
 
+/** Supabase project URL only — never /rest/v1 or trailing slash */
+function normalizeSupabaseUrl(raw: string | undefined): string | undefined {
+  if (!raw) return undefined;
+  return raw.replace(/\/rest\/v1\/?$/i, "").replace(/\/+$/, "");
+}
+
 export const env = {
   siteUrl: readEnv("NEXT_PUBLIC_SITE_URL") ?? "https://flowkitch.com",
-  supabaseUrl: readEnv("NEXT_PUBLIC_SUPABASE_URL"),
-  supabaseAnonKey: readEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-  supabaseServiceRoleKey: readEnv("SUPABASE_SERVICE_ROLE_KEY"),
+  supabaseUrl: normalizeSupabaseUrl(readEnv("NEXT_PUBLIC_SUPABASE_URL")),
+  supabaseAnonKey:
+    readEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY") ??
+    readEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
+  supabaseServiceRoleKey:
+    readEnv("SUPABASE_SERVICE_ROLE_KEY") ??
+    readEnv("SUPABASE_SECRET_KEY"),
   kitchApiHmacSecret: readEnv("KITCH_API_HMAC_SECRET"),
 } as const;
 
