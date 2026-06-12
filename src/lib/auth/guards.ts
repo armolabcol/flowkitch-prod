@@ -16,11 +16,11 @@ export async function requireAdminAccess(locale: Locale): Promise<void> {
 
   const session = await getAuthSession();
   if (!session) {
-    redirect(withLocale(locale, "/admin/login"));
+    redirect(withLocale(locale, "/portal/login"));
   }
 
   if (!session.profile || !isAdminRole(session.profile.role)) {
-    redirect(withLocale(locale, "/portal/login"));
+    redirect(withLocale(locale, "/portal"));
   }
 }
 
@@ -33,7 +33,7 @@ export async function requirePortalAccess(locale: Locale): Promise<void> {
   }
 
   if (!session.profile || !isClientRole(session.profile.role)) {
-    redirect(withLocale(locale, "/admin/login"));
+    redirect(withLocale(locale, "/admin"));
   }
 }
 

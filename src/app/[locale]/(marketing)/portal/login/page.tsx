@@ -7,7 +7,10 @@ import { getDictionary } from "@/lib/dictionaries";
 import { buildPageMetadata, localeFromParams } from "@/lib/build-page-metadata";
 import { withLocale, type Locale } from "@/lib/i18n";
 
-type Props = { params: Promise<{ locale: string }> };
+type Props = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ error?: string }>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale: raw } = await params;
@@ -22,11 +25,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export default async function PortalLoginPage({ params }: Props) {
+export default async function PortalLoginPage({ params, searchParams }: Props) {
   const { locale: raw } = await params;
+  const { error: errorCode } = await searchParams;
   const locale: Locale = localeFromParams(raw);
   const dict = getDictionary(locale);
   const d = dict.portal;
+
+  const initialError =
+    errorCode === "callback_failed" ? d.callbackFailed : undefined;
 
   return (
     <div className="relative border-b border-white/[0.04]">
@@ -44,17 +51,8 @@ export default async function PortalLoginPage({ params }: Props) {
         <div className="mt-12">
           <SaasLoginForm
             locale={locale}
-            audience="portal"
-            badgeLabel={d.clientsOnly}
-            emailLabel={d.email}
-            passwordLabel={d.password}
-            submitLabel={d.login}
-            notice={d.notice}
-            mockNotice={
-              locale === "es"
-                ? "Modo mock: sin Supabase, cualquier credencial abre el portal demo."
-                : "Mock mode: without Supabase, any credentials open the demo portal."
-            }
+            dictionary={dict}
+            initialError={initialError}
           />
         </div>
         <div className="mt-12 flex flex-wrap justify-center gap-3">

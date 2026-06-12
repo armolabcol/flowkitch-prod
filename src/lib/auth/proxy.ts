@@ -12,8 +12,11 @@ import {
 import { isAdminRole, isClientRole } from "@/lib/auth/roles";
 import type { UserRole } from "@/types/saas";
 
-const ADMIN_LOGIN = "/admin/login";
 const PORTAL_LOGIN = "/portal/login";
+const PUBLIC_PORTAL_PATHS = new Set([
+  PORTAL_LOGIN,
+  "/portal/reset-password",
+]);
 
 function pickLocale(pathname: string): Locale {
   const first = pathname.split("/").filter(Boolean)[0];
@@ -29,8 +32,8 @@ function isSaasProtectedPath(path: string): boolean {
   );
 }
 
-function isLoginPath(path: string): boolean {
-  return path === ADMIN_LOGIN || path === PORTAL_LOGIN;
+function isPublicSaasPath(path: string): boolean {
+  return path === "/admin/login" || PUBLIC_PORTAL_PATHS.has(path);
 }
 
 export async function refreshSupabaseSession(
@@ -102,30 +105,37 @@ export function enforceSaasRouteAccess(
   if (!isSupabaseConfigured()) return response;
 
   const path = stripLocaleFromPathname(pathname);
-  if (!isSaasProtectedPath(path) || isLoginPath(path)) return response;
+  if (!isSaasProtectedPath(path) || isPublicSaasPath(path)) {
+    if (path === "/admin/login") {
+      const locale = pickLocale(pathname);
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = withLocale(locale, PORTAL_LOGIN);
+      return NextResponse.redirect(loginUrl);
+    }
+    return response;
+  }
 
   const locale = pickLocale(pathname);
   const loginUrl = request.nextUrl.clone();
 
   if (!userId) {
-    loginUrl.pathname = withLocale(
-      locale,
-      path.startsWith("/admin") ? ADMIN_LOGIN : PORTAL_LOGIN,
-    );
+    loginUrl.pathname = withLocale(locale, PORTAL_LOGIN);
     return NextResponse.redirect(loginUrl);
   }
 
   if (path.startsWith("/admin") && (!role || !isAdminRole(role))) {
-    loginUrl.pathname = withLocale(locale, PORTAL_LOGIN);
-    return NextResponse.redirect(loginUrl);
+    const portalUrl = request.nextUrl.clone();
+    portalUrl.pathname = withLocale(locale, "/portal");
+    return NextResponse.redirect(portalUrl);
   }
 
   if (
     (path === "/portal" || path.startsWith("/portal/")) &&
     (!role || !isClientRole(role))
   ) {
-    loginUrl.pathname = withLocale(locale, ADMIN_LOGIN);
-    return NextResponse.redirect(loginUrl);
+    const adminUrl = request.nextUrl.clone();
+    adminUrl.pathname = withLocale(locale, "/admin");
+    return NextResponse.redirect(adminUrl);
   }
 
   return response;

@@ -1,59 +1,48 @@
-import { NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { env, isSupabaseConfigured } from "@/lib/env";
-import type { Database } from "@/lib/supabase/types";
-import { isAdminRole, isKnownRole } from "@/lib/auth/roles";
+import { NextRequest } from "next/server";
+import { isAdminRole, isClientRole, isKnownRole } from "@/lib/auth/roles";
+import { isSupabaseConfigured } from "@/lib/env";
+import { createRouteHandlerSupabase } from "@/lib/supabase/route-handler";
 import type { UserRole } from "@/types/saas";
 
-export async function POST(request: Request) {
+function redirectForRole(role: UserRole): "admin" | "portal" {
+  if (isAdminRole(role)) return "admin";
+  if (isClientRole(role)) return "portal";
+  return "portal";
+}
+
+export async function POST(request: NextRequest) {
   if (!isSupabaseConfigured()) {
-    return NextResponse.json(
-      { error: "Supabase not configured" },
-      { status: 503 },
-    );
+    return Response.json({ error: "Supabase not configured", code: "config" }, {
+      status: 503,
+    });
   }
 
-  let body: { email?: string; password?: string; audience?: string };
+  let body: { email?: string; password?: string };
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return Response.json({ error: "Invalid JSON", code: "invalid_json" }, {
+      status: 400,
+    });
   }
 
-  const email = body.email?.trim();
+  const email = body.email?.trim().toLowerCase();
   const password = body.password;
 
   if (!email || !password) {
-    return NextResponse.json(
-      { error: "Email and password required" },
+    return Response.json(
+      { error: "Email and password required", code: "missing_fields" },
       { status: 400 },
     );
   }
 
-  const cookieStore = await cookies();
-  const supabase = createServerClient<Database>(
-    env.supabaseUrl!,
-    env.supabaseAnonKey!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        },
-      },
-    },
-  );
+  const { supabase, jsonResponse } = createRouteHandlerSupabase(request);
 
   const { data: authData, error: signInError } =
     await supabase.auth.signInWithPassword({ email, password });
 
   if (signInError) {
-    return NextResponse.json(
+    return jsonResponse(
       {
         error: signInError.message,
         code: signInError.code ?? "sign_in_failed",
@@ -63,7 +52,10 @@ export async function POST(request: Request) {
   }
 
   if (!authData.user) {
-    return NextResponse.json({ error: "Sign in failed" }, { status: 401 });
+    return jsonResponse(
+      { error: "Sign in failed", code: "sign_in_failed" },
+      { status: 401 },
+    );
   }
 
   const { data: profile, error: profileError } = await supabase
@@ -74,8 +66,11 @@ export async function POST(request: Request) {
 
   if (profileError) {
     await supabase.auth.signOut();
-    return NextResponse.json(
-      { error: "Profile lookup failed", code: "profile_error" },
+    return jsonResponse(
+      {
+        error: profileError.message || "Profile lookup failed",
+        code: "profile_error",
+      },
       { status: 403 },
     );
   }
@@ -83,36 +78,21 @@ export async function POST(request: Request) {
   const role = profile?.role;
   if (!role || !isKnownRole(role)) {
     await supabase.auth.signOut();
-    return NextResponse.json(
+    return jsonResponse(
       {
-        error: "Profile not configured",
+        error:
+          "No encontramos tu perfil. Contacta a soporte ARMO para activar tu acceso.",
         code: "profile_missing",
-        hint:
-          "Ensure public.profiles.id matches auth.users.id for this email.",
       },
       { status: 403 },
     );
   }
 
   const userRole = role as UserRole;
-  const audience = body.audience === "admin" ? "admin" : "portal";
 
-  if (audience === "admin" && !isAdminRole(userRole)) {
-    await supabase.auth.signOut();
-    return NextResponse.json(
-      { error: "Not authorized for admin", code: "wrong_audience" },
-      { status: 403 },
-    );
-  }
-
-  if (audience === "portal" && isAdminRole(userRole)) {
-    // Admins may use portal login — send them to admin
-    return NextResponse.json({ role: userRole, redirect: "admin" });
-  }
-
-  if (audience === "portal" && !isAdminRole(userRole)) {
-    return NextResponse.json({ role: userRole, redirect: "portal" });
-  }
-
-  return NextResponse.json({ role: userRole, redirect: "admin" });
+  return jsonResponse({
+    ok: true,
+    role: userRole,
+    redirect: redirectForRole(userRole),
+  });
 }

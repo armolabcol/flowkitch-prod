@@ -1,10 +1,8 @@
-import { NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { env, isSupabaseConfigured } from "@/lib/env";
-import type { Database } from "@/lib/supabase/types";
+import { NextRequest, NextResponse } from "next/server";
+import { isSupabaseConfigured } from "@/lib/env";
+import { createRouteHandlerSupabase } from "@/lib/supabase/route-handler";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   if (!isSupabaseConfigured()) {
     return NextResponse.redirect(new URL("/es/portal/login", request.url));
   }
@@ -13,30 +11,20 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/es/portal";
 
-  if (code) {
-    const cookieStore = await cookies();
-    const supabase = createServerClient<Database>(
-      env.supabaseUrl!,
-      env.supabaseAnonKey!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          },
-        },
-      },
-    );
-
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
-    }
+  if (!code) {
+    return NextResponse.redirect(`${origin}/es/portal/login`);
   }
 
-  return NextResponse.redirect(`${origin}/es/portal/login`);
+  const { supabase, applyCookiesTo } = createRouteHandlerSupabase(request);
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    const login = new URL("/es/portal/login", origin);
+    login.searchParams.set("error", "callback_failed");
+    return NextResponse.redirect(login.toString());
+  }
+
+  return applyCookiesTo(
+    NextResponse.redirect(`${origin}${next}`),
+  );
 }
