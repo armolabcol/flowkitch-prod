@@ -31,6 +31,10 @@ export const metadata: Metadata = {
       "Kitch connects guests, waiters, kitchen teams and managers in one traceable digital flow built for restaurants that need speed, clarity and control.",
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: [{ url: "/brand/favicon-kitch.webp", type: "image/webp" }],
+    apple: [{ url: "/brand/favicon-kitch.webp", type: "image/webp" }],
+  },
 };
 
 async function readLocaleFromHeaders(): Promise<Locale> {

@@ -1,6 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { withLocale, type Locale } from "@/lib/i18n";
+
+const LOGO_SRC = "/brand/kitch-logo-slogan.webp";
 
 type KitchLogoProps = {
   locale: Locale;
@@ -12,7 +15,7 @@ type KitchLogoProps = {
 export function KitchLogo({
   locale,
   className,
-  showByline = true,
+  showByline = false,
   variant = "header",
 }: KitchLogoProps) {
   const isHero = variant === "hero";
@@ -21,39 +24,23 @@ export function KitchLogo({
     <Link
       href={withLocale(locale, "/")}
       className={cn(
-        "group inline-flex items-baseline gap-2.5",
-        isHero && "flex-col items-start gap-1 sm:gap-1.5",
+        "group inline-flex flex-col items-start gap-1",
         className,
       )}
     >
-      <span
+      <Image
+        src={LOGO_SRC}
+        alt="Kitch — The flow behind great service"
+        width={isHero ? 320 : 160}
+        height={isHero ? 96 : 48}
+        priority={isHero}
         className={cn(
-          "relative font-semibold tracking-tight text-white",
-          isHero && "text-4xl sm:text-5xl lg:text-6xl",
+          "h-auto w-auto object-contain transition-opacity group-hover:opacity-90",
+          isHero ? "max-h-20 sm:max-h-24 lg:max-h-28" : "max-h-9 sm:max-h-10",
         )}
-      >
-        <span className={cn(isHero ? "" : "text-[1.35rem] font-semibold sm:text-2xl")}>
-          Kitch
-        </span>
-        <span
-          className={cn(
-            "absolute rounded-full bg-kitch-accent shadow-[0_0_14px_rgba(230,57,70,0.85)] transition-transform group-hover:scale-110",
-            isHero
-              ? "-right-2 top-2 size-2.5 sm:top-2.5 sm:size-3 lg:top-3 lg:size-3.5"
-              : "-right-1.5 top-1 size-2",
-          )}
-          aria-hidden
-        />
-      </span>
+      />
       {showByline && (
-        <span
-          className={cn(
-            "font-medium uppercase tracking-[0.18em] text-kitch-subtle",
-            isHero
-              ? "text-xs sm:text-sm"
-              : "text-[11px] sm:text-xs",
-          )}
-        >
+        <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-kitch-subtle sm:text-xs">
           By Armo
         </span>
       )}

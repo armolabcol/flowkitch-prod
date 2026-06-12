@@ -1,10 +1,8 @@
 # Brand assets (Kitch)
 
-Coloca aquí los archivos finales de marca cuando estén listos:
+Archivos activos:
 
-- `kitch-logo-light.svg` — logotipo para fondos oscuros
-- `kitch-logo-dark.svg` — variante para fondos claros (si aplica)
-- `kitch-favicon.svg` — favicon vectorial
-- `kitch-icon.svg` — icono de app / marca reducida
+- `kitch-logo-slogan.webp` — logotipo con slogan (fondo negro)
+- `favicon-kitch.webp` — favicon circular
 
-La web funciona sin estos archivos (logotipo textual en UI). Sustituye las referencias en componentes cuando los añadas.
+Referenciados en `KitchLogo.tsx` y `src/app/layout.tsx` (metadata icons).

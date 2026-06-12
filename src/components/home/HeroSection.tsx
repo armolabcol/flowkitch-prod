@@ -135,11 +135,6 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
           <div className="inline-flex items-center gap-3 rounded-2xl border border-white/[0.12] bg-white/[0.06] px-4 py-3 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-[18px]">
             <KitchLogo locale={locale} variant="hero" className="leading-none" />
           </div>
-          <p className="mt-5 max-w-xl text-lg font-semibold leading-snug tracking-wide text-white/95 sm:text-xl">
-            <span className="bg-gradient-to-r from-white via-white to-kitch-muted bg-clip-text text-transparent">
-              {dictionary.brand.slogan}
-            </span>
-          </p>
         </motion.div>
 
         <div className="mt-8 grid gap-10 lg:mt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] lg:items-center lg:gap-16">

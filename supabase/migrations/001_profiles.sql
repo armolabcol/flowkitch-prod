@@ -31,15 +31,8 @@ create policy "Users can read own profile"
   on public.profiles for select
   using (auth.uid() = id);
 
-create policy "Admins can read all profiles"
-  on public.profiles for select
-  using (
-    exists (
-      select 1 from public.profiles p
-      where p.id = auth.uid()
-        and p.role in ('armo_admin', 'super_admin', 'billing_admin', 'support_agent', 'sales_agent')
-    )
-  );
+-- Admin reads use is_armo_staff() (security definer) to avoid RLS recursion.
+-- Function body is defined in 002_core_schema.sql; policy is finalized in 004_fix_profiles_rls.sql.
 
 -- Auto-create profile row on signup (default client_user — promote manually)
 create or replace function public.handle_new_user()
