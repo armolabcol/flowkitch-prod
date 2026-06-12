@@ -1,0 +1,52 @@
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
+import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
+import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
+import { getClientPortalData } from "@/data/saas-mock";
+import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
+import { withLocale, defaultLocale, isLocale, type Locale } from "@/lib/i18n";
+
+type Props = { params: Promise<{ locale: string }> };
+
+export default async function PortalMembershipPage({ params }: Props) {
+  const { locale: raw } = await params;
+  const locale: Locale = isLocale(raw) ? raw : defaultLocale;
+  const dict = getSaasDictionary(locale);
+  const { subscription, installation } = getClientPortalData();
+  const d = dict.portal.membership;
+
+  if (!subscription || !installation) return null;
+
+  return (
+    <>
+      <SaasPageHeader title={d.title} />
+      <div className="rounded-2xl border border-white/[0.08] bg-kitch-surface/80 p-6 sm:p-8">
+        <div className="flex flex-wrap items-center gap-3">
+          <LicenseStatusBadge
+            status={installation.license_status}
+            label={dict.licenseStatus[installation.license_status]}
+          />
+          <span className="text-lg text-white">{subscription.plan_name}</span>
+        </div>
+        <p className="mt-6 text-kitch-muted">
+          {d.expiresAt}:{" "}
+          <span className="text-white">
+            {formatSaasDate(subscription.current_period_end, locale)}
+          </span>
+        </p>
+        {subscription.grace_until && (
+          <p className="mt-2 text-sm text-amber-300/90">
+            {locale === "es" ? "Periodo de gracia hasta" : "Grace period until"}:{" "}
+            {formatSaasDate(subscription.grace_until, locale)}
+          </p>
+        )}
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Button size="md">{d.renew}</Button>
+          <Button asChild variant="secondary" size="md">
+            <Link href={withLocale(locale, "/portal/support")}>{d.contactSupport}</Link>
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+}

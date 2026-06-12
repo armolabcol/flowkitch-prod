@@ -4,18 +4,24 @@ import { type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/lib/dictionaries";
 import { cn } from "@/lib/cn";
+import { withLocale, type Locale } from "@/lib/i18n";
 
 export function PortalLoginPlaceholder({
   dictionary,
+  locale = "es",
 }: {
   dictionary: Dictionary;
+  locale?: Locale;
 }) {
   const d = dictionary.portal;
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    console.log("[Kitch portal] login placeholder — sin auth:", Object.fromEntries(data));
+    const email = data.get("email");
+    // Auth real: Supabase signInWithPassword — ver README SaaS section
+    console.log("[Kitch portal] login attempt (mock):", { email });
+    window.location.href = withLocale(locale, "/portal");
   }
 
   const inputClass =

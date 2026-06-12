@@ -42,7 +42,7 @@ export default async function PortalLoginPage({ params }: Props) {
           <p className="mt-3 text-pretty text-kitch-muted">{d.subtitle}</p>
         </div>
         <div className="mt-12">
-          <PortalLoginPlaceholder dictionary={dict} />
+          <PortalLoginPlaceholder dictionary={dict} locale={locale} />
         </div>
         <div className="mt-12 flex flex-wrap justify-center gap-3">
           <Button asChild variant="secondary" size="md">
