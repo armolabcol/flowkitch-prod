@@ -49,14 +49,39 @@ Variables existentes y futuras:
 
 ## Despliegue en Hostinger App Web (Node.js)
 
-1. Conecta el repositorio o sube el proyecto.
-2. **Build command:** `npm run build`
-3. **Start command:** `npm run start` (Node ejecuta Next en modo producción).
-4. **Node version:** alinea con la LTS recomendada por Hostinger (18+ o 20+).
-5. Define `NODE_ENV=production` en el panel si no viene por defecto.
-6. Asigna el dominio `flowkitch.com` al servicio y configura SSL en el panel.
+1. Conecta el repositorio `armolabcol/flowkitch-prod` (rama `main`).
+2. **Node.js version:** `20` (coincide con `.nvmrc`).
+3. **Install command:** `npm ci`
+4. **Build command:** `npm run build`
+5. **Start command:** `npm run start -- -p $PORT`  
+   (alternativa: `npm run start` — el script ya escucha en `0.0.0.0` y respeta `PORT`).
+6. **Output directory:** `.next` (si el panel lo pide).
+7. **Entry file:** dejar vacío — Next.js arranca vía `npm run start`, no `app.js`.
+8. Define `NODE_ENV=production` y las variables de `.env.example`.
+9. Asigna el dominio `flowkitch.com` y configura SSL.
 
-Si Hostinger expone un **puerto** dinámico, Next.js 13+ suele respetar `PORT` del entorno automáticamente con `next start`.
+Si Hostinger expone un **puerto** dinámico, Next.js lo toma de la variable `PORT` automáticamente.
+
+### Error 503 (Service Unavailable)
+
+Significa que el proceso Node **no está corriendo** detrás del proxy. Revisa en hPanel → tu app Node.js:
+
+1. **Build logs** — ¿`npm run build` terminó sin error?
+2. **Runtime / Deploy logs** — ¿hay crash al iniciar (`next start`)?
+3. **Start command** — debe ser `npm run start -- -p $PORT` (no `node app.js`).
+4. **Entry file** — vacío o no configurado.
+5. **Redeploy** — botón *Redeploy* o *Restart* tras cambiar env vars.
+6. **Health check** — cuando la app esté arriba: `https://flowkitch.com/api/health` debe responder `{"ok":true}`.
+
+Variables mínimas recomendadas en Hostinger:
+
+| Variable | Valor |
+|----------|--------|
+| `NODE_ENV` | `production` |
+| `NEXT_PUBLIC_SITE_URL` | `https://flowkitch.com` |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://TU-PROYECTO.supabase.co` (sin `/rest/v1`) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | clave publishable/anon |
+| `SUPABASE_SERVICE_ROLE_KEY` | clave secret (servidor) |
 
 ## Assets
 

@@ -15,6 +15,17 @@ function pickLocaleFromPath(pathname: string): Locale | null {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Static assets — skip session refresh (no auth needed)
+  if (
+    pathname.startsWith("/brand/") ||
+    pathname.startsWith("/videos/") ||
+    pathname.startsWith("/_next/") ||
+    pathname === "/api/health" ||
+    /\.(webp|png|jpg|jpeg|gif|svg|ico|mp4|webm|woff2?)$/i.test(pathname)
+  ) {
+    return NextResponse.next();
+  }
+
   if (pathname === "/") {
     const url = request.nextUrl.clone();
     url.pathname = `/${defaultLocale}`;
@@ -61,7 +72,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|icon.webp|apple-icon.webp|brand/|videos/|robots.txt|sitemap.xml|.*\\.(?:webp|png|jpg|jpeg|gif|svg|ico|mp4|webm|woff2?)$).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)"],
 };
