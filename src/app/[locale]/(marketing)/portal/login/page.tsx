@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PortalLoginPlaceholder } from "@/components/forms/PortalLoginPlaceholder";
+import { SaasLoginForm } from "@/components/forms/SaasLoginForm";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { getDictionary } from "@/lib/dictionaries";
@@ -42,7 +42,20 @@ export default async function PortalLoginPage({ params }: Props) {
           <p className="mt-3 text-pretty text-kitch-muted">{d.subtitle}</p>
         </div>
         <div className="mt-12">
-          <PortalLoginPlaceholder dictionary={dict} locale={locale} />
+          <SaasLoginForm
+            locale={locale}
+            audience="portal"
+            badgeLabel={d.clientsOnly}
+            emailLabel={d.email}
+            passwordLabel={d.password}
+            submitLabel={d.login}
+            notice={d.notice}
+            mockNotice={
+              locale === "es"
+                ? "Modo mock: sin Supabase, cualquier credencial abre el portal demo."
+                : "Mock mode: without Supabase, any credentials open the demo portal."
+            }
+          />
         </div>
         <div className="mt-12 flex flex-wrap justify-center gap-3">
           <Button asChild variant="secondary" size="md">

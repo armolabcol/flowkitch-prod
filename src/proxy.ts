@@ -1,4 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  enforceSaasRouteAccess,
+  refreshSupabaseSession,
+} from "@/lib/auth/proxy";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 import { LOCALE_HEADER } from "@/lib/locale-header";
 
@@ -8,7 +12,7 @@ function pickLocaleFromPath(pathname: string): Locale | null {
   return null;
 }
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/") {
@@ -23,6 +27,7 @@ export function proxy(request: NextRequest) {
     const isAsset =
       pathname.startsWith("/_next") ||
       pathname.startsWith("/api") ||
+      pathname.startsWith("/auth") ||
       /\.[a-zA-Z0-9]+$/.test(pathname);
 
     if (!isAsset) {
@@ -35,9 +40,24 @@ export function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(LOCALE_HEADER, locale ?? defaultLocale);
 
-  return NextResponse.next({
+  let response = NextResponse.next({
     request: { headers: requestHeaders },
   });
+
+  const { response: refreshed, userId, role } = await refreshSupabaseSession(
+    request,
+    response,
+  );
+
+  response = enforceSaasRouteAccess(
+    request,
+    refreshed,
+    pathname,
+    userId,
+    role,
+  );
+
+  return response;
 }
 
 export const config = {

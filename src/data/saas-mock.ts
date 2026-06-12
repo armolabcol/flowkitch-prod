@@ -332,11 +332,22 @@ export function getAdminDashboardStats() {
   };
 }
 
-export function getClientPortalData(clientId: string = MOCK_CLIENT_USER.client_id) {
-  const client = mockClients.find((c) => c.id === clientId);
-  const installation = getInstallationWithDetails(MOCK_CLIENT_USER.installation_id);
-  const subscription = mockSubscriptions.find((s) => s.client_id === clientId);
-  const payments = mockPayments.filter((p) => p.client_id === clientId);
+export function getClientPortalData(clientId?: string | null) {
+  const resolvedId = clientId ?? MOCK_CLIENT_USER.client_id;
+  const client = mockClients.find((c) => c.id === resolvedId);
+  const installation = mockClients.some((c) => c.id === resolvedId)
+    ? getInstallationWithDetails(
+        resolvedId === "cli_001"
+          ? "inst_001"
+          : resolvedId === "cli_002"
+            ? MOCK_CLIENT_USER.installation_id
+            : resolvedId === "cli_003"
+              ? "inst_005"
+              : MOCK_CLIENT_USER.installation_id,
+      )
+    : getInstallationWithDetails(MOCK_CLIENT_USER.installation_id);
+  const subscription = mockSubscriptions.find((s) => s.client_id === resolvedId);
+  const payments = mockPayments.filter((p) => p.client_id === resolvedId);
 
   return { client, installation, subscription, payments };
 }

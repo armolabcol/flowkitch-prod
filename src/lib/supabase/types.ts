@@ -20,6 +20,7 @@ export interface Database {
           email: string;
           role: string;
           client_id: string | null;
+          full_name: string | null;
           created_at: string;
           updated_at: string;
         };

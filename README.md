@@ -75,9 +75,10 @@ Recomendación: MP4 H.264, 1600×900 o 1920×1080, 8–15s, loop suave, sin audi
 
 1. **Fase 1 (completada):** Web comercial visual — marketing, i18n, SEO base, placeholders portal/demo.
 2. **Fase SaaS (actual):** Base técnica de licenciamiento — admin, portal cliente, API plugin, mock data, Supabase preparado.
-3. **Fase 2:** Auth real + Supabase en producción.
-4. **Fase 3:** Pagos y membresías (Colombia / USA).
-5. **Fase 4:** Integración con instalaciones y operación Kitch en campo.
+3. **Fase 2 Auth (actual):** Login real Supabase, protección por rol, migración `profiles`.
+4. **Fase 3:** Base de datos completa + datos reales (sin mock).
+5. **Fase 4:** Pagos y membresías (Colombia / USA).
+6. **Fase 5:** Integración plugin WordPress + telemetría.
 
 ## SaaS licensing architecture
 
@@ -130,12 +131,14 @@ Copia `.env.example` a `.env.local`. **El proyecto compila sin credenciales real
 
 ### Fases pendientes
 
-1. **Supabase real** — desplegar esquema documentado en `docs/saas-data-model.md`
-2. **Auth real** — Supabase Auth + roles (`armo_admin`, `client_user`, …)
+1. **Supabase en producción** — ejecutar migración y configurar `.env` (ver `docs/saas-status.md`)
+2. **Base de datos completa** — tablas clients, restaurants, installations, etc.
 3. **Pagos Colombia/USA** — Wompi, Stripe u otro proveedor
 4. **Webhooks** — eventos de pago → actualización de licencias
 5. **Telemetría real** — heartbeat diario desde plugin
 6. **Integración plugin WordPress** — consumo de API en producción
+
+Ver estado detallado: [`docs/saas-status.md`](docs/saas-status.md)
 
 ### Seguridad
 

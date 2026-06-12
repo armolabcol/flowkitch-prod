@@ -12,11 +12,14 @@ import { withLocale, type Locale } from "@/lib/i18n";
 export function PortalDashboard({
   locale,
   dictionary,
+  clientId,
 }: {
   locale: Locale;
   dictionary: SaasDictionary;
+  clientId?: string | null;
 }) {
-  const { client, installation, subscription, payments } = getClientPortalData();
+  const { client, installation, subscription, payments } =
+    getClientPortalData(clientId);
   const d = dictionary.portal;
 
   if (!client || !installation || !subscription) {

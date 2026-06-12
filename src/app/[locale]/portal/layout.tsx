@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PortalShell } from "@/components/saas/PortalShell";
+import { requirePortalAccess } from "@/lib/auth/guards";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -21,6 +22,7 @@ export default async function PortalLayout({
 }: Props & { children: React.ReactNode }) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
+  await requirePortalAccess(locale);
   const dictionary = getSaasDictionary(locale);
 
   return (

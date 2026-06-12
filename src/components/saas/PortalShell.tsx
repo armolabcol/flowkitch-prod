@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { KitchLogo } from "@/components/brand/KitchLogo";
 import { SaasLocaleSwitcher } from "@/components/saas/SaasLocaleSwitcher";
+import { SaasSignOutLink } from "@/components/saas/SaasSignOutLink";
 import { cn } from "@/lib/cn";
 import type { SaasDictionary } from "@/lib/saas-dictionaries";
 import { withLocale, type Locale } from "@/lib/i18n";
@@ -42,12 +43,7 @@ export function PortalShell({
           <KitchLogo locale={locale} />
           <div className="flex items-center gap-3">
             <SaasLocaleSwitcher locale={locale} />
-            <Link
-              href={withLocale(locale, "/portal/login")}
-              className="text-xs text-kitch-subtle hover:text-kitch-fg"
-            >
-              {locale === "es" ? "Cerrar sesión" : "Sign out"}
-            </Link>
+            <SaasSignOutLink locale={locale} />
           </div>
         </div>
         <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-4 pb-3 sm:px-6">

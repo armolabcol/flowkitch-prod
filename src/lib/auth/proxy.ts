@@ -1,0 +1,132 @@
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
+import { env, isSupabaseConfigured } from "@/lib/env";
+import type { Database } from "@/lib/supabase/types";
+import {
+  defaultLocale,
+  isLocale,
+  stripLocaleFromPathname,
+  withLocale,
+  type Locale,
+} from "@/lib/i18n";
+import { isAdminRole, isClientRole } from "@/lib/auth/roles";
+import type { UserRole } from "@/types/saas";
+
+const ADMIN_LOGIN = "/admin/login";
+const PORTAL_LOGIN = "/portal/login";
+
+function pickLocale(pathname: string): Locale {
+  const first = pathname.split("/").filter(Boolean)[0];
+  return first && isLocale(first) ? first : defaultLocale;
+}
+
+function isSaasProtectedPath(path: string): boolean {
+  return (
+    path === "/admin" ||
+    path.startsWith("/admin/") ||
+    path === "/portal" ||
+    path.startsWith("/portal/")
+  );
+}
+
+function isLoginPath(path: string): boolean {
+  return path === ADMIN_LOGIN || path === PORTAL_LOGIN;
+}
+
+export async function refreshSupabaseSession(
+  request: NextRequest,
+  response: NextResponse,
+): Promise<{ response: NextResponse; userId: string | null; role: UserRole | null }> {
+  if (!isSupabaseConfigured()) {
+    return { response, userId: null, role: null };
+  }
+
+  let supabaseResponse = response;
+
+  const supabase = createServerClient<Database>(
+    env.supabaseUrl!,
+    env.supabaseAnonKey!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set(name, value);
+          });
+          supabaseResponse = NextResponse.next({
+            request: { headers: request.headers },
+          });
+          response.headers.forEach((value, key) => {
+            supabaseResponse.headers.set(key, value);
+          });
+          cookiesToSet.forEach(({ name, value, options }) => {
+            supabaseResponse.cookies.set(name, value, options);
+          });
+        },
+      },
+    },
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { response: supabaseResponse, userId: null, role: null };
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle<{ role: string }>();
+
+  const role = profile?.role as UserRole | undefined;
+
+  return {
+    response: supabaseResponse,
+    userId: user.id,
+    role: role ?? null,
+  };
+}
+
+export function enforceSaasRouteAccess(
+  request: NextRequest,
+  response: NextResponse,
+  pathname: string,
+  userId: string | null,
+  role: UserRole | null,
+): NextResponse {
+  if (!isSupabaseConfigured()) return response;
+
+  const path = stripLocaleFromPathname(pathname);
+  if (!isSaasProtectedPath(path) || isLoginPath(path)) return response;
+
+  const locale = pickLocale(pathname);
+  const loginUrl = request.nextUrl.clone();
+
+  if (!userId) {
+    loginUrl.pathname = withLocale(
+      locale,
+      path.startsWith("/admin") ? ADMIN_LOGIN : PORTAL_LOGIN,
+    );
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (path.startsWith("/admin") && (!role || !isAdminRole(role))) {
+    loginUrl.pathname = withLocale(locale, PORTAL_LOGIN);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (
+    (path === "/portal" || path.startsWith("/portal/")) &&
+    (!role || !isClientRole(role))
+  ) {
+    loginUrl.pathname = withLocale(locale, ADMIN_LOGIN);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return response;
+}
