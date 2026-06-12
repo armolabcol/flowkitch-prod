@@ -23,6 +23,9 @@ type HeroSectionProps = {
   dictionary: Dictionary;
 };
 
+/** Hero background video — enable when assets exist in public/videos/ */
+const HERO_VIDEO_ENABLED = false;
+
 export function HeroSection({ locale, dictionary }: HeroSectionProps) {
   const reduce = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
@@ -61,15 +64,15 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
       className="relative min-h-0 overflow-hidden border-b border-kitch-border/40 lg:min-h-[min(92vh,880px)]"
     >
       <div className="pointer-events-none absolute inset-0">
-        {/* Video background (fallback friendly) */}
-        {!reduce && (
+        {/* Video background (optional — assets in public/videos/) */}
+        {HERO_VIDEO_ENABLED && !reduce && (
           <motion.div
-            className="absolute inset-0"
+            className="pointer-events-none absolute inset-0"
             style={{ y: videoY }}
             aria-hidden
           >
             <video
-              className={`h-full w-full object-cover opacity-0 transition-opacity duration-700 ${
+              className={`pointer-events-none h-full w-full object-cover opacity-0 transition-opacity duration-700 ${
                 videoOk ? "opacity-100" : ""
               }`}
               autoPlay
@@ -80,7 +83,6 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
               onCanPlay={() => setVideoOk(true)}
               onError={() => setVideoOk(false)}
             >
-              <source src="/videos/restaurant-operations-hero.webm" type="video/webm" />
               <source src="/videos/restaurant-operations-hero.mp4" type="video/mp4" />
             </video>
           </motion.div>
@@ -125,7 +127,7 @@ export function HeroSection({ locale, dictionary }: HeroSectionProps) {
         </svg>
       </div>
 
-      <Container className="relative max-w-7xl pt-8 pb-12 sm:pt-10 sm:pb-16 lg:pt-14 lg:pb-24">
+      <Container className="relative z-10 max-w-7xl pt-8 pb-12 sm:pt-10 sm:pb-16 lg:pt-14 lg:pb-24">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -235,7 +237,7 @@ function HeroMockupComposition({
   reduceMotion: boolean;
 }) {
   return (
-    <div className="relative mx-auto mt-4 w-full max-w-xl lg:mx-0 lg:mt-0 lg:max-w-none">
+    <div className="pointer-events-none relative mx-auto mt-4 w-full max-w-xl lg:mx-0 lg:mt-0 lg:max-w-none">
       <div className="relative aspect-[4/5] min-h-[420px] w-full sm:aspect-[5/6] sm:min-h-[480px] lg:aspect-auto lg:h-[min(620px,calc(100vh-220px))] lg:min-h-[520px]">
         <HeroConnectorSvg reduceMotion={reduceMotion} />
 

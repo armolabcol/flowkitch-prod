@@ -32,8 +32,9 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   icons: {
-    icon: [{ url: "/brand/favicon-kitch.webp", type: "image/webp" }],
-    apple: [{ url: "/brand/favicon-kitch.webp", type: "image/webp" }],
+    icon: "/brand/favicon-kitch.webp",
+    apple: "/brand/favicon-kitch.webp",
+    shortcut: "/brand/favicon-kitch.webp",
   },
 };
 
