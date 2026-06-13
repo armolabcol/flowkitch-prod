@@ -1,4 +1,4 @@
-import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 const API_KEY_PREFIX = "kitch_live_";
 const API_KEY_BYTES = 32;
@@ -32,15 +32,16 @@ export function timingSafeCompare(a: string, b: string): boolean {
 }
 
 /**
- * TODO: HMAC signature verification for plugin requests.
- * Expected header: X-Kitch-Signature: sha256=<hex>
- * Payload: timestamp + body
+ * Verify plugin HMAC signature.
+ * Header: X-Kitch-Signature: sha256=<hex>
  */
 export function verifyHmacSignature(
-  _payload: string,
-  _signature: string,
-  _secret: string,
+  payload: string,
+  signatureHeader: string | null,
+  secret: string,
 ): boolean {
-  // Placeholder — implement when KITCH_API_HMAC_SECRET is configured
-  return false;
+  if (!signatureHeader?.startsWith("sha256=")) return false;
+  const provided = signatureHeader.slice("sha256=".length);
+  const expected = createHmac("sha256", secret).update(payload).digest("hex");
+  return timingSafeCompare(expected, provided);
 }

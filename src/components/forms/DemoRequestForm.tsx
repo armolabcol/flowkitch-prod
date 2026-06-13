@@ -69,13 +69,21 @@ export function DemoRequestForm({ dictionary, locale }: DemoRequestFormProps) {
     submitLockRef.current = true;
     const payload = Object.fromEntries(data.entries());
     setStatus("submitting");
-    // TODO lead integration: send `payload` to the CRM/email/WhatsApp API endpoint here.
-    console.log("[Kitch demo] form payload (future lead integration):", payload);
-    window.setTimeout(() => {
-      submitLockRef.current = false;
-      const shouldSimulateError = email.toLowerCase().includes("error");
-      setStatus(shouldSimulateError ? "error" : "done");
-    }, 650);
+
+    fetch("/api/leads/demo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...payload, locale }),
+    })
+      .then(async (res) => {
+        const result = (await res.json()) as { ok?: boolean };
+        if (!res.ok || !result.ok) throw new Error("submit failed");
+        setStatus("done");
+      })
+      .catch(() => setStatus("error"))
+      .finally(() => {
+        submitLockRef.current = false;
+      });
   }
 
   const fieldClass =

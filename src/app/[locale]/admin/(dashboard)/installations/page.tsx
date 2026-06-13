@@ -1,4 +1,5 @@
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
+import { InstallationApiKeyActions } from "@/components/saas/InstallationApiKeyActions";
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { listInstallationsWithDetails } from "@/services/saas/admin-service";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
@@ -22,6 +23,7 @@ export default async function AdminInstallationsPage({ params }: Props) {
           dict.admin.table.licenseStatus,
           dict.admin.table.pluginVersion,
           `API Key (${locale === "es" ? "últimos 4" : "last 4"})`,
+          locale === "es" ? "Acciones" : "Actions",
         ]}
         rows={installations.map((i) => [
           i.id.slice(0, 8) + "…",
@@ -33,6 +35,11 @@ export default async function AdminInstallationsPage({ params }: Props) {
           />,
           `v${i.plugin_version}`,
           `••••${i.api_key_last4}`,
+          <InstallationApiKeyActions
+            key={`actions-${i.id}`}
+            installationId={i.id}
+            locale={locale}
+          />,
         ])}
       />
     </>

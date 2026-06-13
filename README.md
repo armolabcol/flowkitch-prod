@@ -159,14 +159,12 @@ Copia `.env.example` a `.env.local`. **El proyecto compila sin credenciales real
 
 ### Fases pendientes
 
-1. **Supabase en producción** — ejecutar migración y configurar `.env` (ver `docs/saas-status.md`)
-2. **Base de datos completa** — tablas clients, restaurants, installations, etc.
-3. **Pagos Colombia/USA** — Wompi, Stripe u otro proveedor
-4. **Webhooks** — eventos de pago → actualización de licencias
-5. **Telemetría real** — heartbeat diario desde plugin
-6. **Integración plugin WordPress** — consumo de API en producción
-
 Ver estado detallado: [`docs/saas-status.md`](docs/saas-status.md)
+
+1. **Supabase** — aplicar migración `005_phase4_phase6.sql` (+ `004` si falta)
+2. **Pagos live** — checkout Stripe/Wompi y conciliación webhook
+3. **Plugin WordPress** — consumir APIs con HMAC en producción
+4. **Rate limit distribuido** — Redis/Upstash para multi-instancia
 
 ### Seguridad
 

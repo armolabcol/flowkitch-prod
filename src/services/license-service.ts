@@ -2,6 +2,10 @@ import {
   getInstallationByApiKey,
   recordLicenseCheck,
 } from "@/services/saas/installations-service";
+import {
+  checkApiKeyRateLimit,
+  checkIpRateLimit,
+} from "@/lib/security/rate-limit";
 import type {
   LicenseCheckRequest,
   LicenseCheckResponse,
@@ -64,6 +68,8 @@ export async function validateLicenseCheck(
   return buildLicenseResponse(installation);
 }
 
-export function checkRateLimit(_identifier: string): boolean {
+export function checkRateLimit(clientIp: string, apiKey?: string): boolean {
+  if (!checkIpRateLimit(clientIp)) return false;
+  if (apiKey && !checkApiKeyRateLimit(apiKey)) return false;
   return true;
 }

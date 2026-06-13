@@ -1,5 +1,6 @@
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { getServerSaasClient } from "@/services/saas/db";
+import { listRecentAuditLogs } from "@/services/audit-service";
 import { isSupabaseConfigured, isHmacConfigured, env } from "@/lib/env";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
@@ -12,6 +13,10 @@ export default async function AdminSettingsPage({ params }: Props) {
   const dict = getSaasDictionary(locale);
 
   let dbStats = "—";
+  let auditCount = 0;
+  const recentAudit = isSupabaseConfigured() ? await listRecentAuditLogs(5) : [];
+  auditCount = recentAudit.length;
+
   if (isSupabaseConfigured()) {
     const supabase = await getServerSaasClient();
     if (supabase) {
@@ -54,6 +59,10 @@ export default async function AdminSettingsPage({ params }: Props) {
       label: "Site URL",
       value: env.siteUrl,
     },
+    {
+      label: locale === "es" ? "Audit logs (recientes)" : "Audit logs (recent)",
+      value: String(auditCount),
+    },
   ];
 
   return (
@@ -77,6 +86,22 @@ export default async function AdminSettingsPage({ params }: Props) {
           </div>
         ))}
       </div>
+      {recentAudit.length > 0 && (
+        <div className="mt-6 space-y-2">
+          <h3 className="text-sm font-medium text-kitch-muted">
+            {locale === "es" ? "Últimos eventos" : "Latest events"}
+          </h3>
+          {recentAudit.map((log) => (
+            <div
+              key={log.id}
+              className="rounded-xl border border-white/[0.06] bg-kitch-surface/40 px-4 py-3 font-mono text-xs text-kitch-muted"
+            >
+              {log.created_at.slice(0, 19)} · {log.action} · {log.entity_type}/
+              {log.entity_id}
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 }

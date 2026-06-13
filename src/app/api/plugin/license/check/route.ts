@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { maskApiKey } from "@/lib/security/api-keys";
+import { env, isHmacConfigured } from "@/lib/env";
+import { maskApiKey, verifyHmacSignature } from "@/lib/security/api-keys";
 import {
   checkRateLimit,
   validateLicenseCheck,
@@ -23,6 +24,20 @@ export async function POST(request: Request) {
   const clientIp =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
 
+  const rawBody = await request.text();
+
+  if (isHmacConfigured()) {
+    const signature = request.headers.get("x-kitch-signature");
+    if (
+      !verifyHmacSignature(rawBody, signature, env.kitchApiHmacSecret!)
+    ) {
+      return NextResponse.json(
+        { status: "license_unknown", message: "Invalid HMAC signature" },
+        { status: 401 },
+      );
+    }
+  }
+
   if (!checkRateLimit(clientIp)) {
     return NextResponse.json(
       { status: "license_unknown", message: "Rate limit exceeded" },
@@ -32,7 +47,7 @@ export async function POST(request: Request) {
 
   let body: unknown;
   try {
-    body = await request.json();
+    body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json(
       { status: "license_unknown", message: "Invalid JSON body" },
@@ -50,7 +65,13 @@ export async function POST(request: Request) {
     );
   }
 
-  // Log masked key only — never the full API key
+  if (!checkRateLimit(clientIp, body.api_key)) {
+    return NextResponse.json(
+      { status: "license_unknown", message: "Rate limit exceeded" },
+      { status: 429 },
+    );
+  }
+
   if (process.env.NODE_ENV === "development") {
     console.log(
       "[license/check]",
@@ -59,8 +80,6 @@ export async function POST(request: Request) {
       body.plugin_version,
     );
   }
-
-  // TODO: Verify X-Kitch-Signature HMAC when KITCH_API_HMAC_SECRET is set
 
   const response = await validateLicenseCheck(body);
   const statusCode = response.status === "license_unknown" ? 401 : 200;

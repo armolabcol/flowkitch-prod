@@ -264,6 +264,98 @@ export interface Database {
           },
         ];
       };
+      payments: {
+        Row: {
+          id: string;
+          client_id: string;
+          subscription_id: string | null;
+          amount_cents: number;
+          currency: string;
+          status: string;
+          provider: string | null;
+          provider_payment_id: string | null;
+          paid_at: string | null;
+          description: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          client_id: string;
+          subscription_id?: string | null;
+          amount_cents: number;
+          currency?: string;
+          status: string;
+          provider?: string | null;
+          provider_payment_id?: string | null;
+          paid_at?: string | null;
+          description?: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["payments"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "payments_client_id_fkey";
+            columns: ["client_id"];
+            isOneToOne: false;
+            referencedRelation: "clients";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      audit_logs: {
+        Row: {
+          id: string;
+          actor_id: string | null;
+          action: string;
+          entity_type: string;
+          entity_id: string;
+          metadata: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          actor_id?: string | null;
+          action: string;
+          entity_type: string;
+          entity_id: string;
+          metadata?: Json;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["audit_logs"]["Insert"]>;
+        Relationships: [];
+      };
+      demo_leads: {
+        Row: {
+          id: string;
+          name: string;
+          restaurant: string;
+          country: string;
+          city: string;
+          email: string;
+          whatsapp: string | null;
+          tables: number | null;
+          uses_pos: string;
+          locale: string;
+          source: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          restaurant: string;
+          country: string;
+          city: string;
+          email: string;
+          whatsapp?: string | null;
+          tables?: number | null;
+          uses_pos: string;
+          locale?: string;
+          source?: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["demo_leads"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
