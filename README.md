@@ -53,8 +53,8 @@ Variables existentes y futuras:
 2. **Node.js version:** `20` (coincide con `.nvmrc`).
 3. **Install command:** `npm ci`
 4. **Build command:** `npm run build`
-5. **Start command:** `node .next/standalone/server.js`  
-   (un solo proceso Node; evita `npm run start` que duplica procesos y agota hilos).
+5. **Start command:** `node scripts/hostinger-start.cjs`  
+   (arranca desde `.next/standalone` en un solo proceso; ver `docs/hostinger-recovery.md` si hay 503).
 6. **Output directory:** `.next` (si el panel lo pide).
 7. **Entry file:** dejar vacío — no usar `app.js`.
 8. Define variables de entorno (ver tabla abajo). **Importante:** usa **Node 20**, no 22.
