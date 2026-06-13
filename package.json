@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/prepare-standalone.mjs",
-    "start": "node scripts/start-production.mjs",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint"
   },
   "engines": {

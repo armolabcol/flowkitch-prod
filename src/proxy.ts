@@ -10,11 +10,6 @@ function pickLocaleFromPath(pathname: string): Locale | null {
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const t0 = Date.now();
-
-  // #region agent log
-  fetch('http://127.0.0.1:7493/ingest/e5d215f0-1ce8-484d-9bde-d15e54771def',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'cef2d7'},body:JSON.stringify({sessionId:'cef2d7',location:'src/proxy.ts:entry',message:'proxy entry',data:{pathname},timestamp:Date.now(),hypothesisId:'H1',runId:'post-fix'})}).catch(()=>{});
-  // #endregion
 
   if (
     pathname.startsWith("/brand/") ||
@@ -58,10 +53,6 @@ export async function proxy(request: NextRequest) {
     loginUrl.pathname = withLocale(locale ?? defaultLocale, "/portal/login");
     return NextResponse.redirect(loginUrl);
   }
-
-  // #region agent log
-  fetch('http://127.0.0.1:7493/ingest/e5d215f0-1ce8-484d-9bde-d15e54771def',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'cef2d7'},body:JSON.stringify({sessionId:'cef2d7',location:'src/proxy.ts:exit',message:'proxy exit locale-only',data:{path,pathname,ms:Date.now()-t0},timestamp:Date.now(),hypothesisId:'H1',runId:'post-fix'})}).catch(()=>{});
-  // #endregion
 
   return NextResponse.next({
     request: { headers: requestHeaders },

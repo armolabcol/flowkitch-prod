@@ -53,8 +53,8 @@ Variables existentes y futuras:
 2. **Node.js version:** `20` (coincide con `.nvmrc`).
 3. **Install command:** `npm ci`
 4. **Build command:** `npm run build`
-5. **Start command:** `npm run start`  
-   (usa el bundle `standalone` en un solo proceso; respeta `PORT` y `HOSTNAME` del entorno).
+5. **Start command:** `node .next/standalone/server.js`  
+   (un solo proceso Node; evita `npm run start` que duplica procesos y agota hilos).
 6. **Output directory:** `.next` (si el panel lo pide).
 7. **Entry file:** dejar vacío — no usar `app.js`.
 8. Define variables de entorno (ver tabla abajo). **Importante:** usa **Node 20**, no 22.
@@ -64,7 +64,9 @@ Si Hostinger expone un **puerto** dinámico, el servidor standalone lo toma de `
 
 ### Error 503 / `pthread_create: Resource temporarily unavailable`
 
-Significa que se agotó el límite de procesos/hilos del plan. El proyecto usa **`output: 'standalone'`** y un solo proceso Node para reducir consumo.
+Significa que se agotó el límite de procesos/hilos del plan (`uv_thread_create` / `pthread_create` en `stderr.log`).
+
+**Antes de redeploy:** en hPanel pulsa **Restart** (no arranques Node por SSH). Si persiste, contacta soporte Hostinger para limpiar procesos zombie.
 
 Tras cambiar env vars o Node version:
 
@@ -79,7 +81,7 @@ Variables recomendadas en Hostinger:
 | `NODE_ENV` | `production` |
 | `HOSTNAME` | `0.0.0.0` |
 | `NODE_OPTIONS` | `--max-old-space-size=512` |
-| `UV_THREADPOOL_SIZE` | `2` |
+| `UV_THREADPOOL_SIZE` | `1` |
 | `NEXT_PUBLIC_SITE_URL` | `https://flowkitch.com` |
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://TU-PROYECTO.supabase.co` (sin `/rest/v1`) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | clave publishable/anon |
