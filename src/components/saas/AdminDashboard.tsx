@@ -5,6 +5,7 @@ import {
   ShoppingBag,
   Users,
 } from "lucide-react";
+import { ExpiringLicensesAlert } from "@/components/saas/ExpiringLicensesAlert";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { StatCard } from "@/components/saas/StatCard";
 import { getAdminDashboardStats } from "@/services/saas/admin-service";
@@ -73,6 +74,8 @@ export async function AdminDashboard({
           icon={<Activity className="size-4" />}
         />
       </div>
+
+      <ExpiringLicensesAlert locale={locale} />
 
       <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-kitch-surface/60">
         <div className="border-b border-white/[0.06] px-5 py-4">

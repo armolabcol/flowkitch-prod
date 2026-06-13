@@ -47,6 +47,15 @@ export async function recordPaymentFromWebhook(params: {
   const supabase = getServiceSaasClient();
   if (!supabase) return null;
 
+  const { data: existing } = await supabase
+    .from("payments")
+    .select("id")
+    .eq("provider", params.provider)
+    .eq("provider_payment_id", params.providerPaymentId)
+    .maybeSingle<{ id: string }>();
+
+  if (existing?.id) return existing.id;
+
   const { data, error } = await supabase
     .from("payments")
     .insert({

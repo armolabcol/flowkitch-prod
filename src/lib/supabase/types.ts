@@ -43,6 +43,8 @@ export interface Database {
           country: string;
           email: string;
           tax_id: string | null;
+          stripe_customer_id: string | null;
+          wompi_customer_email: string | null;
           created_at: string;
         };
         Insert: {
@@ -51,6 +53,8 @@ export interface Database {
           country: string;
           email: string;
           tax_id?: string | null;
+          stripe_customer_id?: string | null;
+          wompi_customer_email?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["clients"]["Insert"]>;

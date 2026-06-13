@@ -1,6 +1,20 @@
-import { getServiceSaasClient } from "@/services/saas/db";
+import { getServerSaasClient, getServiceSaasClient } from "@/services/saas/db";
 
-export type DemoLeadPayload = {
+export type DemoLead = {
+  id: string;
+  name: string;
+  restaurant: string;
+  country: string;
+  city: string;
+  email: string;
+  whatsapp: string | null;
+  tables: number | null;
+  uses_pos: string;
+  locale: string;
+  created_at: string;
+};
+
+export async function saveDemoLead(payload: {
   name: string;
   restaurant: string;
   country: string;
@@ -10,9 +24,7 @@ export type DemoLeadPayload = {
   tables?: number | null;
   uses_pos: string;
   locale: "es" | "en";
-};
-
-export async function saveDemoLead(payload: DemoLeadPayload): Promise<boolean> {
+}): Promise<boolean> {
   const supabase = getServiceSaasClient();
   if (!supabase) return false;
 
@@ -30,4 +42,18 @@ export async function saveDemoLead(payload: DemoLeadPayload): Promise<boolean> {
   } as never);
 
   return !error;
+}
+
+export async function listDemoLeads(limit = 100): Promise<DemoLead[]> {
+  const supabase = await getServerSaasClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("demo_leads")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data) return [];
+  return data as DemoLead[];
 }

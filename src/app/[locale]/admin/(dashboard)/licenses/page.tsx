@@ -1,4 +1,5 @@
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
+import { InstallationLicenseActions } from "@/components/saas/InstallationLicenseActions";
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { listInstallationsWithDetails } from "@/services/saas/admin-service";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
@@ -21,6 +22,7 @@ export default async function AdminLicensesPage({ params }: Props) {
           dict.admin.table.licenseStatus,
           dict.admin.table.expiresAt,
           locale === "es" ? "Gracia hasta" : "Grace until",
+          locale === "es" ? "Acciones" : "Actions",
         ]}
         rows={installations.map((i) => [
           i.restaurant.name,
@@ -31,6 +33,13 @@ export default async function AdminLicensesPage({ params }: Props) {
           />,
           formatSaasDate(i.license_expires_at, locale),
           formatSaasDate(i.grace_until, locale),
+          <InstallationLicenseActions
+            key={`lic-${i.id}`}
+            installationId={i.id}
+            currentStatus={i.license_status}
+            locale={locale}
+            statusLabels={dict.licenseStatus}
+          />,
         ])}
       />
     </>
