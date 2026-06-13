@@ -1,9 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-import {
-  enforceSaasRouteAccess,
-  needsSaasAuth,
-  refreshSupabaseSession,
-} from "@/lib/auth/proxy";
 import { defaultLocale, isLocale, stripLocaleFromPathname, withLocale, type Locale } from "@/lib/i18n";
 import { LOCALE_HEADER } from "@/lib/locale-header";
 
@@ -15,8 +10,12 @@ function pickLocaleFromPath(pathname: string): Locale | null {
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const t0 = Date.now();
 
-  // Static assets — skip session refresh (no auth needed)
+  // #region agent log
+  fetch('http://127.0.0.1:7493/ingest/e5d215f0-1ce8-484d-9bde-d15e54771def',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'cef2d7'},body:JSON.stringify({sessionId:'cef2d7',location:'src/proxy.ts:entry',message:'proxy entry',data:{pathname},timestamp:Date.now(),hypothesisId:'H1',runId:'post-fix'})}).catch(()=>{});
+  // #endregion
+
   if (
     pathname.startsWith("/brand/") ||
     pathname.startsWith("/videos/") ||
@@ -60,30 +59,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (!needsSaasAuth(path)) {
-    return NextResponse.next({
-      request: { headers: requestHeaders },
-    });
-  }
+  // #region agent log
+  fetch('http://127.0.0.1:7493/ingest/e5d215f0-1ce8-484d-9bde-d15e54771def',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'cef2d7'},body:JSON.stringify({sessionId:'cef2d7',location:'src/proxy.ts:exit',message:'proxy exit locale-only',data:{path,pathname,ms:Date.now()-t0},timestamp:Date.now(),hypothesisId:'H1',runId:'post-fix'})}).catch(()=>{});
+  // #endregion
 
-  let response = NextResponse.next({
+  return NextResponse.next({
     request: { headers: requestHeaders },
   });
-
-  const { response: refreshed, userId, role } = await refreshSupabaseSession(
-    request,
-    response,
-  );
-
-  response = enforceSaasRouteAccess(
-    request,
-    refreshed,
-    pathname,
-    userId,
-    role,
-  );
-
-  return response;
 }
 
 export const config = {
