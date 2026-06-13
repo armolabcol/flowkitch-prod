@@ -24,6 +24,11 @@ export const env = {
     readEnv("SUPABASE_SERVICE_ROLE_KEY") ??
     readEnv("SUPABASE_SECRET_KEY"),
   kitchApiHmacSecret: readEnv("KITCH_API_HMAC_SECRET"),
+  stripeSecretKey: readEnv("STRIPE_SECRET_KEY"),
+  stripePriceIdUsd: readEnv("STRIPE_PRICE_ID_USD"),
+  wompiPublicKey: readEnv("WOMPI_PUBLIC_KEY"),
+  resendApiKey: readEnv("RESEND_API_KEY"),
+  alertEmailTo: readEnv("ALERT_EMAIL_TO"),
 } as const;
 
 export function isSupabaseConfigured(): boolean {
@@ -36,4 +41,12 @@ export function isSupabaseServiceConfigured(): boolean {
 
 export function isHmacConfigured(): boolean {
   return Boolean(env.kitchApiHmacSecret);
+}
+
+export function isStripeCheckoutConfigured(): boolean {
+  return Boolean(env.stripeSecretKey && env.stripePriceIdUsd);
+}
+
+export function isResendConfigured(): boolean {
+  return Boolean(env.resendApiKey && env.alertEmailTo);
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { PortalRenewButton } from "@/components/saas/PortalRenewButton";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { getPortalClientId } from "@/lib/auth/guards";
@@ -49,7 +50,7 @@ export default async function PortalMembershipPage({ params }: Props) {
           </p>
         )}
         <div className="mt-8 flex flex-wrap gap-3">
-          <Button size="md">{d.renew}</Button>
+          <PortalRenewButton label={d.renew} locale={locale} />
           <Button asChild variant="secondary" size="md">
             <Link href={withLocale(locale, "/portal/support")}>{d.contactSupport}</Link>
           </Button>

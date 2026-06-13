@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build && node scripts/prepare-standalone.mjs",
     "start": "node scripts/hostinger-start.cjs",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:plugin": "node scripts/test-plugin-api.mjs"
   },
   "engines": {
     "node": ">=20 <21"

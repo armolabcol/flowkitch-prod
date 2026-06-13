@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
 import { writeAuditLog } from "@/services/audit-service";
+import { sendLicenseAlertEmail } from "@/services/saas/alert-email-service";
 import { getExpiringInstallations } from "@/services/saas/webhook-service";
 
 /**
@@ -17,6 +18,7 @@ export async function GET(request: Request) {
   }
 
   const expiring = await getExpiringInstallations(30);
+  const emailSent = await sendLicenseAlertEmail(expiring);
 
   await writeAuditLog({
     action: "cron.license_alerts",
@@ -31,12 +33,14 @@ export async function GET(request: Request) {
         expires: e.license_expires_at,
         email: e.clientEmail,
       })),
+      emailSent,
     },
   });
 
   return NextResponse.json({
     ok: true,
     expiringCount: expiring.length,
+    emailSent,
     expiring,
   });
 }

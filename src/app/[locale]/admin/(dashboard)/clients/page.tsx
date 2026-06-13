@@ -1,3 +1,4 @@
+import { AdminClientCreateForm } from "@/components/saas/AdminClientCreateForm";
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { listClients } from "@/services/saas/admin-service";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
@@ -14,6 +15,7 @@ export default async function AdminClientsPage({ params }: Props) {
   return (
     <>
       <SaasPageHeader title={dict.admin.nav.clients} />
+      <AdminClientCreateForm locale={locale} />
       <SaasMockTable
         headers={["ID", locale === "es" ? "Nombre" : "Name", locale === "es" ? "País" : "Country", "Email"]}
         rows={clients.map((c) => [
