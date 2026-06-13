@@ -37,6 +37,11 @@ function isPublicSaasPath(path: string): boolean {
   return path === "/admin/login" || PUBLIC_PORTAL_PATHS.has(path);
 }
 
+/** Routes that need session refresh + role checks (skip marketing for Hostinger limits) */
+export function needsSaasAuth(path: string): boolean {
+  return isSaasProtectedPath(path) && !isPublicSaasPath(path);
+}
+
 export async function refreshSupabaseSession(
   request: NextRequest,
   response: NextResponse,
@@ -81,15 +86,16 @@ export async function refreshSupabaseSession(
     return { response: supabaseResponse, userId: null, role: null };
   }
 
-  const { role: profileRole } = await fetchProfileRole(user.id, supabase);
-
-  const role = profileRole as UserRole | undefined;
-
-  return {
-    response: supabaseResponse,
-    userId: user.id,
-    role: role ?? null,
-  };
+  try {
+    const { role: profileRole } = await fetchProfileRole(user.id, supabase);
+    return {
+      response: supabaseResponse,
+      userId: user.id,
+      role: (profileRole as UserRole | undefined) ?? null,
+    };
+  } catch {
+    return { response: supabaseResponse, userId: user.id, role: null };
+  }
 }
 
 export function enforceSaasRouteAccess(
@@ -120,7 +126,13 @@ export function enforceSaasRouteAccess(
     return NextResponse.redirect(loginUrl);
   }
 
-  if (path.startsWith("/admin") && (!role || !isAdminRole(role))) {
+  if (!role) {
+    loginUrl.pathname = withLocale(locale, PORTAL_LOGIN);
+    loginUrl.searchParams.set("error", "profile_error");
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (path.startsWith("/admin") && !isAdminRole(role)) {
     const portalUrl = request.nextUrl.clone();
     portalUrl.pathname = withLocale(locale, "/portal");
     return NextResponse.redirect(portalUrl);
@@ -128,7 +140,7 @@ export function enforceSaasRouteAccess(
 
   if (
     (path === "/portal" || path.startsWith("/portal/")) &&
-    (!role || !isClientRole(role))
+    !isClientRole(role)
   ) {
     const adminUrl = request.nextUrl.clone();
     adminUrl.pathname = withLocale(locale, "/admin");

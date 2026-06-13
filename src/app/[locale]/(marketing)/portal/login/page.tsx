@@ -33,7 +33,13 @@ export default async function PortalLoginPage({ params, searchParams }: Props) {
   const d = dict.portal;
 
   const initialError =
-    errorCode === "callback_failed" ? d.callbackFailed : undefined;
+    errorCode === "callback_failed"
+      ? d.callbackFailed
+      : errorCode === "profile_error"
+        ? (locale === "es"
+            ? "No se pudo verificar tu perfil. Intenta iniciar sesión de nuevo."
+            : "Could not verify your profile. Try signing in again.")
+        : undefined;
 
   return (
     <div className="relative border-b border-white/[0.04]">

@@ -1,9 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import {
   enforceSaasRouteAccess,
+  needsSaasAuth,
   refreshSupabaseSession,
 } from "@/lib/auth/proxy";
-import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
+import { defaultLocale, isLocale, stripLocaleFromPathname, withLocale, type Locale } from "@/lib/i18n";
 import { LOCALE_HEADER } from "@/lib/locale-header";
 
 function pickLocaleFromPath(pathname: string): Locale | null {
@@ -50,6 +51,20 @@ export async function proxy(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(LOCALE_HEADER, locale ?? defaultLocale);
+
+  const path = stripLocaleFromPathname(pathname);
+
+  if (path === "/admin/login") {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = withLocale(locale ?? defaultLocale, "/portal/login");
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (!needsSaasAuth(path)) {
+    return NextResponse.next({
+      request: { headers: requestHeaders },
+    });
+  }
 
   let response = NextResponse.next({
     request: { headers: requestHeaders },
