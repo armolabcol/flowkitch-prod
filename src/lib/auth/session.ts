@@ -4,6 +4,7 @@ import { env, isSupabaseConfigured } from "@/lib/env";
 import type { Database } from "@/lib/supabase/types";
 import type { AuthProfile, AuthSession } from "@/lib/auth/types";
 import { isKnownRole } from "@/lib/auth/roles";
+import { fetchProfileByUserId } from "@/lib/auth/profile-lookup";
 import type { UserRole } from "@/types/saas";
 
 export async function createSupabaseServerClient() {
@@ -61,17 +62,7 @@ export async function getAuthSession(): Promise<AuthSession | null> {
 
   if (error || !user?.email) return null;
 
-  const { data: profileRow } = await supabase
-    .from("profiles")
-    .select("id, email, role, client_id, full_name")
-    .eq("id", user.id)
-    .maybeSingle<{
-      id: string;
-      email: string;
-      role: string;
-      client_id: string | null;
-      full_name: string | null;
-    }>();
+  const { profile: profileRow } = await fetchProfileByUserId(user.id, supabase);
 
   return {
     userId: user.id,

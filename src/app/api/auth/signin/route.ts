@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { isAdminRole, isClientRole, isKnownRole } from "@/lib/auth/roles";
+import { fetchProfileRole } from "@/lib/auth/profile-lookup";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createRouteHandlerSupabase } from "@/lib/supabase/route-handler";
 import type { UserRole } from "@/types/saas";
@@ -58,24 +59,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", authData.user.id)
-    .maybeSingle<{ role: string }>();
+  const { role, error: profileError } = await fetchProfileRole(
+    authData.user.id,
+    supabase,
+  );
 
   if (profileError) {
     await supabase.auth.signOut();
     return jsonResponse(
       {
-        error: profileError.message || "Profile lookup failed",
+        error: profileError,
         code: "profile_error",
       },
       { status: 403 },
     );
   }
 
-  const role = profile?.role;
   if (!role || !isKnownRole(role)) {
     await supabase.auth.signOut();
     return jsonResponse(

@@ -10,6 +10,7 @@ import {
   type Locale,
 } from "@/lib/i18n";
 import { isAdminRole, isClientRole } from "@/lib/auth/roles";
+import { fetchProfileRole } from "@/lib/auth/profile-lookup";
 import type { UserRole } from "@/types/saas";
 
 const PORTAL_LOGIN = "/portal/login";
@@ -80,13 +81,9 @@ export async function refreshSupabaseSession(
     return { response: supabaseResponse, userId: null, role: null };
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle<{ role: string }>();
+  const { role: profileRole } = await fetchProfileRole(user.id, supabase);
 
-  const role = profile?.role as UserRole | undefined;
+  const role = profileRole as UserRole | undefined;
 
   return {
     response: supabaseResponse,
