@@ -37,3 +37,61 @@ export async function createClientRecord(params: {
 
   return data;
 }
+
+export async function updateClientRecord(
+  clientId: string,
+  updates: {
+    name?: string;
+    email?: string;
+    country?: "CO" | "US";
+    taxId?: string | null;
+    stripeCustomerId?: string | null;
+    wompiCustomerEmail?: string | null;
+  },
+  actorId?: string | null,
+): Promise<boolean> {
+  const supabase = getServiceSaasClient();
+  if (!supabase) return false;
+
+  const patch: Database["public"]["Tables"]["clients"]["Update"] = {};
+  if (updates.name) patch.name = updates.name.trim();
+  if (updates.email) patch.email = updates.email.trim().toLowerCase();
+  if (updates.country) patch.country = updates.country;
+  if (updates.taxId !== undefined) patch.tax_id = updates.taxId?.trim() || null;
+  if (updates.stripeCustomerId !== undefined) {
+    patch.stripe_customer_id = updates.stripeCustomerId;
+  }
+  if (updates.wompiCustomerEmail !== undefined) {
+    patch.wompi_customer_email = updates.wompiCustomerEmail;
+  }
+
+  const { error } = await supabase
+    .from("clients")
+    .update(patch as never)
+    .eq("id", clientId);
+
+  if (error) return false;
+
+  await writeAuditLog({
+    actorId,
+    action: "client.updated",
+    entityType: "client",
+    entityId: clientId,
+    metadata: updates as Record<string, unknown>,
+  });
+
+  return true;
+}
+
+export async function getClientById(clientId: string) {
+  const supabase = getServiceSaasClient();
+  if (!supabase) return null;
+
+  const { data } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("id", clientId)
+    .maybeSingle<Database["public"]["Tables"]["clients"]["Row"]>();
+
+  return data;
+}

@@ -18,16 +18,18 @@ export default async function AdminInstallationsPage({ params }: Props) {
       <SaasPageHeader title={dict.admin.nav.installations} />
       <SaasMockTable
         headers={[
-          "ID",
           dict.admin.table.restaurant,
+          locale === "es" ? "Sitio" : "Site",
           dict.admin.table.licenseStatus,
           dict.admin.table.pluginVersion,
           `API Key (${locale === "es" ? "últimos 4" : "last 4"})`,
           locale === "es" ? "Acciones" : "Actions",
         ]}
         rows={installations.map((i) => [
-          i.id.slice(0, 8) + "…",
           i.restaurant.name,
+          <span key={`url-${i.id}`} className="font-mono text-xs text-kitch-muted">
+            {i.site_url}
+          </span>,
           <LicenseStatusBadge
             key={i.id}
             status={i.license_status}

@@ -1,3 +1,4 @@
+-- DEPRECATED: Use /es/admin/onboarding in flowkitch.com instead of this SQL.
 -- Kitch SaaS — Plantilla cliente piloto (Armo Lab / primer cliente real)
 -- 1. Reemplaza los valores marcados con <<...>>
 -- 2. Ejecuta en Supabase SQL Editor

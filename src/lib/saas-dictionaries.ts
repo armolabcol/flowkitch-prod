@@ -11,6 +11,8 @@ export const saasDictionaries = {
       nav: {
         dashboard: "Dashboard",
         clients: "Clientes",
+        onboarding: "Alta cliente",
+        users: "Usuarios",
         restaurants: "Restaurantes",
         installations: "Instalaciones",
         licenses: "Licencias",
@@ -101,6 +103,8 @@ export const saasDictionaries = {
       nav: {
         dashboard: "Dashboard",
         clients: "Clients",
+        onboarding: "New client",
+        users: "Users",
         restaurants: "Restaurants",
         installations: "Installations",
         licenses: "Licenses",

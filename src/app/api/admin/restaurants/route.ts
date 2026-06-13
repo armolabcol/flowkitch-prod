@@ -1,22 +1,22 @@
 import { NextResponse } from "next/server";
 import { getAdminApiSession } from "@/lib/auth/admin-api";
-import { createClientRecord, updateClientRecord } from "@/services/saas/clients-admin-service";
+import {
+  createRestaurantRecord,
+  updateRestaurantRecord,
+} from "@/services/saas/restaurants-admin-service";
 
 type PostBody = {
+  clientId?: string;
   name?: string;
-  email?: string;
+  city?: string;
   country?: string;
-  taxId?: string;
+  timezone?: string;
 };
 
 type PatchBody = {
-  clientId?: string;
+  restaurantId?: string;
   name?: string;
-  email?: string;
-  country?: string;
-  taxId?: string;
-  stripeCustomerId?: string;
-  wompiCustomerEmail?: string;
+  city?: string;
 };
 
 export async function POST(request: Request) {
@@ -32,22 +32,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "Invalid JSON" }, { status: 400 });
   }
 
+  const clientId = body.clientId?.trim();
   const name = body.name?.trim();
-  const email = body.email?.trim();
-  const country = body.country === "US" ? "US" : "CO";
-
-  if (!name || !email) {
+  const city = body.city?.trim();
+  if (!clientId || !name || !city) {
     return NextResponse.json(
-      { ok: false, message: "name and email required" },
+      { ok: false, message: "clientId, name, city required" },
       { status: 400 },
     );
   }
 
-  const result = await createClientRecord({
+  const country = body.country === "US" ? "US" : "CO";
+  const result = await createRestaurantRecord({
+    clientId,
     name,
-    email,
+    city,
     country,
-    taxId: body.taxId,
+    timezone: body.timezone,
     actorId: session.userId,
   });
 
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "Create failed" }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, id: result.id, message: "Client created" });
+  return NextResponse.json({ ok: true, id: result.id });
 }
 
 export async function PATCH(request: Request) {
@@ -71,26 +72,19 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ ok: false, message: "Invalid JSON" }, { status: 400 });
   }
 
-  const clientId = body.clientId?.trim();
-  if (!clientId) {
-    return NextResponse.json({ ok: false, message: "clientId required" }, { status: 400 });
+  const restaurantId = body.restaurantId?.trim();
+  if (!restaurantId) {
+    return NextResponse.json({ ok: false, message: "restaurantId required" }, { status: 400 });
   }
 
-  const ok = await updateClientRecord(
-    clientId,
-    {
-      name: body.name,
-      email: body.email,
-      country: body.country === "US" ? "US" : body.country === "CO" ? "CO" : undefined,
-      taxId: body.taxId,
-      stripeCustomerId: body.stripeCustomerId,
-      wompiCustomerEmail: body.wompiCustomerEmail,
-    },
+  const ok = await updateRestaurantRecord(
+    restaurantId,
+    { name: body.name, city: body.city },
     session.userId,
   );
 
   return NextResponse.json(
-    ok ? { ok: true, message: "Client updated" } : { ok: false, message: "Update failed" },
+    ok ? { ok: true } : { ok: false, message: "Update failed" },
     { status: ok ? 200 : 500 },
   );
 }

@@ -9,8 +9,10 @@ import {
   Mail,
   Settings,
   Store,
-  Wrench,
+  UserPlus,
+  UserCog,
   Users,
+  Wrench,
 } from "lucide-react";
 import { KitchLogo } from "@/components/brand/KitchLogo";
 import { SaasLocaleSwitcher } from "@/components/saas/SaasLocaleSwitcher";
@@ -20,7 +22,9 @@ import { withLocale, type Locale } from "@/lib/i18n";
 
 const navItems = [
   { key: "dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
+  { key: "onboarding", href: "/admin/onboarding", icon: UserPlus },
   { key: "clients", href: "/admin/clients", icon: Users },
+  { key: "users", href: "/admin/users", icon: UserCog },
   { key: "restaurants", href: "/admin/restaurants", icon: Store },
   { key: "installations", href: "/admin/installations", icon: Building2 },
   { key: "licenses", href: "/admin/licenses", icon: KeyRound },

@@ -1,26 +1,15 @@
 # Kitch SaaS — Estado del proyecto
 
-**Reporte maestro de pendientes:** [`docs/PENDIENTES.md`](PENDIENTES.md)
+**Reporte:** [`docs/PENDIENTES.md`](PENDIENTES.md)
 
-Última actualización: **Operaciones + checkout parcial**
+## Admin sin SQL — entregado
 
-## Nuevo en este batch
+- `/es/admin/onboarding` — alta completa + API key + prueba plugin
+- `/es/admin/clients/[id]` — detalle, restaurantes, instalaciones, usuarios
+- `/es/admin/users` — vincular / invitar / roles
 
-| Feature | Detalle |
-|---------|---------|
-| Cliente piloto | `007_pilot_client_template.sql` |
-| Admin crear clientes | `/es/admin/clients` formulario |
-| Renovar membresía | Stripe USD si configurado, else WhatsApp |
-| Email alertas | Resend opcional en cron |
-| Test plugin | `npm run test:plugin` |
+## Próximo paso
 
-## Resumen
-
-| Área | Estado |
-|------|--------|
-| Plataforma base | ✅ ~90% |
-| Ops comercial | 🟡 Piloto + WhatsApp |
-| Pagos auto | 🟠 Stripe listo si env vars; Wompi pendiente |
-| Plugin WP | 🔴 Repo plugin |
-
-Ver checklist completo en **PENDIENTES.md**.
+1. Redeploy Hostinger
+2. Alta cliente en onboarding
+3. Conectar plugin WordPress
