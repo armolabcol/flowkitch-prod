@@ -6,9 +6,11 @@ import {
   ClientUserLinkForm,
   InstallationApiKeyActions,
 } from "@/components/saas/ClientDetailActions";
+import { SubscriptionEditForm } from "@/components/saas/SubscriptionEditForm";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { getClientDetail } from "@/services/saas/client-detail-service";
+import { formatMembershipAmount, paymentProviderLabel } from "@/lib/billing-utils";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import { withLocale, defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -102,14 +104,31 @@ export default async function AdminClientDetailPage({ params }: Props) {
       </section>
 
       {subscriptions.length > 0 && (
-        <section>
+        <section className="mb-8 space-y-3">
           <h3 className="text-sm font-medium text-white mb-2">
-            {locale === "es" ? "Suscripción" : "Subscription"}
+            {locale === "es" ? "Suscripción y facturación" : "Subscription & billing"}
           </h3>
           <p className="text-sm text-kitch-muted">
             {subscriptions[0].plan_name} — {subscriptions[0].status} —{" "}
+            {formatMembershipAmount(
+              subscriptions[0].amount_cents,
+              subscriptions[0].currency,
+              locale,
+            )}{" "}
+            — {locale === "es" ? "vence" : "expires"}{" "}
             {formatSaasDate(subscriptions[0].current_period_end, locale)}
           </p>
+          <p className="text-xs text-kitch-muted">
+            {locale === "es" ? "Pasarela" : "Gateway"}:{" "}
+            {paymentProviderLabel(client.payment_provider, locale)}
+          </p>
+          <SubscriptionEditForm
+            subscriptionId={subscriptions[0].id}
+            planName={subscriptions[0].plan_name}
+            amountCents={subscriptions[0].amount_cents}
+            currency={subscriptions[0].currency}
+            locale={locale}
+          />
         </section>
       )}
     </>

@@ -45,6 +45,8 @@ export interface Database {
           tax_id: string | null;
           stripe_customer_id: string | null;
           wompi_customer_email: string | null;
+          payu_buyer_email: string | null;
+          payment_provider: string | null;
           created_at: string;
         };
         Insert: {
@@ -55,9 +57,27 @@ export interface Database {
           tax_id?: string | null;
           stripe_customer_id?: string | null;
           wompi_customer_email?: string | null;
+          payu_buyer_email?: string | null;
+          payment_provider?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["clients"]["Insert"]>;
+        Relationships: [];
+      };
+      platform_settings: {
+        Row: {
+          key: string;
+          value: Json;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          key: string;
+          value: Json;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["platform_settings"]["Insert"]>;
         Relationships: [];
       };
       restaurants: {

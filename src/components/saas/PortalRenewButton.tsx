@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/Button";
 export function PortalRenewButton({
   label,
   locale,
+  amountLabel,
 }: {
   label: string;
   locale: "es" | "en";
+  amountLabel?: string;
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -36,8 +38,15 @@ export function PortalRenewButton({
   }
 
   return (
-    <Button type="button" size="md" disabled={loading} onClick={handleRenew}>
-      {loading ? (locale === "es" ? "Cargando…" : "Loading…") : label}
-    </Button>
+    <div className="flex flex-col gap-1">
+      {amountLabel && (
+        <span className="text-xs text-kitch-muted">
+          {locale === "es" ? "Total" : "Total"}: {amountLabel}
+        </span>
+      )}
+      <Button type="button" size="md" disabled={loading} onClick={handleRenew}>
+        {loading ? (locale === "es" ? "Cargando…" : "Loading…") : label}
+      </Button>
+    </div>
   );
 }

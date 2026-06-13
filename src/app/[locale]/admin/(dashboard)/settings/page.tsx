@@ -1,4 +1,5 @@
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
+import { BillingSettingsPanel } from "@/components/saas/BillingSettingsPanel";
 import { getServerSaasClient } from "@/services/saas/db";
 import { listRecentAuditLogs } from "@/services/audit-service";
 import { isSupabaseConfigured, isHmacConfigured, env } from "@/lib/env";
@@ -85,6 +86,9 @@ export default async function AdminSettingsPage({ params }: Props) {
             <span className="font-mono text-sm text-white">{s.value}</span>
           </div>
         ))}
+      </div>
+      <div className="mt-6">
+        <BillingSettingsPanel locale={locale} />
       </div>
       {recentAudit.length > 0 && (
         <div className="mt-6 space-y-2">

@@ -1,6 +1,6 @@
 # Kitch — Reporte maestro de pendientes
 
-Última actualización: **Admin onboarding completo** (sin SQL operativo)
+Última actualización: **Membresía por cliente + pasarelas** (Stripe / Wompi / PayU)
 
 ---
 
@@ -9,8 +9,12 @@
 | Función | Ruta |
 |---------|------|
 | Alta cliente completa (cliente + restaurante + instalación + suscripción + API key) | `/es/admin/onboarding` |
+| **Costo membresía por cliente** (COP/USD según país) | `/es/admin/onboarding` |
+| **Pasarela Colombia global** (Wompi vs PayU) | `/es/admin/settings` |
+| Checkout portal con monto del cliente | `/es/portal/membership` |
+| Webhooks Stripe / Wompi / PayU | `/api/webhooks/*` |
 | Crear solo cliente | `/es/admin/clients` |
-| Detalle cliente + añadir restaurante/instalación/usuario | `/es/admin/clients/[id]` |
+| Detalle cliente + editar suscripción | `/es/admin/clients/[id]` |
 | Gestionar usuarios portal (vincular, invitar, roles) | `/es/admin/users` |
 | Rotar/revocar API keys | `/es/admin/installations` |
 | Gestionar licencias (+30d, cambiar estado) | `/es/admin/licenses` |
@@ -18,7 +22,7 @@
 | Leads demo | `/es/admin/leads` |
 | Alertas licencias | Dashboard + cron `/api/cron/license-alerts` |
 
-**Ya no uses SQL** para operación diaria. Migraciones 001–006 solo para bootstrap inicial del proyecto.
+**Ya no uses SQL** para operación diaria. Migraciones 001–007 bootstrap; **008** pasarelas (`008_billing_providers.sql`). Ver [`docs/billing-providers.md`](billing-providers.md).
 
 ---
 
@@ -37,21 +41,21 @@
 
 | # | Tarea |
 |---|-------|
-| 1 | Redeploy Hostinger (último commit) + Restart |
-| 2 | `NEXT_PUBLIC_WHATSAPP_E164` en Hostinger (renovación portal) |
+| 1 | Aplicar migración `008_billing_providers.sql` en Supabase |
+| 2 | Redeploy Hostinger + credenciales pasarelas (ver `docs/billing-providers.md`) |
 | 3 | `CRON_SECRET` + cron diario alertas |
 | 4 | `RESEND_API_KEY` + `ALERT_EMAIL_TO` (emails opcionales) |
 | 5 | Supabase Auth → SMTP para invitaciones por email |
 
 ---
 
-## Pendiente pagos (cuando tengas cuentas)
+## Pendiente pagos (credenciales live)
 
 | # | Tarea |
 |---|-------|
-| 6 | Stripe: `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID_USD`, webhook |
-| 7 | Wompi checkout Colombia + webhook |
-| 8 | Mapeo `stripe_customer_id` en detalle cliente |
+| 6 | Stripe live: `STRIPE_SECRET_KEY`, webhook |
+| 7 | Wompi live: keys + webhook events |
+| 8 | PayU live: merchant + confirmation URL |
 
 ---
 
@@ -75,4 +79,4 @@
 |------|---|
 | Admin / onboarding sin SQL | **~95%** |
 | Plugin WP conectado | **~10%** (API lista) |
-| Pagos automáticos | **~40%** |
+| Pagos automáticos | **~75%** (código listo; falta credenciales live) |

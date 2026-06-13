@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { PluginTestPanel } from "@/components/saas/PluginTestPanel";
+import {
+  countryToCurrency,
+  defaultAmountDisplay,
+  parseAmountToCents,
+  paymentProviderLabel,
+} from "@/lib/billing-utils";
 
 type OnboardingResult = {
   clientId: string;
@@ -19,6 +25,27 @@ export function OnboardingForm({ locale }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<OnboardingResult | null>(null);
   const [siteUrl, setSiteUrl] = useState("");
+  const [country, setCountry] = useState<"CO" | "US">("CO");
+  const [coProvider, setCoProvider] = useState<"wompi" | "payu">("wompi");
+  const [amountDisplay, setAmountDisplay] = useState(defaultAmountDisplay("CO"));
+
+  const currency = countryToCurrency(country);
+  const gatewayLabel =
+    country === "US" ? "Stripe" : paymentProviderLabel(coProvider, locale);
+
+  useEffect(() => {
+    fetch("/api/admin/settings/billing")
+      .then((r) => r.json())
+      .then((data: { coProvider?: "wompi" | "payu" }) => {
+        if (data.coProvider) setCoProvider(data.coProvider);
+      })
+      .catch(() => undefined);
+  }, []);
+
+  function handleCountryChange(next: "CO" | "US") {
+    setCountry(next);
+    setAmountDisplay(defaultAmountDisplay(next));
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,11 +57,18 @@ export function OnboardingForm({ locale }: Props) {
     const site = String(fd.get("siteUrl") ?? "").trim();
     setSiteUrl(site);
 
+    const amountCents = parseAmountToCents(String(fd.get("membershipAmount") ?? ""), currency);
+    if (amountCents <= 0) {
+      setError(locale === "es" ? "Costo de membresía inválido" : "Invalid membership amount");
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       client: {
         name: String(fd.get("clientName") ?? ""),
         email: String(fd.get("clientEmail") ?? ""),
-        country: String(fd.get("country") ?? "CO"),
+        country,
         taxId: String(fd.get("taxId") ?? "") || undefined,
       },
       restaurant: {
@@ -44,6 +78,12 @@ export function OnboardingForm({ locale }: Props) {
       installation: {
         siteUrl: site,
         licenseDays: Number(fd.get("licenseDays") ?? 30),
+      },
+      subscription: {
+        planName: String(fd.get("planName") ?? "Kitch Pro"),
+        amountCents,
+        currency,
+        periodDays: Number(fd.get("periodDays") ?? 30),
       },
       portalUser: String(fd.get("portalEmail") ?? "").trim()
         ? {
@@ -129,7 +169,12 @@ export function OnboardingForm({ locale }: Props) {
       </label>
       <label className="text-xs text-kitch-muted">
         {locale === "es" ? "País" : "Country"}
-        <select name="country" className={fieldClass} defaultValue="CO">
+        <select
+          name="country"
+          className={fieldClass}
+          value={country}
+          onChange={(e) => handleCountryChange(e.target.value === "US" ? "US" : "CO")}
+        >
           <option value="CO">Colombia</option>
           <option value="US">USA</option>
         </select>
@@ -163,6 +208,44 @@ export function OnboardingForm({ locale }: Props) {
         {locale === "es" ? "Días de licencia" : "License days"}
         <input name="licenseDays" type="number" defaultValue={30} min={1} className={fieldClass} />
       </label>
+
+      <h3 className="sm:col-span-2 mt-2 text-sm font-medium text-white">
+        {locale === "es" ? "Membresía" : "Membership"}
+      </h3>
+      <label className="text-xs text-kitch-muted">
+        {locale === "es" ? "Plan" : "Plan"}
+        <input name="planName" defaultValue="Kitch Pro" className={fieldClass} />
+      </label>
+      <label className="text-xs text-kitch-muted">
+        {locale === "es" ? "Costo membresía" : "Membership fee"}
+        <input
+          name="membershipAmount"
+          type="number"
+          min={1}
+          step={currency === "USD" ? "0.01" : "1"}
+          value={amountDisplay}
+          onChange={(e) => setAmountDisplay(e.target.value)}
+          required
+          className={fieldClass}
+        />
+      </label>
+      <label className="text-xs text-kitch-muted">
+        {locale === "es" ? "Moneda" : "Currency"}
+        <input readOnly value={currency} className={`${fieldClass} opacity-70`} />
+      </label>
+      <label className="text-xs text-kitch-muted">
+        {locale === "es" ? "Periodo (días)" : "Period (days)"}
+        <input name="periodDays" type="number" defaultValue={30} min={1} className={fieldClass} />
+      </label>
+      <div className="sm:col-span-2 text-xs text-kitch-muted">
+        {locale === "es" ? "Pasarela de pago" : "Payment gateway"}:{" "}
+        <span className="text-white">{gatewayLabel}</span>
+        {country === "CO" && (
+          <span className="ml-2 text-kitch-subtle">
+            ({locale === "es" ? "config global en Ajustes" : "global setting in Settings"})
+          </span>
+        )}
+      </div>
 
       <h3 className="sm:col-span-2 mt-2 text-sm font-medium text-white">
         {locale === "es" ? "Usuario portal (opcional)" : "Portal user (optional)"}

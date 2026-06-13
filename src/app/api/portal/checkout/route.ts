@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { client } = await getClientPortalData(clientId);
+  const { client, subscription } = await getClientPortalData(clientId);
   if (!client) {
     return NextResponse.json({ ok: false, message: "Client not found" }, { status: 404 });
   }
@@ -34,6 +34,8 @@ export async function POST(request: Request) {
     clientId,
     clientEmail: client.email,
     country: client.country,
+    paymentProvider: client.payment_provider,
+    subscription,
     locale: resolvedLocale,
   });
 

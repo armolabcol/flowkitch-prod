@@ -62,10 +62,34 @@ export async function POST(request: Request) {
   }
 
   const country = body.client?.country === "US" ? "US" : "CO";
+  const expectedCurrency = country === "US" ? "USD" : "COP";
   const currency =
     body.subscription?.currency === "USD" || body.subscription?.currency === "COP"
       ? body.subscription.currency
-      : undefined;
+      : expectedCurrency;
+
+  if (
+    body.subscription?.currency &&
+    body.subscription.currency !== expectedCurrency
+  ) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: `Currency must be ${expectedCurrency} for country ${country}`,
+      },
+      { status: 400 },
+    );
+  }
+
+  if (
+    body.subscription?.amountCents !== undefined &&
+    (body.subscription.amountCents <= 0 || !Number.isFinite(body.subscription.amountCents))
+  ) {
+    return NextResponse.json(
+      { ok: false, message: "subscription.amountCents must be a positive number" },
+      { status: 400 },
+    );
+  }
 
   const result = await provisionClientStack({
     client: {
@@ -84,14 +108,12 @@ export async function POST(request: Request) {
       pluginVersion: body.installation?.pluginVersion,
       licenseDays: body.installation?.licenseDays,
     },
-    subscription: body.subscription
-      ? {
-          planName: body.subscription.planName,
-          amountCents: body.subscription.amountCents,
+    subscription: {
+          planName: body.subscription?.planName,
+          amountCents: body.subscription?.amountCents,
           currency,
-          periodDays: body.subscription.periodDays,
-        }
-      : undefined,
+          periodDays: body.subscription?.periodDays,
+        },
     portalUser: body.portalUser?.email
       ? {
           email: body.portalUser.email,

@@ -6,6 +6,7 @@ import {
   linkOrInvitePortalUser,
   type PortalUserResult,
 } from "@/services/saas/profiles-admin-service";
+import { resolvePaymentProviderForCountry } from "@/services/saas/platform-settings-service";
 import { createRestaurantRecord } from "@/services/saas/restaurants-admin-service";
 import { createSubscriptionRecord } from "@/services/saas/subscriptions-admin-service";
 import { getServiceSaasClient } from "@/services/saas/db";
@@ -84,6 +85,7 @@ export async function provisionClientStack(
   input: OnboardingInput,
 ): Promise<OnboardingResult | { error: string }> {
   const subDefaults = defaultSubscription(input.client.country);
+  const paymentProvider = await resolvePaymentProviderForCountry(input.client.country);
   const created: {
     clientId?: string;
     restaurantId?: string;
@@ -96,6 +98,7 @@ export async function provisionClientStack(
     email: input.client.email,
     country: input.client.country,
     taxId: input.client.taxId,
+    paymentProvider,
     actorId: input.actorId,
   });
   if (!client) {

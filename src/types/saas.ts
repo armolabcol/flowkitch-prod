@@ -27,11 +27,14 @@ export type SubscriptionStatus =
   | "cancelled"
   | "trialing";
 
+export type PaymentProvider = "stripe" | "wompi" | "payu";
+
 export interface Client {
   id: string;
   name: string;
   country: string;
   email: string;
+  payment_provider: PaymentProvider | null;
   created_at: string;
 }
 

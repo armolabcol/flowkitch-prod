@@ -43,3 +43,38 @@ export async function createSubscriptionRecord(params: {
 
   return data;
 }
+
+export async function updateSubscriptionRecord(
+  subscriptionId: string,
+  updates: {
+    planName?: string;
+    amountCents?: number;
+    currency?: "USD" | "COP";
+  },
+  actorId?: string | null,
+): Promise<boolean> {
+  const supabase = getServiceSaasClient();
+  if (!supabase) return false;
+
+  const patch: Database["public"]["Tables"]["subscriptions"]["Update"] = {};
+  if (updates.planName) patch.plan_name = updates.planName;
+  if (updates.amountCents !== undefined) patch.amount_cents = updates.amountCents;
+  if (updates.currency) patch.currency = updates.currency;
+
+  const { error } = await supabase
+    .from("subscriptions")
+    .update(patch as never)
+    .eq("id", subscriptionId);
+
+  if (error) return false;
+
+  await writeAuditLog({
+    actorId,
+    action: "subscription.updated",
+    entityType: "subscription",
+    entityId: subscriptionId,
+    metadata: updates as Record<string, unknown>,
+  });
+
+  return true;
+}

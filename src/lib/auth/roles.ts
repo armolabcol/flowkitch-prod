@@ -27,3 +27,7 @@ export function isClientRole(role: UserRole): boolean {
 export function isKnownRole(role: string): role is UserRole {
   return isAdminRole(role as UserRole) || isClientRole(role as UserRole);
 }
+
+export function isBillingSettingsRole(role: UserRole): boolean {
+  return role === "super_admin" || role === "billing_admin";
+}

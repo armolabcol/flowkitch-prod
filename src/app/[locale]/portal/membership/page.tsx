@@ -6,6 +6,7 @@ import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { getPortalClientId } from "@/lib/auth/guards";
 import { getClientPortalData } from "@/services/saas/portal-service";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
+import { formatMembershipAmount } from "@/lib/billing-utils";
 import { withLocale, defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -33,6 +34,18 @@ export default async function PortalMembershipPage({ params }: Props) {
             <span className="text-lg text-white">{subscription.plan_name}</span>
           )}
         </div>
+        {subscription && (
+          <p className="mt-4 text-kitch-muted">
+            {locale === "es" ? "Membresía" : "Membership"}:{" "}
+            <span className="text-white">
+              {formatMembershipAmount(
+                subscription.amount_cents,
+                subscription.currency,
+                locale,
+              )}
+            </span>
+          </p>
+        )}
         <p className="mt-6 text-kitch-muted">
           {d.expiresAt}:{" "}
           <span className="text-white">
@@ -50,7 +63,19 @@ export default async function PortalMembershipPage({ params }: Props) {
           </p>
         )}
         <div className="mt-8 flex flex-wrap gap-3">
-          <PortalRenewButton label={d.renew} locale={locale} />
+          <PortalRenewButton
+            label={d.renew}
+            locale={locale}
+            amountLabel={
+              subscription
+                ? formatMembershipAmount(
+                    subscription.amount_cents,
+                    subscription.currency,
+                    locale,
+                  )
+                : undefined
+            }
+          />
           <Button asChild variant="secondary" size="md">
             <Link href={withLocale(locale, "/portal/support")}>{d.contactSupport}</Link>
           </Button>

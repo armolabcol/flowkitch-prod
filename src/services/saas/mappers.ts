@@ -25,6 +25,7 @@ export function mapClient(row: ClientRow): Client {
     name: row.name,
     country: row.country,
     email: row.email,
+    payment_provider: (row.payment_provider as Client["payment_provider"]) ?? null,
     created_at: row.created_at,
   };
 }

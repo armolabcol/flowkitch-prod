@@ -7,6 +7,7 @@ export async function createClientRecord(params: {
   country: "CO" | "US";
   email: string;
   taxId?: string | null;
+  paymentProvider?: "stripe" | "wompi" | "payu" | null;
   actorId?: string | null;
 }): Promise<{ id: string } | null> {
   const supabase = getServiceSaasClient();
@@ -17,6 +18,7 @@ export async function createClientRecord(params: {
     country: params.country,
     email: params.email.trim().toLowerCase(),
     tax_id: params.taxId?.trim() || null,
+    payment_provider: params.paymentProvider ?? null,
   };
 
   const { data, error } = await supabase
@@ -47,6 +49,8 @@ export async function updateClientRecord(
     taxId?: string | null;
     stripeCustomerId?: string | null;
     wompiCustomerEmail?: string | null;
+    payuBuyerEmail?: string | null;
+    paymentProvider?: "stripe" | "wompi" | "payu" | null;
   },
   actorId?: string | null,
 ): Promise<boolean> {
@@ -63,6 +67,12 @@ export async function updateClientRecord(
   }
   if (updates.wompiCustomerEmail !== undefined) {
     patch.wompi_customer_email = updates.wompiCustomerEmail;
+  }
+  if (updates.payuBuyerEmail !== undefined) {
+    patch.payu_buyer_email = updates.payuBuyerEmail;
+  }
+  if (updates.paymentProvider !== undefined) {
+    patch.payment_provider = updates.paymentProvider;
   }
 
   const { error } = await supabase

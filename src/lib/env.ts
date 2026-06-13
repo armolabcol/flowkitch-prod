@@ -25,8 +25,17 @@ export const env = {
     readEnv("SUPABASE_SECRET_KEY"),
   kitchApiHmacSecret: readEnv("KITCH_API_HMAC_SECRET"),
   stripeSecretKey: readEnv("STRIPE_SECRET_KEY"),
+  stripeWebhookSecret: readEnv("STRIPE_WEBHOOK_SECRET"),
   stripePriceIdUsd: readEnv("STRIPE_PRICE_ID_USD"),
   wompiPublicKey: readEnv("WOMPI_PUBLIC_KEY"),
+  wompiPrivateKey: readEnv("WOMPI_PRIVATE_KEY"),
+  wompiIntegritySecret: readEnv("WOMPI_INTEGRITY_SECRET"),
+  wompiEventsSecret: readEnv("WOMPI_EVENTS_SECRET"),
+  payuApiLogin: readEnv("PAYU_API_LOGIN"),
+  payuApiKey: readEnv("PAYU_API_KEY"),
+  payuMerchantId: readEnv("PAYU_MERCHANT_ID"),
+  payuAccountId: readEnv("PAYU_ACCOUNT_ID"),
+  payuTestMode: readEnv("PAYU_TEST_MODE") === "true",
   resendApiKey: readEnv("RESEND_API_KEY"),
   alertEmailTo: readEnv("ALERT_EMAIL_TO"),
 } as const;
@@ -44,7 +53,22 @@ export function isHmacConfigured(): boolean {
 }
 
 export function isStripeCheckoutConfigured(): boolean {
-  return Boolean(env.stripeSecretKey && env.stripePriceIdUsd);
+  return Boolean(env.stripeSecretKey);
+}
+
+export function isWompiCheckoutConfigured(): boolean {
+  return Boolean(
+    env.wompiPublicKey && env.wompiPrivateKey && env.wompiIntegritySecret,
+  );
+}
+
+export function isPayuCheckoutConfigured(): boolean {
+  return Boolean(
+    env.payuApiLogin &&
+      env.payuApiKey &&
+      env.payuMerchantId &&
+      env.payuAccountId,
+  );
 }
 
 export function isResendConfigured(): boolean {
