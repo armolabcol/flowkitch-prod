@@ -53,31 +53,33 @@ Variables existentes y futuras:
 2. **Node.js version:** `20` (coincide con `.nvmrc`).
 3. **Install command:** `npm ci`
 4. **Build command:** `npm run build`
-5. **Start command:** `npm run start -- -p $PORT`  
-   (alternativa: `npm run start` — el script ya escucha en `0.0.0.0` y respeta `PORT`).
+5. **Start command:** `npm run start`  
+   (usa el bundle `standalone` en un solo proceso; respeta `PORT` y `HOSTNAME` del entorno).
 6. **Output directory:** `.next` (si el panel lo pide).
-7. **Entry file:** dejar vacío — Next.js arranca vía `npm run start`, no `app.js`.
-8. Define `NODE_ENV=production` y las variables de `.env.example`.
+7. **Entry file:** dejar vacío — no usar `app.js`.
+8. Define variables de entorno (ver tabla abajo). **Importante:** usa **Node 20**, no 22.
 9. Asigna el dominio `flowkitch.com` y configura SSL.
 
-Si Hostinger expone un **puerto** dinámico, Next.js lo toma de la variable `PORT` automáticamente.
+Si Hostinger expone un **puerto** dinámico, el servidor standalone lo toma de `PORT` automáticamente.
 
-### Error 503 (Service Unavailable)
+### Error 503 / `pthread_create: Resource temporarily unavailable`
 
-Significa que el proceso Node **no está corriendo** detrás del proxy. Revisa en hPanel → tu app Node.js:
+Significa que se agotó el límite de procesos/hilos del plan. El proyecto usa **`output: 'standalone'`** y un solo proceso Node para reducir consumo.
 
-1. **Build logs** — ¿`npm run build` terminó sin error?
-2. **Runtime / Deploy logs** — ¿hay crash al iniciar (`next start`)?
-3. **Start command** — debe ser `npm run start -- -p $PORT` (no `node app.js`).
-4. **Entry file** — vacío o no configurado.
-5. **Redeploy** — botón *Redeploy* o *Restart* tras cambiar env vars.
-6. **Health check** — cuando la app esté arriba: `https://flowkitch.com/api/health` debe responder `{"ok":true}`.
+Tras cambiar env vars o Node version:
 
-Variables mínimas recomendadas en Hostinger:
+1. **Ajustes y reimplementación** → Node **20** → **Redeploy**
+2. **Restart** desde el panel (no arrancar Node por SSH en paralelo)
+3. Revisa `stderr.log` — no debe repetir `pthread_create`
+
+Variables recomendadas en Hostinger:
 
 | Variable | Valor |
 |----------|--------|
 | `NODE_ENV` | `production` |
+| `HOSTNAME` | `0.0.0.0` |
+| `NODE_OPTIONS` | `--max-old-space-size=512` |
+| `UV_THREADPOOL_SIZE` | `2` |
 | `NEXT_PUBLIC_SITE_URL` | `https://flowkitch.com` |
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://TU-PROYECTO.supabase.co` (sin `/rest/v1`) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | clave publishable/anon |

@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start -H 0.0.0.0",
+    "build": "next build && node scripts/prepare-standalone.mjs",
+    "start": "node scripts/start-production.mjs",
     "lint": "eslint"
+  },
+  "engines": {
+    "node": ">=20 <21"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
