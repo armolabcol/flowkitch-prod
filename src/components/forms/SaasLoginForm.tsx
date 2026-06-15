@@ -145,7 +145,11 @@ export function SaasLoginForm({
       const payload = await parseApiResponse(res);
 
       if (!res.ok) {
-        setError(payload.error ?? (locale === "es" ? "Error al enviar." : "Send failed."));
+        const msg =
+          payload.code === "rate_limit"
+            ? d.resetRateLimited
+            : (payload.error ?? (locale === "es" ? "Error al enviar." : "Send failed."));
+        setError(msg);
         setLoading(false);
         return;
       }

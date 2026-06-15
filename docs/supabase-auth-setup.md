@@ -60,5 +60,17 @@ Opcional después: **SMTP** propio (Resend/SendGrid) para remitente `noreply@flo
 |---------|--------|----------|
 | `localhost:3000` en el enlace | Site URL en Supabase = local | Cambiar a `https://flowkitch.com` |
 | `otp_expired` | Token usado o >1 h | Pedir nuevo correo |
+| **`email rate limit exceeded`** | Muchos resets en poco tiempo (límite Supabase) | Esperar **~60 min** o subir límite en **Authentication → Rate Limits** |
 | Sesión expirada al guardar clave | No pasó por `/auth/callback` | Revisar Redirect URLs |
 | Correo genérico “Supabase Auth” | Template por defecto | Personalizar en §4 |
+
+### Rate limit de correos (plan gratuito / pruebas)
+
+Supabase limita cuántos correos de auth se envían por hora (típico: **2–4 por hora** en pruebas intensas).
+
+**Opciones:**
+
+1. **Esperar** 60 minutos y volver a intentar (un solo clic en “Enviar enlace”).
+2. **Supabase Dashboard** → **Authentication** → **Rate Limits** → subir `Email sent` / `OTP` si tu plan lo permite.
+3. **Probar con otro email** registrado en Auth (menos ideal).
+4. **SMTP propio** (Resend, etc.) en Authentication → SMTP — límites más altos y mejor deliverability.

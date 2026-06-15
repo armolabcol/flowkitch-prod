@@ -292,6 +292,8 @@ export const dictionaries = {
       sending: "Enviando…",
       resetEmailSent:
         "Si el correo está registrado, recibirás un enlace para restablecer tu contraseña.",
+      resetRateLimited:
+        "Demasiados intentos seguidos. Espera unos 60 minutos o prueba con otro correo. En Supabase puedes subir el límite en Authentication → Rate Limits.",
       backToLogin: "Volver al inicio de sesión",
       resetPasswordTitle: "Nueva contraseña",
       resetPasswordHint: "Elige una contraseña de al menos 8 caracteres.",
@@ -618,6 +620,8 @@ export const dictionaries = {
       sending: "Sending…",
       resetEmailSent:
         "If the email is registered, you will receive a password reset link.",
+      resetRateLimited:
+        "Too many attempts in a short time. Wait about 60 minutes or try another email. You can raise the limit in Supabase → Authentication → Rate Limits.",
       backToLogin: "Back to sign in",
       resetPasswordTitle: "New password",
       resetPasswordHint: "Choose a password with at least 8 characters.",

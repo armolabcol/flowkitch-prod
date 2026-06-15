@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { mapForgotPasswordError } from "@/lib/auth/auth-errors";
 import { env, isSupabaseConfigured } from "@/lib/env";
 import { createRouteHandlerSupabase } from "@/lib/supabase/route-handler";
 
@@ -28,9 +29,10 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
+    const mapped = mapForgotPasswordError(error.message, error.code);
     return jsonResponse(
-      { error: error.message, code: error.code ?? "reset_failed" },
-      { status: 400 },
+      { error: mapped.message, code: mapped.code },
+      { status: mapped.code === "rate_limit" ? 429 : 400 },
     );
   }
 
