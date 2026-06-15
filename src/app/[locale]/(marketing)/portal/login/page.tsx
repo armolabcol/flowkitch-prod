@@ -33,7 +33,7 @@ export default async function PortalLoginPage({ params, searchParams }: Props) {
   const d = dict.portal;
 
   const initialError =
-    errorCode === "callback_failed"
+    errorCode === "callback_failed" || errorCode === "reset_link_expired"
       ? d.callbackFailed
       : errorCode === "profile_error"
         ? (locale === "es"

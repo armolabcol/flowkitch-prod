@@ -27,6 +27,24 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  const authError = request.nextUrl.searchParams.get("error");
+  const errorCode = request.nextUrl.searchParams.get("error_code");
+  if (
+    authError === "access_denied" ||
+    errorCode === "otp_expired" ||
+    errorCode === "otp_disabled"
+  ) {
+    const loc = pickLocaleFromPath(pathname) ?? defaultLocale;
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = withLocale(loc, "/portal/login");
+    loginUrl.searchParams.delete("error");
+    loginUrl.searchParams.delete("error_code");
+    loginUrl.searchParams.delete("error_description");
+    loginUrl.hash = "";
+    loginUrl.searchParams.set("error", "reset_link_expired");
+    return NextResponse.redirect(loginUrl);
+  }
+
   const locale = pickLocaleFromPath(pathname);
 
   if (!locale) {

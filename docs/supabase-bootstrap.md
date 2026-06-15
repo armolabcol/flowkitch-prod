@@ -17,3 +17,5 @@ Las migraciones SQL son solo para **crear el esquema** la primera vez.
 | 8 | `009_rbac_profiles.sql` |
 
 Ver [`docs/rbac-roles.md`](rbac-roles.md) para roles y permisos.
+
+**Auth (login / reset password):** [`docs/supabase-auth-setup.md`](supabase-auth-setup.md) — Site URL, Redirect URLs y plantilla de correo.
