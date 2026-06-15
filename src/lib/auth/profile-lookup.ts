@@ -8,6 +8,7 @@ type ProfileRow = {
   role: string;
   client_id: string | null;
   full_name: string | null;
+  assigned_country: string | null;
 };
 
 /**
@@ -27,7 +28,7 @@ export async function fetchProfileByUserId(
 
   const { data, error } = await client
     .from("profiles")
-    .select("id, email, role, client_id, full_name")
+    .select("id, email, role, client_id, full_name, assigned_country")
     .eq("id", userId)
     .maybeSingle<ProfileRow>();
 

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { AdminClientCreateForm } from "@/components/saas/AdminClientCreateForm";
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { listClients } from "@/services/saas/admin-service";
+import { getPageAdminScope } from "@/lib/auth/page-scope";
+import { canAccessAdminRoute } from "@/lib/auth/permissions";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { withLocale, defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -11,7 +13,9 @@ export default async function AdminClientsPage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const clients = await listClients();
+  const { scope, session } = await getPageAdminScope(locale);
+  const clients = await listClients(scope);
+  const canOnboard = canAccessAdminRoute(session.profile!, "onboarding");
 
   return (
     <>
@@ -23,15 +27,19 @@ export default async function AdminClientsPage({ params }: Props) {
             : "Use New client for full provisioning, or create client only here."
         }
       />
-      <p className="mb-4 text-sm">
-        <Link
-          href={withLocale(locale, "/admin/onboarding")}
-          className="text-kitch-accent hover:underline"
-        >
-          → {dict.admin.nav.onboarding}
-        </Link>
-      </p>
-      <AdminClientCreateForm locale={locale} />
+      {canOnboard && (
+        <>
+          <p className="mb-4 text-sm">
+            <Link
+              href={withLocale(locale, "/admin/onboarding")}
+              className="text-kitch-accent hover:underline"
+            >
+              → {dict.admin.nav.onboarding}
+            </Link>
+          </p>
+          <AdminClientCreateForm locale={locale} />
+        </>
+      )}
       <SaasMockTable
         headers={["ID", locale === "es" ? "Nombre" : "Name", locale === "es" ? "País" : "Country", "Email"]}
         rows={clients.map((c) => [

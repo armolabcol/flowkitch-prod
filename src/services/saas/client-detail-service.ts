@@ -1,7 +1,12 @@
 import { getServiceSaasClient } from "@/services/saas/db";
 import { pickActiveApiKeyLast4 } from "@/services/saas/mappers";
+import { assertClientInScope } from "@/services/saas/scope-service";
+import type { StaffScope } from "@/lib/auth/permissions";
 
-export async function getClientDetail(clientId: string) {
+export async function getClientDetail(clientId: string, scope: StaffScope) {
+  const inScope = await assertClientInScope(scope, clientId);
+  if (!inScope) return null;
+
   const supabase = getServiceSaasClient();
   if (!supabase) return null;
 
@@ -71,11 +76,23 @@ export async function getClientDetail(clientId: string) {
     .select("id, email, role, full_name")
     .eq("client_id", clientId);
 
+  let assignedAgent: { id: string; email: string; full_name: string | null } | null =
+    null;
+  if (client.assigned_sales_agent_id) {
+    const { data: agent } = await supabase
+      .from("profiles")
+      .select("id, email, full_name")
+      .eq("id", client.assigned_sales_agent_id)
+      .maybeSingle();
+    assignedAgent = agent;
+  }
+
   return {
     client,
     restaurants: restaurants ?? [],
     subscriptions: subscriptions ?? [],
     installations,
     profiles: profiles ?? [],
+    assignedAgent,
   };
 }

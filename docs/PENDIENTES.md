@@ -1,6 +1,6 @@
 # Kitch — Reporte maestro de pendientes
 
-Última actualización: **Membresía por cliente + pasarelas** (Stripe / Wompi / PayU)
+Última actualización: **RBAC perfiles** (super / regional / agente / cliente)
 
 ---
 
@@ -8,6 +8,7 @@
 
 | Función | Ruta |
 |---------|------|
+| **RBAC** super / regional / agente comercial | Ver [`docs/rbac-roles.md`](rbac-roles.md) |
 | Alta cliente completa (cliente + restaurante + instalación + suscripción + API key) | `/es/admin/onboarding` |
 | **Costo membresía por cliente** (COP/USD según país) | `/es/admin/onboarding` |
 | **Pasarela Colombia global** (Wompi vs PayU) | `/es/admin/settings` |
@@ -22,7 +23,7 @@
 | Leads demo | `/es/admin/leads` |
 | Alertas licencias | Dashboard + cron `/api/cron/license-alerts` |
 
-**Ya no uses SQL** para operación diaria. Migraciones 001–007 bootstrap; **008** pasarelas (`008_billing_providers.sql`). Ver [`docs/billing-providers.md`](billing-providers.md).
+**Ya no uses SQL** para operación diaria. Migraciones 001–008 bootstrap; **009** RBAC (`009_rbac_profiles.sql`). Ver [`docs/rbac-roles.md`](rbac-roles.md) y [`docs/billing-providers.md`](billing-providers.md).
 
 ---
 
@@ -41,9 +42,9 @@
 
 | # | Tarea |
 |---|-------|
-| 1 | Aplicar migración `008_billing_providers.sql` en Supabase |
-| 2 | Redeploy Hostinger + credenciales pasarelas (ver `docs/billing-providers.md`) |
-| 3 | `CRON_SECRET` + cron diario alertas |
+| 1 | Aplicar migración `009_rbac_profiles.sql` en Supabase |
+| 2 | Promover super admin + invitar admins regionales desde `/es/admin/users` |
+| 3 | Redeploy Hostinger + credenciales pasarelas (ver `docs/billing-providers.md`) |
 | 4 | `RESEND_API_KEY` + `ALERT_EMAIL_TO` (emails opcionales) |
 | 5 | Supabase Auth → SMTP para invitaciones por email |
 
@@ -77,6 +78,6 @@
 
 | Área | % |
 |------|---|
-| Admin / onboarding sin SQL | **~95%** |
+| Admin / onboarding / RBAC | **~98%** |
 | Plugin WP conectado | **~10%** (API lista) |
 | Pagos automáticos | **~75%** (código listo; falta credenciales live) |

@@ -1,15 +1,19 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import {
   AddInstallationForm,
   AddRestaurantForm,
   ClientUserLinkForm,
   InstallationApiKeyActions,
 } from "@/components/saas/ClientDetailActions";
+import { AssignSalesAgentForm } from "@/components/saas/AssignSalesAgentForm";
 import { SubscriptionEditForm } from "@/components/saas/SubscriptionEditForm";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { getClientDetail } from "@/services/saas/client-detail-service";
+import { listSalesAgents } from "@/services/saas/profiles-admin-service";
+import { getPageAdminScope } from "@/lib/auth/page-scope";
+import { canRotateApiKeys, canWriteClient } from "@/lib/auth/permissions";
 import { formatMembershipAmount, paymentProviderLabel } from "@/lib/billing-utils";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import { withLocale, defaultLocale, isLocale, type Locale } from "@/lib/i18n";
@@ -20,18 +24,23 @@ export default async function AdminClientDetailPage({ params }: Props) {
   const { locale: raw, id } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const detail = await getClientDetail(id);
+  const { scope } = await getPageAdminScope(locale);
+  const detail = await getClientDetail(id, scope);
 
   if (!detail) notFound();
 
   const { client, restaurants, installations, subscriptions, profiles } = detail;
+  const canWrite = canWriteClient(scope, {
+    id: client.id,
+    country: client.country,
+    assigned_sales_agent_id: client.assigned_sales_agent_id,
+  });
+  const canRotate = canRotateApiKeys(scope);
+  const salesAgents = await listSalesAgents();
 
   return (
     <>
-      <SaasPageHeader
-        title={client.name}
-        description={client.email}
-      />
+      <SaasPageHeader title={client.name} description={client.email} />
       <div className="mb-4">
         <Link
           href={withLocale(locale, "/admin/clients")}
@@ -40,6 +49,20 @@ export default async function AdminClientDetailPage({ params }: Props) {
           ← {dict.admin.nav.clients}
         </Link>
       </div>
+
+      <section className="mb-6">
+        <AssignSalesAgentForm
+          clientId={client.id}
+          currentAgentId={client.assigned_sales_agent_id}
+          agents={salesAgents}
+          locale={locale}
+          canEdit={canWrite}
+        />
+        <p className="mt-2 text-xs text-kitch-muted">
+          {locale === "es" ? "Pasarela" : "Gateway"}:{" "}
+          {paymentProviderLabel(client.payment_provider, locale)}
+        </p>
+      </section>
 
       <section className="mb-8 space-y-3">
         <h3 className="text-sm font-medium text-white">
@@ -58,12 +81,19 @@ export default async function AdminClientDetailPage({ params }: Props) {
             {locale === "es" ? "Sin usuarios vinculados" : "No linked users"}
           </p>
         )}
-        <ClientUserLinkForm clientId={client.id} locale={locale} />
+        {canWrite && (
+          <ClientUserLinkForm clientId={client.id} locale={locale} />
+        )}
       </section>
 
-      <section className="mb-8 space-y-3">
-        <h3 className="text-sm font-medium text-white">{dict.admin.nav.restaurants}</h3>
-        <AddRestaurantForm clientId={client.id} country={client.country} locale={locale} />
+      {canWrite && (
+        <section className="mb-8 space-y-3">
+          <h3 className="text-sm font-medium text-white">{dict.admin.nav.restaurants}</h3>
+          <AddRestaurantForm clientId={client.id} country={client.country} locale={locale} />
+        </section>
+      )}
+
+      <section className="mb-4">
         <ul className="space-y-2 text-sm text-kitch-muted">
           {restaurants.map((r) => (
             <li key={r.id}>
@@ -75,12 +105,13 @@ export default async function AdminClientDetailPage({ params }: Props) {
 
       <section className="mb-8 space-y-4">
         <h3 className="text-sm font-medium text-white">{dict.admin.nav.installations}</h3>
-        {restaurants.map((r) => (
-          <div key={r.id} className="rounded-xl border border-white/[0.06] p-4">
-            <p className="text-xs text-kitch-subtle mb-2">{r.name}</p>
-            <AddInstallationForm restaurantId={r.id} locale={locale} />
-          </div>
-        ))}
+        {canWrite &&
+          restaurants.map((r) => (
+            <div key={r.id} className="rounded-xl border border-white/[0.06] p-4">
+              <p className="text-xs text-kitch-subtle mb-2">{r.name}</p>
+              <AddInstallationForm restaurantId={r.id} locale={locale} />
+            </div>
+          ))}
         {installations.map((i) => (
           <div
             key={i.id}
@@ -98,7 +129,9 @@ export default async function AdminClientDetailPage({ params }: Props) {
                 {formatSaasDate(i.license_expires_at, locale)}
               </p>
             </div>
-            <InstallationApiKeyActions installationId={i.id} locale={locale} />
+            {canRotate && (
+              <InstallationApiKeyActions installationId={i.id} locale={locale} />
+            )}
           </div>
         ))}
       </section>
@@ -118,17 +151,15 @@ export default async function AdminClientDetailPage({ params }: Props) {
             — {locale === "es" ? "vence" : "expires"}{" "}
             {formatSaasDate(subscriptions[0].current_period_end, locale)}
           </p>
-          <p className="text-xs text-kitch-muted">
-            {locale === "es" ? "Pasarela" : "Gateway"}:{" "}
-            {paymentProviderLabel(client.payment_provider, locale)}
-          </p>
-          <SubscriptionEditForm
-            subscriptionId={subscriptions[0].id}
-            planName={subscriptions[0].plan_name}
-            amountCents={subscriptions[0].amount_cents}
-            currency={subscriptions[0].currency}
-            locale={locale}
-          />
+          {canWrite && (
+            <SubscriptionEditForm
+              subscriptionId={subscriptions[0].id}
+              planName={subscriptions[0].plan_name}
+              amountCents={subscriptions[0].amount_cents}
+              currency={subscriptions[0].currency}
+              locale={locale}
+            />
+          )}
         </section>
       )}
     </>

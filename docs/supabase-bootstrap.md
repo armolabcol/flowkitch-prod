@@ -14,5 +14,6 @@ Las migraciones SQL son solo para **crear el esquema** la primera vez.
 | 5 | `005_phase4_phase6.sql` |
 | 6 | `006_client_payment_refs.sql` |
 | 7 | `008_billing_providers.sql` |
+| 8 | `009_rbac_profiles.sql` |
 
-`007_pilot_client_template.sql` está **deprecated** — usar `/admin/onboarding`.
+Ver [`docs/rbac-roles.md`](rbac-roles.md) para roles y permisos.

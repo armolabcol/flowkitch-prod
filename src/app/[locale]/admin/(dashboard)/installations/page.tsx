@@ -1,8 +1,10 @@
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { InstallationApiKeyActions } from "@/components/saas/InstallationApiKeyActions";
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
+import { getPageAdminScope } from "@/lib/auth/page-scope";
+import { canRotateApiKeys } from "@/lib/auth/permissions";
+import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import { listInstallationsWithDetails } from "@/services/saas/admin-service";
-import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -11,7 +13,9 @@ export default async function AdminInstallationsPage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const installations = await listInstallationsWithDetails();
+  const { scope } = await getPageAdminScope(locale);
+  const installations = await listInstallationsWithDetails(scope);
+  const showKeyActions = canRotateApiKeys(scope);
 
   return (
     <>
@@ -37,11 +41,15 @@ export default async function AdminInstallationsPage({ params }: Props) {
           />,
           `v${i.plugin_version}`,
           `••••${i.api_key_last4}`,
-          <InstallationApiKeyActions
-            key={`actions-${i.id}`}
-            installationId={i.id}
-            locale={locale}
-          />,
+          showKeyActions ? (
+            <InstallationApiKeyActions
+              key={`actions-${i.id}`}
+              installationId={i.id}
+              locale={locale}
+            />
+          ) : (
+            "—"
+          ),
         ])}
       />
     </>

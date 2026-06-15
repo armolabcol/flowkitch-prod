@@ -18,9 +18,12 @@ type OnboardingResult = {
   portalUser?: { action: string; email?: string; reason?: string };
 };
 
-type Props = { locale: "es" | "en" };
+type Props = {
+  locale: "es" | "en";
+  salesAgents?: { id: string; email: string; full_name: string | null }[];
+};
 
-export function OnboardingForm({ locale }: Props) {
+export function OnboardingForm({ locale, salesAgents = [] }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<OnboardingResult | null>(null);
@@ -91,6 +94,7 @@ export function OnboardingForm({ locale }: Props) {
             fullName: String(fd.get("portalName") ?? "") || undefined,
           }
         : undefined,
+      assignedSalesAgentId: String(fd.get("salesAgentId") ?? "") || undefined,
     };
 
     try {
@@ -250,6 +254,19 @@ export function OnboardingForm({ locale }: Props) {
       <h3 className="sm:col-span-2 mt-2 text-sm font-medium text-white">
         {locale === "es" ? "Usuario portal (opcional)" : "Portal user (optional)"}
       </h3>
+      {salesAgents.length > 0 && (
+        <label className="sm:col-span-2 text-xs text-kitch-muted">
+          {locale === "es" ? "Agente comercial (opcional)" : "Sales agent (optional)"}
+          <select name="salesAgentId" className={fieldClass} defaultValue="">
+            <option value="">{locale === "es" ? "Sin asignar" : "Unassigned"}</option>
+            {salesAgents.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.full_name ?? a.email}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <label className="text-xs text-kitch-muted">
         {locale === "es" ? "Email portal" : "Portal email"}
         <input name="portalEmail" type="email" className={fieldClass} />

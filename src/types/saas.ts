@@ -1,13 +1,15 @@
 /** User roles — extensible for future RBAC */
 export type UserRole =
-  | "armo_admin"
-  | "client_user"
   | "super_admin"
+  | "regional_admin"
+  | "client_user"
   | "billing_admin"
   | "support_agent"
   | "sales_agent"
   | "client_owner"
-  | "client_billing";
+  | "client_billing"
+  /** @deprecated migrated to super_admin */
+  | "armo_admin";
 
 export type LicenseStatus =
   | "active"
@@ -35,6 +37,7 @@ export interface Client {
   country: string;
   email: string;
   payment_provider: PaymentProvider | null;
+  assigned_sales_agent_id: string | null;
   created_at: string;
 }
 

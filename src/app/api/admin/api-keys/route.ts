@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
-import { getAdminApiSession } from "@/lib/auth/admin-api";
+import {
+  canRotateApiKeys,
+  forbidden,
+  requireClientAccess,
+  requireScopedAdmin,
+  unauthorized,
+} from "@/lib/auth/admin-api-helpers";
+import { getClientIdForInstallation } from "@/services/saas/scope-service";
 import { rotateApiKey, revokeActiveApiKeys } from "@/services/api-key-service";
 
 type Body = {
@@ -8,9 +15,11 @@ type Body = {
 };
 
 export async function POST(request: Request) {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
+  const ctx = await requireScopedAdmin();
+  if (!ctx) return unauthorized();
+
+  if (!canRotateApiKeys(ctx.scope)) {
+    return forbidden("Cannot rotate API keys");
   }
 
   let body: Body;
@@ -28,15 +37,23 @@ export async function POST(request: Request) {
     );
   }
 
+  const clientId = await getClientIdForInstallation(installationId);
+  if (!clientId) {
+    return NextResponse.json({ ok: false, message: "Installation not found" }, { status: 404 });
+  }
+
+  const access = await requireClientAccess(clientId);
+  if ("error" in access && access.error) return access.error;
+
   if (body.action === "revoke") {
-    const ok = await revokeActiveApiKeys(installationId, session.userId);
+    const ok = await revokeActiveApiKeys(installationId, ctx.session.userId);
     return NextResponse.json(
       ok ? { ok: true, message: "API keys revoked" } : { ok: false, message: "Revoke failed" },
       { status: ok ? 200 : 500 },
     );
   }
 
-  const result = await rotateApiKey(installationId, session.userId);
+  const result = await rotateApiKey(installationId, ctx.session.userId);
   if (!result) {
     return NextResponse.json({ ok: false, message: "Rotate failed" }, { status: 500 });
   }

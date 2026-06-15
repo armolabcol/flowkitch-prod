@@ -2,8 +2,8 @@ import type { UserRole } from "@/types/saas";
 
 /** Roles with access to /admin */
 export const ADMIN_ROLES: readonly UserRole[] = [
-  "armo_admin",
   "super_admin",
+  "regional_admin",
   "billing_admin",
   "support_agent",
   "sales_agent",
@@ -25,7 +25,11 @@ export function isClientRole(role: UserRole): boolean {
 }
 
 export function isKnownRole(role: string): role is UserRole {
-  return isAdminRole(role as UserRole) || isClientRole(role as UserRole);
+  return (
+    isAdminRole(role as UserRole) ||
+    isClientRole(role as UserRole) ||
+    role === "armo_admin"
+  );
 }
 
 export function isBillingSettingsRole(role: UserRole): boolean {

@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { getAdminApiSession } from "@/lib/auth/admin-api";
+import {
+  canCreateClientInCountry,
+  forbidden,
+  requireClientWrite,
+  requireScopedAdmin,
+  unauthorized,
+} from "@/lib/auth/admin-api-helpers";
 import { createClientRecord, updateClientRecord } from "@/services/saas/clients-admin-service";
 
 type PostBody = {
@@ -17,12 +23,15 @@ type PatchBody = {
   taxId?: string;
   stripeCustomerId?: string;
   wompiCustomerEmail?: string;
+  assignedSalesAgentId?: string | null;
 };
 
 export async function POST(request: Request) {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
+  const ctx = await requireScopedAdmin();
+  if (!ctx) return unauthorized();
+
+  if (ctx.scope.kind === "portfolio") {
+    return forbidden("Sales agents cannot create clients");
   }
 
   let body: PostBody;
@@ -43,12 +52,16 @@ export async function POST(request: Request) {
     );
   }
 
+  if (!canCreateClientInCountry(ctx.scope, country)) {
+    return forbidden(`Cannot create clients in ${country}`);
+  }
+
   const result = await createClientRecord({
     name,
     email,
     country,
     taxId: body.taxId,
-    actorId: session.userId,
+    actorId: ctx.session.userId,
   });
 
   if (!result) {
@@ -59,11 +72,6 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
-
   let body: PatchBody;
   try {
     body = await request.json();
@@ -76,6 +84,9 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ ok: false, message: "clientId required" }, { status: 400 });
   }
 
+  const access = await requireClientWrite(clientId);
+  if ("error" in access && access.error) return access.error;
+
   const ok = await updateClientRecord(
     clientId,
     {
@@ -85,8 +96,9 @@ export async function PATCH(request: Request) {
       taxId: body.taxId,
       stripeCustomerId: body.stripeCustomerId,
       wompiCustomerEmail: body.wompiCustomerEmail,
+      assignedSalesAgentId: body.assignedSalesAgentId,
     },
-    session.userId,
+    access.session.userId,
   );
 
   return NextResponse.json(

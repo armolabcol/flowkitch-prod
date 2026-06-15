@@ -40,14 +40,21 @@ function mapProfile(row: {
   role: string;
   client_id: string | null;
   full_name: string | null;
+  assigned_country: string | null;
 }): AuthProfile | null {
-  if (!isKnownRole(row.role)) return null;
+  const role = row.role === "armo_admin" ? "super_admin" : row.role;
+  if (!isKnownRole(role)) return null;
+  const assigned =
+    row.assigned_country === "CO" || row.assigned_country === "US"
+      ? row.assigned_country
+      : null;
   return {
     id: row.id,
     email: row.email,
-    role: row.role as UserRole,
+    role: role as UserRole,
     client_id: row.client_id,
     full_name: row.full_name,
+    assigned_country: assigned,
   };
 }
 

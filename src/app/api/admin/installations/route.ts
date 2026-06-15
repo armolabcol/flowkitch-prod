@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server";
-import { getAdminApiSession } from "@/lib/auth/admin-api";
+import {
+  canRotateApiKeys,
+  forbidden,
+  requireClientWrite,
+  requireScopedAdmin,
+  unauthorized,
+} from "@/lib/auth/admin-api-helpers";
+import {
+  getClientIdForInstallation,
+  getClientIdForRestaurant,
+} from "@/services/saas/scope-service";
 import {
   createInstallationRecord,
   extendInstallationLicense,
@@ -33,10 +43,8 @@ type Body = {
 };
 
 export async function POST(request: Request) {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
+  const ctx = await requireScopedAdmin();
+  if (!ctx) return unauthorized();
 
   let body: Body;
   try {
@@ -46,6 +54,10 @@ export async function POST(request: Request) {
   }
 
   if (body.action === "create") {
+    if (ctx.scope.kind === "portfolio") {
+      return forbidden("Sales agents cannot create installations");
+    }
+
     const restaurantId = body.restaurantId?.trim();
     const siteUrl = body.siteUrl?.trim();
     if (!restaurantId || !siteUrl) {
@@ -55,18 +67,26 @@ export async function POST(request: Request) {
       );
     }
 
+    const clientId = await getClientIdForRestaurant(restaurantId);
+    if (!clientId) {
+      return NextResponse.json({ ok: false, message: "Restaurant not found" }, { status: 404 });
+    }
+
+    const access = await requireClientWrite(clientId);
+    if ("error" in access && access.error) return access.error;
+
     const installation = await createInstallationRecord({
       restaurantId,
       siteUrl,
       pluginVersion: body.pluginVersion,
       licenseDays: body.licenseDays,
-      actorId: session.userId,
+      actorId: ctx.session.userId,
     });
     if (!installation) {
       return NextResponse.json({ ok: false, message: "Create failed" }, { status: 500 });
     }
 
-    const key = await createApiKeyRecord(installation.id, session.userId);
+    const key = await createApiKeyRecord(installation.id, ctx.session.userId);
     return NextResponse.json({
       ok: true,
       installationId: installation.id,
@@ -83,9 +103,17 @@ export async function POST(request: Request) {
     );
   }
 
+  const clientId = await getClientIdForInstallation(installationId);
+  if (!clientId) {
+    return NextResponse.json({ ok: false, message: "Installation not found" }, { status: 404 });
+  }
+
+  const access = await requireClientWrite(clientId);
+  if ("error" in access && access.error) return access.error;
+
   if (body.action === "extend") {
     const days = body.days ?? 30;
-    const ok = await extendInstallationLicense(installationId, days, session.userId);
+    const ok = await extendInstallationLicense(installationId, days, ctx.session.userId);
     return NextResponse.json(
       ok
         ? { ok: true, message: `Extended ${days} days` }
@@ -109,7 +137,7 @@ export async function POST(request: Request) {
         license_expires_at: body.license_expires_at,
         grace_until: body.grace_until,
       },
-      session.userId,
+      ctx.session.userId,
     );
     return NextResponse.json(
       ok ? { ok: true, message: "Installation updated" } : { ok: false, message: "Patch failed" },
@@ -130,7 +158,7 @@ export async function POST(request: Request) {
         license_expires_at: body.license_expires_at,
         grace_until: body.grace_until,
       },
-      session.userId,
+      ctx.session.userId,
     );
     return NextResponse.json(
       ok ? { ok: true, message: "License updated" } : { ok: false, message: "Update failed" },

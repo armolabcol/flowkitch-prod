@@ -33,9 +33,15 @@ Extiende `auth.users` de Supabase.
 | `created_at` | timestamptz | |
 | `updated_at` | timestamptz | |
 
-**Roles actuales:** `armo_admin`, `client_user`
+**Roles actuales:** `super_admin`, `regional_admin`, `sales_agent`, `client_user`, `client_owner`, `client_billing`
 
-**Roles futuros:** `super_admin`, `billing_admin`, `support_agent`, `sales_agent`, `client_owner`, `client_billing`
+**Roles legacy:** `billing_admin`, `support_agent` (acceso global lectura, migrar manualmente)
+
+Ver [`docs/rbac-roles.md`](rbac-roles.md) para matriz completa.
+
+| Campo | Tipo | Notas |
+|-------|------|-------|
+| `assigned_country` | text nullable | `CO` / `US` — solo `regional_admin` |
 
 ---
 
@@ -48,6 +54,8 @@ Extiende `auth.users` de Supabase.
 | `country` | text | ISO 3166-1 alpha-2 (`CO`, `US`) |
 | `email` | text | Contacto principal |
 | `tax_id` | text nullable | NIT / EIN |
+| `assigned_sales_agent_id` | uuid FK nullable | Agente comercial asignado |
+| `payment_provider` | text nullable | stripe / wompi / payu |
 | `created_at` | timestamptz | |
 
 ---

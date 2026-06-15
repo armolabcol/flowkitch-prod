@@ -9,7 +9,7 @@ import {
   withLocale,
   type Locale,
 } from "@/lib/i18n";
-import { isAdminRole, isClientRole } from "@/lib/auth/roles";
+import { isAdminRole, isClientRole, isKnownRole } from "@/lib/auth/roles";
 import { fetchProfileRole } from "@/lib/auth/profile-lookup";
 import type { UserRole } from "@/types/saas";
 
@@ -40,6 +40,12 @@ function isPublicSaasPath(path: string): boolean {
 /** Routes that need session refresh + role checks (skip marketing for Hostinger limits) */
 export function needsSaasAuth(path: string): boolean {
   return isSaasProtectedPath(path) && !isPublicSaasPath(path);
+}
+
+function normalizeProfileRole(role: string | null): UserRole | null {
+  if (!role) return null;
+  const normalized = role === "armo_admin" ? "super_admin" : role;
+  return isKnownRole(normalized) ? (normalized as UserRole) : null;
 }
 
 export async function refreshSupabaseSession(
@@ -91,7 +97,7 @@ export async function refreshSupabaseSession(
     return {
       response: supabaseResponse,
       userId: user.id,
-      role: (profileRole as UserRole | undefined) ?? null,
+      role: normalizeProfileRole(profileRole),
     };
   } catch {
     return { response: supabaseResponse, userId: user.id, role: null };

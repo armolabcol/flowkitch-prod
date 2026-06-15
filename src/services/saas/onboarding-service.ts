@@ -38,6 +38,7 @@ export type OnboardingInput = {
     email: string;
     fullName?: string | null;
   };
+  assignedSalesAgentId?: string | null;
   actorId?: string | null;
 };
 
@@ -99,6 +100,7 @@ export async function provisionClientStack(
     country: input.client.country,
     taxId: input.client.taxId,
     paymentProvider,
+    assignedSalesAgentId: input.assignedSalesAgentId,
     actorId: input.actorId,
   });
   if (!client) {

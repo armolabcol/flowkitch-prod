@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { getAdminApiSession } from "@/lib/auth/admin-api";
+import {
+  forbidden,
+  requireClientWrite,
+  requireScopedAdmin,
+  unauthorized,
+} from "@/lib/auth/admin-api-helpers";
+import { getClientIdForRestaurant } from "@/services/saas/scope-service";
 import {
   createRestaurantRecord,
   updateRestaurantRecord,
@@ -20,9 +26,11 @@ type PatchBody = {
 };
 
 export async function POST(request: Request) {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
+  const ctx = await requireScopedAdmin();
+  if (!ctx) return unauthorized();
+
+  if (ctx.scope.kind === "portfolio") {
+    return forbidden("Sales agents cannot create restaurants");
   }
 
   let body: PostBody;
@@ -42,6 +50,9 @@ export async function POST(request: Request) {
     );
   }
 
+  const access = await requireClientWrite(clientId);
+  if ("error" in access && access.error) return access.error;
+
   const country = body.country === "US" ? "US" : "CO";
   const result = await createRestaurantRecord({
     clientId,
@@ -49,7 +60,7 @@ export async function POST(request: Request) {
     city,
     country,
     timezone: body.timezone,
-    actorId: session.userId,
+    actorId: ctx.session.userId,
   });
 
   if (!result) {
@@ -60,11 +71,6 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
-
   let body: PatchBody;
   try {
     body = await request.json();
@@ -77,10 +83,18 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ ok: false, message: "restaurantId required" }, { status: 400 });
   }
 
+  const clientId = await getClientIdForRestaurant(restaurantId);
+  if (!clientId) {
+    return NextResponse.json({ ok: false, message: "Restaurant not found" }, { status: 404 });
+  }
+
+  const access = await requireClientWrite(clientId);
+  if ("error" in access && access.error) return access.error;
+
   const ok = await updateRestaurantRecord(
     restaurantId,
     { name: body.name, city: body.city },
-    session.userId,
+    access.session.userId,
   );
 
   return NextResponse.json(

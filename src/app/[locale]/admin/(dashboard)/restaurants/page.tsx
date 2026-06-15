@@ -1,5 +1,6 @@
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { getClientsMap, listRestaurants } from "@/services/saas/admin-service";
+import { requireAdminRoute } from "@/lib/auth/page-scope";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -10,9 +11,11 @@ export default async function AdminRestaurantsPage({ params }: Props) {
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
 
+  const { scope } = await requireAdminRoute(locale, "restaurants");
+
   const [restaurants, clientMap] = await Promise.all([
-    listRestaurants(),
-    getClientsMap(),
+    listRestaurants(scope),
+    getClientsMap(scope),
   ]);
 
   return (

@@ -6,6 +6,7 @@ export interface AuthProfile {
   role: UserRole;
   client_id: string | null;
   full_name: string | null;
+  assigned_country: "CO" | "US" | null;
 }
 
 export interface AuthSession {

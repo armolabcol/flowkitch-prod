@@ -1,5 +1,6 @@
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { listDemoLeads } from "@/services/saas/leads-service";
+import { requireAdminRoute } from "@/lib/auth/page-scope";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -9,7 +10,14 @@ export default async function AdminLeadsPage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const leads = await listDemoLeads();
+  const { scope } = await requireAdminRoute(locale, "leads");
+  let leads = await listDemoLeads();
+
+  if (scope.kind === "country") {
+    leads = leads.filter((l) => l.country === scope.country);
+  } else if (scope.kind === "portfolio") {
+    leads = [];
+  }
 
   return (
     <>

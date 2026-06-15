@@ -1,5 +1,6 @@
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { listMaintenanceLogs } from "@/services/saas/admin-service";
+import { getPageAdminScope, requireAdminRoute } from "@/lib/auth/page-scope";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
@@ -9,7 +10,8 @@ export default async function AdminMaintenancePage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const logs = await listMaintenanceLogs();
+  const { scope } = await requireAdminRoute(locale, "maintenance");
+  const logs = await listMaintenanceLogs(scope);
 
   return (
     <>

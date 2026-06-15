@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAdminApiSession } from "@/lib/auth/admin-api";
+import { requireScopedAdmin, unauthorized } from "@/lib/auth/admin-api-helpers";
 import { validateLicenseCheck } from "@/services/license-service";
 import { submitDailyTelemetry } from "@/services/saas/plugin-telemetry-service";
 
@@ -9,10 +9,8 @@ type Body = {
 };
 
 export async function POST(request: Request) {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
+  const ctx = await requireScopedAdmin();
+  if (!ctx) return unauthorized();
 
   let body: Body;
   try {

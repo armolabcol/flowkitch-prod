@@ -8,6 +8,7 @@ export async function createClientRecord(params: {
   email: string;
   taxId?: string | null;
   paymentProvider?: "stripe" | "wompi" | "payu" | null;
+  assignedSalesAgentId?: string | null;
   actorId?: string | null;
 }): Promise<{ id: string } | null> {
   const supabase = getServiceSaasClient();
@@ -19,6 +20,7 @@ export async function createClientRecord(params: {
     email: params.email.trim().toLowerCase(),
     tax_id: params.taxId?.trim() || null,
     payment_provider: params.paymentProvider ?? null,
+    assigned_sales_agent_id: params.assignedSalesAgentId ?? null,
   };
 
   const { data, error } = await supabase
@@ -51,6 +53,7 @@ export async function updateClientRecord(
     wompiCustomerEmail?: string | null;
     payuBuyerEmail?: string | null;
     paymentProvider?: "stripe" | "wompi" | "payu" | null;
+    assignedSalesAgentId?: string | null;
   },
   actorId?: string | null,
 ): Promise<boolean> {
@@ -73,6 +76,9 @@ export async function updateClientRecord(
   }
   if (updates.paymentProvider !== undefined) {
     patch.payment_provider = updates.paymentProvider;
+  }
+  if (updates.assignedSalesAgentId !== undefined) {
+    patch.assigned_sales_agent_id = updates.assignedSalesAgentId;
   }
 
   const { error } = await supabase

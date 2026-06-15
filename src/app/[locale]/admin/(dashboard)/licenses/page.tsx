@@ -1,9 +1,11 @@
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { InstallationLicenseActions } from "@/components/saas/InstallationLicenseActions";
 import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { listInstallationsWithDetails } from "@/services/saas/admin-service";
-import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
+import { getPageAdminScope } from "@/lib/auth/page-scope";
+import { canRotateApiKeys } from "@/lib/auth/permissions";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
+import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
+import { listInstallationsWithDetails } from "@/services/saas/admin-service";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -11,7 +13,9 @@ export default async function AdminLicensesPage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const installations = await listInstallationsWithDetails();
+  const { scope } = await getPageAdminScope(locale);
+  const installations = await listInstallationsWithDetails(scope);
+  const showActions = canRotateApiKeys(scope);
 
   return (
     <>
@@ -33,13 +37,17 @@ export default async function AdminLicensesPage({ params }: Props) {
           />,
           formatSaasDate(i.license_expires_at, locale),
           formatSaasDate(i.grace_until, locale),
-          <InstallationLicenseActions
-            key={`lic-${i.id}`}
-            installationId={i.id}
-            currentStatus={i.license_status}
-            locale={locale}
-            statusLabels={dict.licenseStatus}
-          />,
+          showActions ? (
+            <InstallationLicenseActions
+              key={`lic-${i.id}`}
+              installationId={i.id}
+              currentStatus={i.license_status}
+              locale={locale}
+              statusLabels={dict.licenseStatus}
+            />
+          ) : (
+            "—"
+          ),
         ])}
       />
     </>

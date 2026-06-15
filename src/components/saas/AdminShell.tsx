@@ -17,10 +17,16 @@ import {
 import { KitchLogo } from "@/components/brand/KitchLogo";
 import { SaasLocaleSwitcher } from "@/components/saas/SaasLocaleSwitcher";
 import { cn } from "@/lib/cn";
+import type { AdminRouteKey } from "@/lib/auth/permissions";
 import type { SaasDictionary } from "@/lib/saas-dictionaries";
 import { withLocale, type Locale } from "@/lib/i18n";
 
-const navItems = [
+const navItems: {
+  key: AdminRouteKey;
+  href: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+}[] = [
   { key: "dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
   { key: "onboarding", href: "/admin/onboarding", icon: UserPlus },
   { key: "clients", href: "/admin/clients", icon: Users },
@@ -31,19 +37,24 @@ const navItems = [
   { key: "leads", href: "/admin/leads", icon: Mail },
   { key: "maintenance", href: "/admin/maintenance", icon: Wrench },
   { key: "settings", href: "/admin/settings", icon: Settings },
-] as const;
+];
 
 export function AdminShell({
   locale,
   dictionary,
+  roleBadge,
+  allowedRoutes,
   children,
 }: {
   locale: Locale;
   dictionary: SaasDictionary;
+  roleBadge: string;
+  allowedRoutes: AdminRouteKey[];
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
   const d = dictionary.admin;
+  const visibleNav = navItems.filter((item) => allowedRoutes.includes(item.key));
 
   return (
     <div className="flex min-h-dvh bg-kitch-bg">
@@ -53,10 +64,10 @@ export function AdminShell({
           <p className="mt-2 text-xs text-kitch-subtle">{d.subtitle}</p>
         </div>
         <nav className="flex-1 space-y-1 p-3">
-          {navItems.map((item) => {
+          {visibleNav.map((item) => {
             const href = withLocale(locale, item.href);
             const active =
-              "exact" in item && item.exact
+              item.exact
                 ? pathname === href || pathname === `${href}/`
                 : pathname.startsWith(href);
             const Icon = item.icon;
@@ -79,7 +90,7 @@ export function AdminShell({
         </nav>
         <div className="border-t border-white/[0.06] p-4">
           <span className="inline-flex rounded-full border border-kitch-accent/25 bg-kitch-accent/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-kitch-accent">
-            ARMO Admin
+            {roleBadge}
           </span>
         </div>
       </aside>
@@ -94,7 +105,7 @@ export function AdminShell({
           </h1>
           <div className="flex items-center gap-3">
             <span className="hidden rounded-full border border-white/10 bg-kitch-elevated px-2.5 py-1 text-[10px] uppercase tracking-wider text-kitch-subtle sm:inline-flex">
-              {d.mockBadge}
+              {roleBadge}
             </span>
             <SaasLocaleSwitcher locale={locale} />
           </div>
@@ -102,12 +113,9 @@ export function AdminShell({
 
         <div className="border-b border-white/[0.06] bg-kitch-bg/80 px-4 py-2 lg:hidden">
           <nav className="flex gap-1 overflow-x-auto pb-1 text-xs">
-            {navItems.map((item) => {
+            {visibleNav.map((item) => {
               const href = withLocale(locale, item.href);
-              const active =
-                "exact" in item && item.exact
-                  ? pathname === href
-                  : pathname.startsWith(href);
+              const active = item.exact ? pathname === href : pathname.startsWith(href);
               return (
                 <Link
                   key={item.key}

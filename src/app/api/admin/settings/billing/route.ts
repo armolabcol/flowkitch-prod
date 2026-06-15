@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getAdminApiSession } from "@/lib/auth/admin-api";
-import { isBillingSettingsRole } from "@/lib/auth/roles";
+import { requireScopedAdmin, forbidden, unauthorized } from "@/lib/auth/admin-api-helpers";
+import { canManageBillingSettings } from "@/lib/auth/permissions";
 import {
   isPayuCheckoutConfigured,
   isStripeCheckoutConfigured,
@@ -13,19 +13,15 @@ import {
 } from "@/services/saas/platform-settings-service";
 
 export async function GET() {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
+  const ctx = await requireScopedAdmin();
+  if (!ctx) return unauthorized();
 
   const settings = await getBillingSettings();
 
   return NextResponse.json({
     ok: true,
     ...settings,
-    canEdit: session.profile
-      ? isBillingSettingsRole(session.profile.role)
-      : false,
+    canEdit: canManageBillingSettings(ctx.session.profile!.role),
     providers: {
       stripe: isStripeCheckoutConfigured(),
       wompi: isWompiCheckoutConfigured(),
@@ -37,13 +33,11 @@ export async function GET() {
 type PatchBody = { coProvider?: string };
 
 export async function PATCH(request: Request) {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-  }
+  const ctx = await requireScopedAdmin();
+  if (!ctx) return unauthorized();
 
-  if (!session?.profile || !isBillingSettingsRole(session.profile.role)) {
-    return NextResponse.json({ ok: false, message: "Forbidden" }, { status: 403 });
+  if (!canManageBillingSettings(ctx.session.profile!.role)) {
+    return forbidden();
   }
 
   let body: PatchBody;
@@ -54,7 +48,7 @@ export async function PATCH(request: Request) {
   }
 
   const coProvider = body.coProvider === "payu" ? "payu" : "wompi";
-  const ok = await setCoPaymentProvider(coProvider as CoPaymentProvider, session.userId);
+  const ok = await setCoPaymentProvider(coProvider as CoPaymentProvider, ctx.session.userId);
 
   if (!ok) {
     return NextResponse.json({ ok: false, message: "Failed to save" }, { status: 500 });

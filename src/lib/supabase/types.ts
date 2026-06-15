@@ -21,6 +21,7 @@ export interface Database {
           role: string;
           client_id: string | null;
           full_name: string | null;
+          assigned_country: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -30,6 +31,7 @@ export interface Database {
           role?: string;
           client_id?: string | null;
           full_name?: string | null;
+          assigned_country?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -47,6 +49,7 @@ export interface Database {
           wompi_customer_email: string | null;
           payu_buyer_email: string | null;
           payment_provider: string | null;
+          assigned_sales_agent_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -59,6 +62,7 @@ export interface Database {
           wompi_customer_email?: string | null;
           payu_buyer_email?: string | null;
           payment_provider?: string | null;
+          assigned_sales_agent_id?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["clients"]["Insert"]>;

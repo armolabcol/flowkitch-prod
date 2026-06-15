@@ -9,6 +9,7 @@ import { ExpiringLicensesAlert } from "@/components/saas/ExpiringLicensesAlert";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { StatCard } from "@/components/saas/StatCard";
 import { getAdminDashboardStats } from "@/services/saas/admin-service";
+import type { StaffScope } from "@/lib/auth/permissions";
 import {
   formatSaasCurrency,
   formatSaasDate,
@@ -19,11 +20,15 @@ import type { Locale } from "@/lib/i18n";
 export async function AdminDashboard({
   locale,
   dictionary,
+  scope,
+  isSalesAgent = false,
 }: {
   locale: Locale;
   dictionary: SaasDictionary;
+  scope: StaffScope;
+  isSalesAgent?: boolean;
 }) {
-  const stats = await getAdminDashboardStats();
+  const stats = await getAdminDashboardStats(scope);
   const d = dictionary.admin;
 
   const formatRevenue = (amount: number, country: string) => {
@@ -37,7 +42,13 @@ export async function AdminDashboard({
         <h2 className="text-2xl font-semibold tracking-tight text-white">
           {d.nav.dashboard}
         </h2>
-        <p className="mt-1 text-sm text-kitch-muted">{d.subtitle}</p>
+        <p className="mt-1 text-sm text-kitch-muted">
+          {isSalesAgent
+            ? locale === "es"
+              ? `Tu cartera: ${stats.assignedClients} cliente(s)`
+              : `Your portfolio: ${stats.assignedClients} client(s)`
+            : d.subtitle}
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -75,7 +86,7 @@ export async function AdminDashboard({
         />
       </div>
 
-      <ExpiringLicensesAlert locale={locale} />
+      <ExpiringLicensesAlert locale={locale} scope={scope} />
 
       <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-kitch-surface/60">
         <div className="border-b border-white/[0.06] px-5 py-4">

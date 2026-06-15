@@ -1,5 +1,6 @@
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { BillingSettingsPanel } from "@/components/saas/BillingSettingsPanel";
+import { requireAdminRoute } from "@/lib/auth/page-scope";
 import { getServerSaasClient } from "@/services/saas/db";
 import { listRecentAuditLogs } from "@/services/audit-service";
 import { isSupabaseConfigured, isHmacConfigured, env } from "@/lib/env";
@@ -11,6 +12,7 @@ type Props = { params: Promise<{ locale: string }> };
 export default async function AdminSettingsPage({ params }: Props) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
+  await requireAdminRoute(locale, "settings");
   const dict = getSaasDictionary(locale);
 
   let dbStats = "—";

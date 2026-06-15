@@ -5,6 +5,11 @@ import {
   pickActiveApiKeyLast4,
 } from "@/services/saas/mappers";
 import { getServerSaasClient, EMPTY_ADMIN_STATS } from "@/services/saas/db";
+import {
+  filterClientsByScope,
+  getAllowedClientIds,
+} from "@/services/saas/scope-service";
+import type { StaffScope } from "@/lib/auth/permissions";
 import type {
   Client,
   InstallationWithDetails,
@@ -19,9 +24,13 @@ type InstallationJoined = Database["public"]["Tables"]["plugin_installations"]["
   };
 };
 
-async function fetchInstallationsJoined(): Promise<InstallationWithDetails[]> {
+async function fetchInstallationsJoined(
+  scope: StaffScope,
+): Promise<InstallationWithDetails[]> {
   const supabase = await getServerSaasClient();
   if (!supabase) return [];
+
+  const allowedIds = await getAllowedClientIds(scope);
 
   const { data: rawInstallations, error } = await supabase
     .from("plugin_installations")
@@ -40,7 +49,14 @@ async function fetchInstallationsJoined(): Promise<InstallationWithDetails[]> {
 
   if (error || !installations?.length) return [];
 
-  const ids = installations.map((i) => i.id);
+  const filtered = installations.filter((row) => {
+    const client = row.restaurants?.clients;
+    if (!client) return false;
+    if (allowedIds === null) return true;
+    return allowedIds.includes(client.id);
+  });
+
+  const ids = filtered.map((i) => i.id);
   const { data: rawKeys } = await supabase
     .from("api_keys")
     .select("installation_id, last4, status")
@@ -57,32 +73,27 @@ async function fetchInstallationsJoined(): Promise<InstallationWithDetails[]> {
     keysByInstallation.set(key.installation_id, list);
   }
 
-  return (installations as InstallationJoined[])
-    .filter((row) => row.restaurants?.clients)
-    .map((row) =>
-      buildInstallationWithDetails(
-        row,
-        row.restaurants,
-        row.restaurants.clients,
-        pickActiveApiKeyLast4(keysByInstallation.get(row.id) ?? []),
-      ),
-    );
+  return filtered.map((row) =>
+    buildInstallationWithDetails(
+      row,
+      row.restaurants,
+      row.restaurants.clients,
+      pickActiveApiKeyLast4(keysByInstallation.get(row.id) ?? []),
+    ),
+  );
 }
 
-export async function getAdminDashboardStats() {
+export async function getAdminDashboardStats(scope: StaffScope) {
   const supabase = await getServerSaasClient();
   if (!supabase) return { ...EMPTY_ADMIN_STATS, installations: [] };
 
-  const { count: totalClients } = await supabase
-    .from("clients")
-    .select("*", { count: "exact", head: true });
-
-  const installations = await fetchInstallationsJoined();
+  const clients = await listClients(scope);
+  const installations = await fetchInstallationsJoined(scope);
   const now = Date.now();
   const thirtyDays = 30 * 24 * 60 * 60 * 1000;
 
   return {
-    totalClients: totalClients ?? 0,
+    totalClients: clients.length,
     activeInstallations: installations.filter(
       (i) =>
         i.license_status === "active" || i.license_status === "grace_period",
@@ -97,10 +108,11 @@ export async function getAdminDashboardStats() {
     totalOrdersMonth: installations.reduce((s, i) => s + i.orders_month, 0),
     totalRevenueMonth: installations.reduce((s, i) => s + i.revenue_month, 0),
     installations,
+    assignedClients: clients.length,
   };
 }
 
-export async function listClients(): Promise<Client[]> {
+export async function listClients(scope: StaffScope): Promise<Client[]> {
   const supabase = await getServerSaasClient();
   if (!supabase) return [];
 
@@ -110,17 +122,22 @@ export async function listClients(): Promise<Client[]> {
     .order("name");
 
   if (error || !data) return [];
-  return data.map(mapClient);
+  return filterClientsByScope(data.map(mapClient), scope);
 }
 
-export async function listRestaurants(): Promise<Restaurant[]> {
+export async function listRestaurants(scope: StaffScope): Promise<Restaurant[]> {
   const supabase = await getServerSaasClient();
   if (!supabase) return [];
 
-  const { data, error } = await supabase
-    .from("restaurants")
-    .select("*")
-    .order("name");
+  const allowedIds = await getAllowedClientIds(scope);
+
+  let query = supabase.from("restaurants").select("*").order("name");
+  if (allowedIds !== null) {
+    if (allowedIds.length === 0) return [];
+    query = query.in("client_id", allowedIds);
+  }
+
+  const { data, error } = await query;
 
   if (error || !data) return [];
   return data.map((r) => ({
@@ -133,24 +150,33 @@ export async function listRestaurants(): Promise<Restaurant[]> {
   }));
 }
 
-export async function listInstallationsWithDetails(): Promise<InstallationWithDetails[]> {
-  return fetchInstallationsJoined();
+export async function listInstallationsWithDetails(
+  scope: StaffScope,
+): Promise<InstallationWithDetails[]> {
+  return fetchInstallationsJoined(scope);
 }
 
-export async function listMaintenanceLogs(): Promise<MaintenanceLog[]> {
+export async function listMaintenanceLogs(
+  scope: StaffScope,
+): Promise<MaintenanceLog[]> {
   const supabase = await getServerSaasClient();
   if (!supabase) return [];
+
+  const installations = await fetchInstallationsJoined(scope);
+  const instIds = installations.map((i) => i.id);
+  if (instIds.length === 0) return [];
 
   const { data, error } = await supabase
     .from("maintenance_logs")
     .select("*")
+    .in("installation_id", instIds)
     .order("scheduled_at", { ascending: false });
 
   if (error || !data) return [];
   return data.map(mapMaintenanceLog);
 }
 
-export async function getClientsMap(): Promise<Record<string, string>> {
-  const clients = await listClients();
+export async function getClientsMap(scope: StaffScope): Promise<Record<string, string>> {
+  const clients = await listClients(scope);
   return Object.fromEntries(clients.map((c) => [c.id, c.name]));
 }

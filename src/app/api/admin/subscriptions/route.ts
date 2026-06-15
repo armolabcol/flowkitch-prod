@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { getAdminApiSession } from "@/lib/auth/admin-api";
+import {
+  forbidden,
+  requireClientWrite,
+  requireScopedAdmin,
+  unauthorized,
+} from "@/lib/auth/admin-api-helpers";
+import { getClientIdForSubscription } from "@/services/saas/scope-service";
 import { updateSubscriptionRecord } from "@/services/saas/subscriptions-admin-service";
 
 type PatchBody = {
@@ -10,9 +16,11 @@ type PatchBody = {
 };
 
 export async function PATCH(request: Request) {
-  const session = await getAdminApiSession();
-  if (!session) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
+  const ctx = await requireScopedAdmin();
+  if (!ctx) return unauthorized();
+
+  if (ctx.scope.kind === "portfolio") {
+    return forbidden("Sales agents cannot edit subscriptions");
   }
 
   let body: PatchBody;
@@ -29,6 +37,14 @@ export async function PATCH(request: Request) {
       { status: 400 },
     );
   }
+
+  const clientId = await getClientIdForSubscription(subscriptionId);
+  if (!clientId) {
+    return NextResponse.json({ ok: false, message: "Subscription not found" }, { status: 404 });
+  }
+
+  const access = await requireClientWrite(clientId);
+  if ("error" in access && access.error) return access.error;
 
   const currency =
     body.currency === "USD" || body.currency === "COP" ? body.currency : undefined;
@@ -47,7 +63,7 @@ export async function PATCH(request: Request) {
       amountCents: body.amountCents,
       currency,
     },
-    session.userId,
+    access.session.userId,
   );
 
   if (!ok) {
