@@ -15,12 +15,14 @@
 
 ```
 super_admin
+  ├── super_admin, billing_admin, support_agent
   ├── regional_admin (CO o US)
-  ├── sales_agent
-  └── client_user (vía portal invite)
+  ├── sales_agent (país + admin regional opcional)
+  ├── client_user / client_owner / client_billing
+  └── clientes + onboarding (cualquier país)
 
 regional_admin
-  ├── sales_agent (mismo país)
+  ├── sales_agent (mismo país, bajo su gestión)
   ├── clientes + onboarding (mismo país)
   └── client_user (clientes de su país)
 
@@ -28,9 +30,18 @@ sales_agent
   └── solo lectura de cartera; puede invitar client_user a clientes asignados
 ```
 
+## Super administrador — gestión completa
+
+Desde `/admin/users` el super admin puede:
+
+- Invitar **cualquier rol** (staff y portal cliente)
+- Cambiar rol, país y **admin regional** de un agente comercial
+- Reasignar **cliente → agente comercial** en detalle de cliente (cualquier agente)
+- Reasignar usuarios portal a otro cliente
+
 ## Configuración inicial
 
-1. Ejecutar `009_rbac_profiles.sql` en Supabase SQL Editor
+1. Ejecutar `009_rbac_profiles.sql` y `010_staff_hierarchy.sql` en Supabase SQL Editor
 2. Promover primer super admin:
 
 ```sql
@@ -50,7 +61,8 @@ where email = 'tu-email@armolabcol.com';
 
 | Campo | Tabla | Uso |
 |-------|-------|-----|
-| `assigned_country` | `profiles` | `CO` / `US` para `regional_admin` |
+| `assigned_country` | `profiles` | `CO` / `US` para `regional_admin` y `sales_agent` |
+| `managed_by_regional_admin_id` | `profiles` | Admin regional del agente comercial |
 | `assigned_sales_agent_id` | `clients` | UUID del agente comercial |
 
 ## Rutas admin por rol

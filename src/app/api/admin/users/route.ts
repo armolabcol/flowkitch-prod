@@ -1,19 +1,22 @@
 import { NextResponse } from "next/server";
 import {
   canInvitePortalUser,
+  canManageAnyUser,
   canManageStaff,
   forbidden,
   requireClientAccess,
   requireScopedAdmin,
   unauthorized,
 } from "@/lib/auth/admin-api-helpers";
-import { isSalesAgent } from "@/lib/auth/permissions";
+import { isRegionalAdmin } from "@/lib/auth/permissions";
 import type { UserRole } from "@/types/saas";
+import { createServiceSupabaseClient } from "@/lib/supabase/server";
 import {
   invitePortalUser,
   inviteStaffUser,
   linkPortalUser,
   updateProfileAdmin,
+  type StaffInviteRole,
 } from "@/services/saas/profiles-admin-service";
 
 type Body = {
@@ -24,15 +27,33 @@ type Body = {
   profileId?: string;
   role?: string;
   assignedCountry?: string;
+  managedByRegionalAdminId?: string | null;
 };
+
+const STAFF_INVITE_ROLES: StaffInviteRole[] = [
+  "super_admin",
+  "regional_admin",
+  "sales_agent",
+  "billing_admin",
+  "support_agent",
+];
+
+async function assertRegionalAdminId(id: string | null | undefined) {
+  if (!id) return true;
+  const supabase = createServiceSupabaseClient();
+  if (!supabase) return false;
+  const { data } = await supabase
+    .from("profiles")
+    .select("id, role")
+    .eq("id", id)
+    .eq("role", "regional_admin")
+    .maybeSingle();
+  return Boolean(data);
+}
 
 export async function POST(request: Request) {
   const ctx = await requireScopedAdmin();
   if (!ctx) return unauthorized();
-
-  if (isSalesAgent(ctx.session.profile!.role) && ctx.scope.kind === "portfolio") {
-    // sales can invite portal users to assigned clients only — handled per action
-  }
 
   let body: Body;
   try {
@@ -41,26 +62,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "Invalid JSON" }, { status: 400 });
   }
 
+  const actor = ctx.session.profile!;
+
   if (body.action === "invite_staff") {
     if (ctx.scope.kind === "portfolio") {
       return forbidden("Sales agents cannot invite staff");
     }
 
     const email = body.email?.trim();
-    const role = body.role as "regional_admin" | "sales_agent" | undefined;
+    const role = body.role as StaffInviteRole | undefined;
     const assignedCountry =
       body.assignedCountry === "US" ? "US" : body.assignedCountry === "CO" ? "CO" : null;
+    const managedByRegionalAdminId = body.managedByRegionalAdminId?.trim() || null;
 
-    if (!email || !role) {
+    if (!email || !role || !STAFF_INVITE_ROLES.includes(role)) {
       return NextResponse.json(
-        { ok: false, message: "email and role required" },
+        { ok: false, message: "email and valid staff role required" },
         { status: 400 },
       );
     }
 
-    if (
-      !canManageStaff(ctx.session.profile!, role as UserRole, assignedCountry)
-    ) {
+    if (!canManageStaff(actor, role as UserRole, assignedCountry)) {
       return forbidden("Cannot invite this role");
     }
 
@@ -71,11 +93,32 @@ export async function POST(request: Request) {
       );
     }
 
+    if (role === "sales_agent" && isRegionalAdmin(actor.role)) {
+      if (managedByRegionalAdminId && managedByRegionalAdminId !== actor.id) {
+        return forbidden("Regional admin can only assign agents to themselves");
+      }
+    }
+
+    if (managedByRegionalAdminId && !(await assertRegionalAdminId(managedByRegionalAdminId))) {
+      return NextResponse.json(
+        { ok: false, message: "Invalid regional admin" },
+        { status: 400 },
+      );
+    }
+
+    const effectiveManagedBy =
+      role === "sales_agent"
+        ? managedByRegionalAdminId ??
+          (isRegionalAdmin(actor.role) ? actor.id : null)
+        : null;
+
     const result = await inviteStaffUser({
       email,
       role,
       fullName: body.fullName,
-      assignedCountry: role === "regional_admin" ? assignedCountry : null,
+      assignedCountry:
+        role === "regional_admin" || role === "sales_agent" ? assignedCountry : null,
+      managedByRegionalAdminId: effectiveManagedBy,
       actorId: ctx.session.userId,
     });
 
@@ -86,13 +129,42 @@ export async function POST(request: Request) {
   }
 
   if (body.action === "update") {
+    if (!canManageAnyUser(actor)) {
+      return forbidden("Only super admin can edit user assignments");
+    }
+
     const profileId = body.profileId?.trim();
     if (!profileId) {
       return NextResponse.json({ ok: false, message: "profileId required" }, { status: 400 });
     }
 
-    if (body.role && !canManageStaff(ctx.session.profile!, body.role as UserRole)) {
+    if (profileId === actor.id && body.role && body.role !== actor.role) {
+      return forbidden("Cannot change your own role");
+    }
+
+    if (body.role && !canManageStaff(actor, body.role as UserRole)) {
       return forbidden("Cannot assign this role");
+    }
+
+    const assignedCountry =
+      body.assignedCountry === "US"
+        ? "US"
+        : body.assignedCountry === "CO"
+          ? "CO"
+          : body.assignedCountry === null
+            ? null
+            : undefined;
+
+    const managedBy =
+      body.managedByRegionalAdminId === null
+        ? null
+        : body.managedByRegionalAdminId?.trim() || undefined;
+
+    if (managedBy && !(await assertRegionalAdminId(managedBy))) {
+      return NextResponse.json(
+        { ok: false, message: "Invalid regional admin" },
+        { status: 400 },
+      );
     }
 
     if (body.clientId) {
@@ -105,6 +177,8 @@ export async function POST(request: Request) {
       role: body.role,
       clientId: body.clientId,
       fullName: body.fullName,
+      assignedCountry,
+      managedByRegionalAdminId: managedBy,
       actorId: ctx.session.userId,
     });
 
@@ -130,6 +204,8 @@ export async function POST(request: Request) {
     return forbidden("Cannot invite users for this client");
   }
 
+  const portalRole = body.role as UserRole | undefined;
+
   if (body.action === "link") {
     const result = await linkPortalUser({
       email,
@@ -137,6 +213,19 @@ export async function POST(request: Request) {
       fullName: body.fullName,
       actorId: ctx.session.userId,
     });
+    if (
+      result.action !== "skipped" &&
+      portalRole &&
+      portalRole !== "client_user" &&
+      "userId" in result &&
+      result.userId
+    ) {
+      await updateProfileAdmin({
+        profileId: result.userId,
+        role: portalRole,
+        actorId: ctx.session.userId,
+      });
+    }
     return NextResponse.json({ ok: result.action !== "skipped", result });
   }
 
@@ -146,6 +235,21 @@ export async function POST(request: Request) {
     fullName: body.fullName,
     actorId: ctx.session.userId,
   });
+
+  if (
+    (result.action === "invited" || result.action === "linked") &&
+    portalRole &&
+    portalRole !== "client_user"
+  ) {
+    const userId = "userId" in result ? result.userId : undefined;
+    if (userId) {
+      await updateProfileAdmin({
+        profileId: userId,
+        role: portalRole,
+        actorId: ctx.session.userId,
+      });
+    }
+  }
 
   return NextResponse.json({
     ok: result.action === "invited" || result.action === "linked",

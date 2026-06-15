@@ -100,6 +100,18 @@ export function canCreateClientInCountry(
   return false;
 }
 
+const INVITABLE_STAFF_ROLES: UserRole[] = [
+  "super_admin",
+  "regional_admin",
+  "sales_agent",
+  "billing_admin",
+  "support_agent",
+];
+
+export function canManageAnyUser(actor: AuthProfile): boolean {
+  return isSuperAdmin(actor.role);
+}
+
 export function canManageStaff(
   actor: AuthProfile,
   targetRole: UserRole,
@@ -107,11 +119,8 @@ export function canManageStaff(
 ): boolean {
   if (isSuperAdmin(actor.role)) {
     return (
-      targetRole === "regional_admin" ||
-      targetRole === "sales_agent" ||
-      targetRole === "client_user" ||
-      targetRole === "client_owner" ||
-      targetRole === "client_billing"
+      INVITABLE_STAFF_ROLES.includes(targetRole) ||
+      CLIENT_ROLES.includes(targetRole)
     );
   }
 
@@ -180,6 +189,10 @@ export function canInvitePortalUser(
 }
 
 export function canRotateApiKeys(scope: StaffScope): boolean {
+  return scope.kind === "global" || scope.kind === "country";
+}
+
+export function canReassignClientAgent(scope: StaffScope): boolean {
   return scope.kind === "global" || scope.kind === "country";
 }
 

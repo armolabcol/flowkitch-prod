@@ -13,7 +13,12 @@ import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
 import { getClientDetail } from "@/services/saas/client-detail-service";
 import { listSalesAgents } from "@/services/saas/profiles-admin-service";
 import { getPageAdminScope } from "@/lib/auth/page-scope";
-import { canRotateApiKeys, canWriteClient } from "@/lib/auth/permissions";
+import {
+  canReassignClientAgent,
+  canRotateApiKeys,
+  canWriteClient,
+  isRegionalAdmin,
+} from "@/lib/auth/permissions";
 import { formatMembershipAmount, paymentProviderLabel } from "@/lib/billing-utils";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import { withLocale, defaultLocale, isLocale, type Locale } from "@/lib/i18n";
@@ -24,7 +29,7 @@ export default async function AdminClientDetailPage({ params }: Props) {
   const { locale: raw, id } = await params;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
-  const { scope } = await getPageAdminScope(locale);
+  const { scope, session } = await getPageAdminScope(locale);
   const detail = await getClientDetail(id, scope);
 
   if (!detail) notFound();
@@ -36,7 +41,17 @@ export default async function AdminClientDetailPage({ params }: Props) {
     assigned_sales_agent_id: client.assigned_sales_agent_id,
   });
   const canRotate = canRotateApiKeys(scope);
-  const salesAgents = await listSalesAgents();
+  const canReassignAgent = canReassignClientAgent(scope);
+  const profile = session.profile!;
+
+  const allAgents = await listSalesAgents(
+    isRegionalAdmin(profile.role)
+      ? { country: profile.assigned_country ?? undefined, regionalAdminId: profile.id }
+      : undefined,
+  );
+  const salesAgents = canReassignAgent
+    ? allAgents
+    : allAgents.filter((a) => a.id === client.assigned_sales_agent_id);
 
   return (
     <>
@@ -56,7 +71,7 @@ export default async function AdminClientDetailPage({ params }: Props) {
           currentAgentId={client.assigned_sales_agent_id}
           agents={salesAgents}
           locale={locale}
-          canEdit={canWrite}
+          canEdit={canReassignAgent}
         />
         <p className="mt-2 text-xs text-kitch-muted">
           {locale === "es" ? "Pasarela" : "Gateway"}:{" "}

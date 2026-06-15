@@ -3,6 +3,7 @@ import { requireAdminScope } from "@/lib/auth/admin-scope";
 import {
   canCreateClientInCountry,
   canInvitePortalUser,
+  canManageAnyUser,
   canManageStaff,
   canReadClient,
   canRotateApiKeys,
@@ -46,6 +47,7 @@ export async function requireClientWrite(clientId: string) {
 export {
   canCreateClientInCountry,
   canInvitePortalUser,
+  canManageAnyUser,
   canManageStaff,
   canReadClient,
   canRotateApiKeys,

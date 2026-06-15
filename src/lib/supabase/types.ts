@@ -22,6 +22,7 @@ export interface Database {
           client_id: string | null;
           full_name: string | null;
           assigned_country: string | null;
+          managed_by_regional_admin_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -32,6 +33,7 @@ export interface Database {
           client_id?: string | null;
           full_name?: string | null;
           assigned_country?: string | null;
+          managed_by_regional_admin_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };

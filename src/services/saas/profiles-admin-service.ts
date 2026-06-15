@@ -143,13 +143,13 @@ export async function listProfiles(limit = 100, staffOnly = false) {
   const supabase = createServiceSupabaseClient();
   if (!supabase) return [];
 
-  let query = supabase
+  const { data, error } = await supabase
     .from("profiles")
-    .select("id, email, role, client_id, full_name, assigned_country, created_at")
+    .select(
+      "id, email, role, client_id, full_name, assigned_country, managed_by_regional_admin_id, created_at",
+    )
     .order("created_at", { ascending: false })
     .limit(limit);
-
-  const { data, error } = await query;
 
   if (error || !data) return [];
 
@@ -167,26 +167,89 @@ export async function listProfiles(limit = 100, staffOnly = false) {
   return data;
 }
 
-export async function listSalesAgents(): Promise<
-  { id: string; email: string; full_name: string | null }[]
+export async function listSalesAgents(options?: {
+  country?: "CO" | "US";
+  regionalAdminId?: string;
+}): Promise<
+  {
+    id: string;
+    email: string;
+    full_name: string | null;
+    assigned_country: string | null;
+    managed_by_regional_admin_id: string | null;
+  }[]
+> {
+  const supabase = createServiceSupabaseClient();
+  if (!supabase) return [];
+
+  let query = supabase
+    .from("profiles")
+    .select("id, email, full_name, assigned_country, managed_by_regional_admin_id")
+    .eq("role", "sales_agent")
+    .order("email");
+
+  if (options?.regionalAdminId) {
+    const { data } = await query;
+    let scoped = data ?? [];
+    if (options.country) {
+      scoped = scoped.filter(
+        (a) =>
+          a.managed_by_regional_admin_id === options.regionalAdminId ||
+          a.assigned_country === options.country ||
+          (!a.managed_by_regional_admin_id && !a.assigned_country),
+      );
+    }
+    return scoped;
+  }
+
+  const { data } = await query;
+
+  let agents = data ?? [];
+
+  if (options?.country) {
+    agents = agents.filter(
+      (a) =>
+        a.assigned_country === options.country ||
+        (!a.assigned_country && !options.regionalAdminId),
+    );
+  }
+
+  return agents;
+}
+
+export async function listRegionalAdmins(): Promise<
+  {
+    id: string;
+    email: string;
+    full_name: string | null;
+    assigned_country: string | null;
+  }[]
 > {
   const supabase = createServiceSupabaseClient();
   if (!supabase) return [];
 
   const { data } = await supabase
     .from("profiles")
-    .select("id, email, full_name")
-    .eq("role", "sales_agent")
+    .select("id, email, full_name, assigned_country")
+    .eq("role", "regional_admin")
     .order("email");
 
   return data ?? [];
 }
 
+export type StaffInviteRole =
+  | "super_admin"
+  | "regional_admin"
+  | "sales_agent"
+  | "billing_admin"
+  | "support_agent";
+
 export async function inviteStaffUser(params: {
   email: string;
-  role: "regional_admin" | "sales_agent";
+  role: StaffInviteRole;
   fullName?: string | null;
   assignedCountry?: "CO" | "US" | null;
+  managedByRegionalAdminId?: string | null;
   actorId?: string | null;
 }): Promise<PortalUserResult> {
   const supabase = createServiceSupabaseClient();
@@ -201,7 +264,12 @@ export async function inviteStaffUser(params: {
     const patch: Record<string, unknown> = {
       role: params.role,
       client_id: null,
-      assigned_country: params.role === "regional_admin" ? params.assignedCountry : null,
+      assigned_country:
+        params.role === "regional_admin" || params.role === "sales_agent"
+          ? params.assignedCountry
+          : null,
+      managed_by_regional_admin_id:
+        params.role === "sales_agent" ? params.managedByRegionalAdminId ?? null : null,
       ...(params.fullName ? { full_name: params.fullName } : {}),
     };
 
@@ -242,7 +310,13 @@ export async function inviteStaffUser(params: {
         role: params.role,
         client_id: null,
         assigned_country:
-          params.role === "regional_admin" ? params.assignedCountry : null,
+          params.role === "regional_admin" || params.role === "sales_agent"
+            ? params.assignedCountry
+            : null,
+        managed_by_regional_admin_id:
+          params.role === "sales_agent"
+            ? params.managedByRegionalAdminId ?? null
+            : null,
         ...(params.fullName ? { full_name: params.fullName } : {}),
       } as never)
       .eq("id", data.user.id);
@@ -253,7 +327,12 @@ export async function inviteStaffUser(params: {
     action: "staff.invited",
     entityType: "profile",
     entityId: data.user?.id ?? email,
-    metadata: { email, role: params.role, assignedCountry: params.assignedCountry },
+    metadata: {
+      email,
+      role: params.role,
+      assignedCountry: params.assignedCountry,
+      managedByRegionalAdminId: params.managedByRegionalAdminId,
+    },
   });
 
   return { action: "invited", email };
@@ -265,6 +344,7 @@ export async function updateProfileAdmin(params: {
   clientId?: string | null;
   fullName?: string | null;
   assignedCountry?: "CO" | "US" | null;
+  managedByRegionalAdminId?: string | null;
   actorId?: string | null;
 }): Promise<boolean> {
   const supabase = createServiceSupabaseClient();
@@ -276,6 +356,24 @@ export async function updateProfileAdmin(params: {
   if (params.fullName !== undefined) patch.full_name = params.fullName;
   if (params.assignedCountry !== undefined) {
     patch.assigned_country = params.assignedCountry;
+  }
+  if (params.managedByRegionalAdminId !== undefined) {
+    patch.managed_by_regional_admin_id = params.managedByRegionalAdminId;
+  }
+
+  if (params.role && params.role !== "sales_agent") {
+    patch.managed_by_regional_admin_id = null;
+  }
+  if (params.role && params.role !== "regional_admin" && params.role !== "sales_agent") {
+    patch.assigned_country = null;
+  }
+  if (
+    params.role &&
+    ["super_admin", "regional_admin", "sales_agent", "billing_admin", "support_agent"].includes(
+      params.role,
+    )
+  ) {
+    patch.client_id = null;
   }
 
   const { error } = await supabase

@@ -41,6 +41,7 @@ function mapProfile(row: {
   client_id: string | null;
   full_name: string | null;
   assigned_country: string | null;
+  managed_by_regional_admin_id?: string | null;
 }): AuthProfile | null {
   const role = row.role === "armo_admin" ? "super_admin" : row.role;
   if (!isKnownRole(role)) return null;
@@ -55,6 +56,7 @@ function mapProfile(row: {
     client_id: row.client_id,
     full_name: row.full_name,
     assigned_country: assigned,
+    managed_by_regional_admin_id: row.managed_by_regional_admin_id ?? null,
   };
 }
 

@@ -7,6 +7,7 @@ export interface AuthProfile {
   client_id: string | null;
   full_name: string | null;
   assigned_country: "CO" | "US" | null;
+  managed_by_regional_admin_id: string | null;
 }
 
 export interface AuthSession {
