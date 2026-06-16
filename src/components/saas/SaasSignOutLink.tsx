@@ -1,23 +1,41 @@
 "use client";
 
-import { isSupabaseConfigured } from "@/lib/env";
+import { useState } from "react";
 import { withLocale, type Locale } from "@/lib/i18n";
 
 export function SaasSignOutLink({ locale }: { locale: Locale }) {
+  const [loading, setLoading] = useState(false);
+
   async function handleSignOut() {
-    if (isSupabaseConfigured()) {
-      await fetch("/api/auth/signout", { method: "POST" });
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      await fetch("/api/auth/signout", {
+        method: "POST",
+        credentials: "same-origin",
+      });
+    } catch {
+      // Still navigate — user expects to leave the session UI
     }
-    window.location.href = withLocale(locale, "/portal/login");
+
+    window.location.assign(withLocale(locale, "/portal/login"));
   }
 
   return (
     <button
       type="button"
-      onClick={handleSignOut}
-      className="text-xs text-kitch-subtle hover:text-kitch-fg"
+      onClick={() => void handleSignOut()}
+      disabled={loading}
+      className="text-xs text-kitch-subtle hover:text-kitch-fg disabled:opacity-50"
     >
-      {locale === "es" ? "Cerrar sesión" : "Sign out"}
+      {loading
+        ? locale === "es"
+          ? "Saliendo…"
+          : "Signing out…"
+        : locale === "es"
+          ? "Cerrar sesión"
+          : "Sign out"}
     </button>
   );
 }

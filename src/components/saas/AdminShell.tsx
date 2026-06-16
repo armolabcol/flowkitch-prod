@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { KitchLogo } from "@/components/brand/KitchLogo";
 import { SaasLocaleSwitcher } from "@/components/saas/SaasLocaleSwitcher";
+import { SaasSignOutLink } from "@/components/saas/SaasSignOutLink";
 import { cn } from "@/lib/cn";
 import type { AdminRouteKey } from "@/lib/auth/permissions";
 import type { SaasDictionary } from "@/lib/saas-dictionaries";
@@ -88,10 +89,11 @@ export function AdminShell({
             );
           })}
         </nav>
-        <div className="border-t border-white/[0.06] p-4">
+        <div className="border-t border-white/[0.06] p-4 space-y-2">
           <span className="inline-flex rounded-full border border-kitch-accent/25 bg-kitch-accent/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-kitch-accent">
             {roleBadge}
           </span>
+          <SaasSignOutLink locale={locale} />
         </div>
       </aside>
 
@@ -107,6 +109,7 @@ export function AdminShell({
             <span className="hidden rounded-full border border-white/10 bg-kitch-elevated px-2.5 py-1 text-[10px] uppercase tracking-wider text-kitch-subtle sm:inline-flex">
               {roleBadge}
             </span>
+            <SaasSignOutLink locale={locale} />
             <SaasLocaleSwitcher locale={locale} />
           </div>
         </header>
