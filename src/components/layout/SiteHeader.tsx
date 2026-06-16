@@ -111,7 +111,7 @@ export function SiteHeader({ locale, dictionary }: SiteHeaderProps) {
             size="sm"
             className="hidden border-white/10 bg-transparent font-semibold text-kitch-muted hover:bg-white/[0.06] hover:text-white md:inline-flex md:min-w-[6.5rem]"
           >
-            <Link href={withLocale(locale, "/portal/login")}>
+            <Link href={withLocale(locale, "/portal")}>
               {dictionary.header.portalLogin}
             </Link>
           </Button>
@@ -188,7 +188,7 @@ export function SiteHeader({ locale, dictionary }: SiteHeaderProps) {
                   className="border-white/10 bg-white/[0.05] font-semibold"
                 >
                   <Link
-                    href={withLocale(locale, "/portal/login")}
+                    href={withLocale(locale, "/portal")}
                     onClick={() => setOpen(false)}
                   >
                     {dictionary.header.portalLogin}

@@ -5,7 +5,7 @@ export const mainNav = [
   { key: "kitchen" as const, href: "/kitchen" },
   { key: "manager" as const, href: "/manager" },
   { key: "demo" as const, href: "/demo" },
-  { key: "portal" as const, href: "/portal/login" },
+  { key: "portal" as const, href: "/portal" },
 ];
 
 export type NavKey = (typeof mainNav)[number]["key"];

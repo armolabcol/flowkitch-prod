@@ -4,6 +4,7 @@ import { SaasLoginForm } from "@/components/forms/SaasLoginForm";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { getDictionary } from "@/lib/dictionaries";
+import { redirectIfAuthenticated } from "@/lib/auth/guards";
 import { buildPageMetadata, localeFromParams } from "@/lib/build-page-metadata";
 import { withLocale, type Locale } from "@/lib/i18n";
 
@@ -31,6 +32,8 @@ export default async function PortalLoginPage({ params, searchParams }: Props) {
   const locale: Locale = localeFromParams(raw);
   const dict = getDictionary(locale);
   const d = dict.portal;
+
+  await redirectIfAuthenticated(locale);
 
   const initialError =
     errorCode === "callback_failed" || errorCode === "reset_link_expired"
