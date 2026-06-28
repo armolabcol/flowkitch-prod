@@ -5,6 +5,15 @@ export type HomepageV2Cta = {
   secondaryLabel?: string;
 };
 
+export type HomepageV2HeroContent = {
+  id: string;
+  eyebrow?: string;
+  title: string;
+  description: string;
+  microcopy: string;
+  cta: HomepageV2Cta;
+};
+
 export type HomepageV2SectionContent = {
   id: string;
   eyebrow?: string;
@@ -16,7 +25,7 @@ export type HomepageV2SectionContent = {
 };
 
 export type HomepageV2Content = {
-  hero: HomepageV2SectionContent;
+  hero: HomepageV2HeroContent;
   operationalProblem: HomepageV2SectionContent;
   restaurantTransformation: HomepageV2SectionContent;
   operationalFlow: HomepageV2SectionContent;
@@ -29,5 +38,10 @@ export type HomepageV2Content = {
 
 export type HomepageV2SectionProps = {
   content: HomepageV2SectionContent;
+  locale: Locale;
+};
+
+export type HomepageV2HeroProps = {
+  content: HomepageV2HeroContent;
   locale: Locale;
 };

@@ -10,6 +10,8 @@ export { HomepageCTA } from "@/components/home/v2/HomepageCTA";
 
 export type {
   HomepageV2Content,
+  HomepageV2HeroContent,
+  HomepageV2HeroProps,
   HomepageV2SectionContent,
   HomepageV2SectionProps,
 } from "@/components/home/v2/types";

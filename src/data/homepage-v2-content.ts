@@ -5,14 +5,14 @@ const es: HomepageV2Content = {
   hero: {
     id: "hero",
     eyebrow: "Kitch by Armo",
-    title: "[Hero] Título temporal",
+    title: "Del caos operativo al control total.",
     description:
-      "Descripción temporal del hero. Espacio reservado para el mensaje principal de la presentación del producto.",
-    mediaPlaceholder: "Video hero — placeholder",
-    animationPlaceholder: "Animación hero — reservado Fase 2",
+      "Kitch conecta clientes, mesas, meseros, cocina y administración en un único flujo digital trazable, para que cada orden avance con precisión incluso en las horas de mayor demanda.",
+    microcopy:
+      "No vendemos otro POS. Construimos el flujo detrás de un gran servicio.",
     cta: {
-      primaryLabel: "CTA principal — placeholder",
-      secondaryLabel: "CTA secundario — placeholder",
+      primaryLabel: "Agendar demo",
+      secondaryLabel: "Ver cómo funciona",
     },
   },
   operationalProblem: {
@@ -97,14 +97,14 @@ const en: HomepageV2Content = {
   hero: {
     id: "hero",
     eyebrow: "Kitch by Armo",
-    title: "[Hero] Temporary title",
+    title: "From operational chaos to total control.",
     description:
-      "Temporary hero description. Reserved for the main product presentation message.",
-    mediaPlaceholder: "Hero video — placeholder",
-    animationPlaceholder: "Hero animation — Phase 2 reserved",
+      "Kitch connects guests, tables, waiters, kitchen and management into one traceable digital flow, so every order moves with precision even during peak service.",
+    microcopy:
+      "We do not sell another POS. We build the flow behind great service.",
     cta: {
-      primaryLabel: "Primary CTA — placeholder",
-      secondaryLabel: "Secondary CTA — placeholder",
+      primaryLabel: "Schedule demo",
+      secondaryLabel: "See how it works",
     },
   },
   operationalProblem: {
