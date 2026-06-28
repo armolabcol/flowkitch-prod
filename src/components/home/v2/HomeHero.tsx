@@ -37,12 +37,12 @@ export function HomeHero({ content, locale }: HomepageV2HeroProps) {
   return (
     <section
       id={content.id}
-      className="relative flex min-h-[100svh] items-center overflow-hidden bg-[#1c1c1c] text-white"
+      className="kitch-hero relative flex min-h-[100svh] items-center overflow-hidden bg-[#1c1c1c] text-white"
       aria-labelledby={`${content.id}-headline`}
     >
       <HeroMedia />
 
-      <Container className="relative z-10 w-full max-w-7xl">
+      <Container className="kitch-hero-content relative z-10 w-full max-w-7xl">
         <div className="grid min-h-[calc(100svh-4.25rem)] items-center gap-10 py-16 sm:py-20 lg:grid-cols-12 lg:gap-14 lg:py-24">
           <div
             className={cn(
