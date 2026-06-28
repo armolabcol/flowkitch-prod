@@ -1,0 +1,33 @@
+import type { Locale } from "@/lib/i18n";
+
+export type HomepageV2Cta = {
+  primaryLabel: string;
+  secondaryLabel?: string;
+};
+
+export type HomepageV2SectionContent = {
+  id: string;
+  eyebrow?: string;
+  title: string;
+  description: string;
+  mediaPlaceholder: string;
+  animationPlaceholder: string;
+  cta?: HomepageV2Cta;
+};
+
+export type HomepageV2Content = {
+  hero: HomepageV2SectionContent;
+  operationalProblem: HomepageV2SectionContent;
+  restaurantTransformation: HomepageV2SectionContent;
+  operationalFlow: HomepageV2SectionContent;
+  kitchEcosystem: HomepageV2SectionContent;
+  android: HomepageV2SectionContent;
+  results: HomepageV2SectionContent;
+  productProof: HomepageV2SectionContent;
+  finalCta: HomepageV2SectionContent;
+};
+
+export type HomepageV2SectionProps = {
+  content: HomepageV2SectionContent;
+  locale: Locale;
+};
