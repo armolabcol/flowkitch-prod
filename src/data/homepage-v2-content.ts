@@ -31,7 +31,10 @@ const es: HomepageV2Content = {
       "Cocina sin visibilidad",
       "Rondas perdidas",
     ],
-    mediaSrc: "/assets/hero/RM001_WEB_HERO_DESKTOP_CLEAN_v01.webp",
+    mediaSrc:
+      "/assets/sections/problem/KITCH_SECTION_02_OPERATIONAL_PROBLEM_v01.webp",
+    mediaAlt:
+      "Cocina de restaurante en hora pico con equipo bajo presión y pantalla KDS visible",
   },
   restaurantTransformation: {
     id: "restaurant-transformation",
@@ -132,7 +135,10 @@ const en: HomepageV2Content = {
       "Kitchen without visibility",
       "Lost rounds",
     ],
-    mediaSrc: "/assets/hero/RM001_WEB_HERO_DESKTOP_CLEAN_v01.webp",
+    mediaSrc:
+      "/assets/sections/problem/KITCH_SECTION_02_OPERATIONAL_PROBLEM_v01.webp",
+    mediaAlt:
+      "Restaurant kitchen during peak service with team under pressure and KDS screen visible",
   },
   restaurantTransformation: {
     id: "restaurant-transformation",

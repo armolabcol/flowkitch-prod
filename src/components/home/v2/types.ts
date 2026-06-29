@@ -25,6 +25,7 @@ export type HomepageV2SectionContent = {
   footerStrip?: string;
   visualBadges?: string[];
   mediaSrc?: string;
+  mediaAlt?: string;
   cta?: HomepageV2Cta;
 };
 

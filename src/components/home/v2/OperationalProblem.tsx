@@ -8,7 +8,10 @@ import {
 } from "@/components/home/v2/placeholders";
 import type { HomepageV2SectionProps } from "@/components/home/v2/types";
 
-const DEFAULT_MEDIA = "/assets/hero/RM001_WEB_HERO_DESKTOP_CLEAN_v01.webp";
+const DEFAULT_MEDIA =
+  "/assets/sections/problem/KITCH_SECTION_02_OPERATIONAL_PROBLEM_v01.webp";
+const DEFAULT_MEDIA_ALT =
+  "Cocina de restaurante en hora pico con equipo bajo presión y pantalla KDS visible";
 
 function OperationalProblemVisual({
   mediaSrc,
@@ -29,7 +32,7 @@ function OperationalProblemVisual({
           <img
             src={mediaSrc}
             alt={alt}
-            className="absolute inset-0 h-full w-full scale-[1.03] object-cover object-center saturate-[0.82] brightness-[0.72]"
+            className="absolute inset-0 h-full w-full object-cover object-[center_42%] sm:object-center"
             onError={() => setImageOk(false)}
             loading="lazy"
           />
@@ -41,15 +44,15 @@ function OperationalProblemVisual({
         )}
 
         <div
-          className="absolute inset-0 bg-gradient-to-t from-[#1c1c1c]/90 via-[#1c1c1c]/35 to-[#1c1c1c]/15"
+          className="absolute inset-0 bg-gradient-to-t from-[#1c1c1c]/75 via-[#1c1c1c]/20 to-transparent"
           aria-hidden
         />
         <div
-          className="absolute inset-0 bg-[#e63946]/[0.07] mix-blend-multiply"
+          className="absolute inset-0 bg-[#e63946]/[0.05] mix-blend-multiply"
           aria-hidden
         />
         <div
-          className="absolute inset-0 bg-gradient-to-r from-black/55 via-transparent to-black/25"
+          className="absolute inset-0 bg-gradient-to-r from-black/35 via-transparent to-black/15"
           aria-hidden
         />
 
@@ -93,6 +96,7 @@ function FooterStrip({ text }: { text: string }) {
 
 export function OperationalProblem({ content }: HomepageV2SectionProps) {
   const mediaSrc = content.mediaSrc ?? DEFAULT_MEDIA;
+  const mediaAlt = content.mediaAlt ?? DEFAULT_MEDIA_ALT;
   const badges = content.visualBadges ?? [];
 
   return (
@@ -131,7 +135,7 @@ export function OperationalProblem({ content }: HomepageV2SectionProps) {
             <OperationalProblemVisual
               mediaSrc={mediaSrc}
               badges={badges}
-              alt=""
+              alt={mediaAlt}
             />
           </div>
         </div>
