@@ -77,11 +77,57 @@ const es: HomepageV2Content = {
   operationalFlow: {
     id: "operational-flow",
     eyebrow: "Sección 04",
-    title: "[Flujo operativo] Título temporal",
+    title: "Un solo flujo para conectar",
+    titleLine2: "toda la operación.",
     description:
-      "Descripción temporal del flujo entre cliente, mesa, mesero, cocina y manager.",
-    mediaPlaceholder: "Diagrama / secuencia — flujo operativo",
-    animationPlaceholder: "Animación de flujo — reservado Fase 2",
+      "Desde el QR en la mesa hasta la cocina y la gerencia, Kitch organiza cada paso del servicio para que todos trabajen con la misma información, en tiempo real y sin depender de órdenes dispersas.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "QR · Orden viva · Validación · Cocina · Manager — todo sincronizado",
+    flowMap: {
+      mapLabel: "Operating flow map",
+      mapSublabel: "Flujo operativo en tiempo real",
+      nodes: [
+        {
+          title: "Cliente",
+          subcopy: "Escanea QR y arma su pedido.",
+          badge: "Inicia",
+          symbol: "QR",
+        },
+        {
+          title: "Mesa QR",
+          subcopy: "Orden viva con join code y rondas.",
+          badge: "Orden viva",
+          symbol: "M8",
+        },
+        {
+          title: "Mesero",
+          subcopy: "Valida, aprueba y mantiene control.",
+          badge: "Aprueba",
+          symbol: "✓",
+        },
+        {
+          title: "Cocina",
+          subcopy: "Recibe estados claros por ítem.",
+          badge: "Prepara",
+          symbol: "KDS",
+        },
+        {
+          title: "Manager",
+          subcopy: "Ve operación, cierres y trazabilidad.",
+          badge: "Supervisa",
+          symbol: "MG",
+        },
+      ],
+      timeline: [
+        "QR escaneado",
+        "Ronda enviada",
+        "Mesero aprueba",
+        "Cocina prepara",
+        "Manager supervisa",
+      ],
+    },
   },
   kitchEcosystem: {
     id: "kitch-ecosystem",
@@ -210,11 +256,57 @@ const en: HomepageV2Content = {
   operationalFlow: {
     id: "operational-flow",
     eyebrow: "Section 04",
-    title: "[Operational flow] Temporary title",
+    title: "One flow to connect",
+    titleLine2: "the entire operation.",
     description:
-      "Temporary description of flow across guest, table, waiter, kitchen and manager.",
-    mediaPlaceholder: "Diagram / sequence — operational flow",
-    animationPlaceholder: "Flow animation — Phase 2 reserved",
+      "From the table QR to the kitchen and management, Kitch organizes every step of service so everyone works from the same information, in real time, without scattered orders.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "QR · Live order · Validation · Kitchen · Manager — fully synchronized",
+    flowMap: {
+      mapLabel: "Operating flow map",
+      mapSublabel: "Real-time operational flow",
+      nodes: [
+        {
+          title: "Guest",
+          subcopy: "Scans QR and builds their order.",
+          badge: "Starts",
+          symbol: "QR",
+        },
+        {
+          title: "Table QR",
+          subcopy: "Live order with join code and rounds.",
+          badge: "Live order",
+          symbol: "T8",
+        },
+        {
+          title: "Waiter",
+          subcopy: "Validates, approves and stays in control.",
+          badge: "Approves",
+          symbol: "✓",
+        },
+        {
+          title: "Kitchen",
+          subcopy: "Receives clear per-item states.",
+          badge: "Prepares",
+          symbol: "KDS",
+        },
+        {
+          title: "Manager",
+          subcopy: "Sees operations, closes and traceability.",
+          badge: "Oversees",
+          symbol: "MG",
+        },
+      ],
+      timeline: [
+        "QR scanned",
+        "Round sent",
+        "Waiter approves",
+        "Kitchen prepares",
+        "Manager oversees",
+      ],
+    },
   },
   kitchEcosystem: {
     id: "kitch-ecosystem",

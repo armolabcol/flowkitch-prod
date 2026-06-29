@@ -29,6 +29,20 @@ export type HomepageV2TransformationBoard = {
   flowSteps: string[];
 };
 
+export type HomepageV2FlowNode = {
+  title: string;
+  subcopy: string;
+  badge: string;
+  symbol: string;
+};
+
+export type HomepageV2FlowMap = {
+  mapLabel: string;
+  mapSublabel?: string;
+  nodes: HomepageV2FlowNode[];
+  timeline: string[];
+};
+
 export type HomepageV2SectionContent = {
   id: string;
   eyebrow?: string;
@@ -42,6 +56,7 @@ export type HomepageV2SectionContent = {
   diagnosticLabel?: string;
   diagnosticSublabel?: string;
   transformationBoard?: HomepageV2TransformationBoard;
+  flowMap?: HomepageV2FlowMap;
   mediaSrc?: string;
   mediaAlt?: string;
   cta?: HomepageV2Cta;

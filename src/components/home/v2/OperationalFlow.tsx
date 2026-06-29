@@ -1,64 +1,122 @@
-import { Container } from "@/components/ui/Container";
-import {
-  AnimationPlaceholder,
-  MediaPlaceholder,
-  SectionDescription,
-  SectionEyebrow,
-  SectionTitle,
-} from "@/components/home/v2/placeholders";
-import type { HomepageV2SectionProps } from "@/components/home/v2/types";
+import type {
+  HomepageV2FlowMap,
+  HomepageV2SectionProps,
+} from "@/components/home/v2/types";
 
-const FLOW_STEPS = 5;
+function SignalStrip({ text }: { text: string }) {
+  const parts = text.split("—").map((p) => p.trim());
+  const mainPart = parts[0] ?? text;
+  const suffix = parts[1];
+  const items = mainPart.split("·").map((item) => item.trim());
+
+  return (
+    <div className="flow-signal-strip">
+      <ul className="flow-signal-strip__list">
+        {items.map((item, index) => (
+          <li key={item} className="flex items-center gap-2">
+            {index > 0 ? (
+              <span className="flow-signal-strip__sep" aria-hidden>
+                ·
+              </span>
+            ) : null}
+            <span className="flow-signal-strip__item">{item}</span>
+          </li>
+        ))}
+        {suffix ? (
+          <>
+            <span className="flow-signal-strip__sep" aria-hidden>
+              —
+            </span>
+            <span className="flow-signal-strip__item">{suffix}</span>
+          </>
+        ) : null}
+      </ul>
+    </div>
+  );
+}
+
+function OperatingFlowMap({ flowMap }: { flowMap: HomepageV2FlowMap }) {
+  return (
+    <div className="kitch-flow-map" aria-hidden>
+      <header className="kitch-flow-map__header">
+        <div>
+          <span className="kitch-flow-map__label">{flowMap.mapLabel}</span>
+          {flowMap.mapSublabel ? (
+            <span className="kitch-flow-map__sublabel">{flowMap.mapSublabel}</span>
+          ) : null}
+        </div>
+        <span className="kitch-flow-map__core">Kitch Flow</span>
+      </header>
+
+      <div className="kitch-flow-map__track">
+        <div className="kitch-flow-map__backline" aria-hidden />
+
+        <div className="kitch-flow-map__nodes">
+          {flowMap.nodes.map((node, index) => (
+            <div key={node.title} className="contents">
+              <div className="kitch-flow-node-wrap">
+                <article className="kitch-flow-node">
+                  <span className="kitch-flow-node__symbol" aria-hidden>
+                    {node.symbol}
+                  </span>
+                  <span className="kitch-flow-node__badge">{node.badge}</span>
+                  <h3 className="kitch-flow-node__title">{node.title}</h3>
+                  <p className="kitch-flow-node__subcopy">{node.subcopy}</p>
+                </article>
+              </div>
+              {index < flowMap.nodes.length - 1 ? (
+                <div className="kitch-flow-connector" aria-hidden />
+              ) : null}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <footer className="kitch-flow-map__timeline">
+        {flowMap.timeline.map((step, index) => (
+          <span key={step} className="kitch-flow-timeline-step">
+            <span className="kitch-flow-timeline-step__num">{index + 1}</span>
+            {step}
+          </span>
+        ))}
+      </footer>
+    </div>
+  );
+}
 
 export function OperationalFlow({ content }: HomepageV2SectionProps) {
+  const flowMap = content.flowMap;
+
   return (
     <section
       id={content.id}
-      className="flex min-h-[100svh] flex-col justify-center border-b border-white/[0.06] py-16 sm:py-20 lg:py-28"
+      className="flow-section relative flex min-h-[100svh] flex-col justify-center"
       aria-labelledby={`${content.id}-title`}
     >
-      <Container className="flex flex-col gap-10 lg:gap-14">
-        <div className="max-w-2xl space-y-6 lg:space-y-8">
-          {content.eyebrow && <SectionEyebrow>{content.eyebrow}</SectionEyebrow>}
-          <SectionTitle>
-            <span id={`${content.id}-title`}>{content.title}</span>
-          </SectionTitle>
-          <SectionDescription>{content.description}</SectionDescription>
-        </div>
+      <div className="flow-section__inner">
+        <header className="flow-section__copy">
+          {content.eyebrow ? (
+            <p className="flow-section__eyebrow">{content.eyebrow}</p>
+          ) : null}
 
-        <MediaPlaceholder
-          label={content.mediaPlaceholder}
-          aspect="wide"
-          className="hidden lg:flex"
-        />
+          <h2 id={`${content.id}-title`} className="flow-section__headline">
+            <span className="block">{content.title}</span>
+            {content.titleLine2 ? (
+              <span className="flow-section__headline-line2">
+                {content.titleLine2}
+              </span>
+            ) : null}
+          </h2>
 
-        <div className="flex gap-4 overflow-x-auto pb-2 lg:hidden" data-slot="flow-mobile">
-          {Array.from({ length: FLOW_STEPS }, (_, i) => (
-            <div
-              key={i}
-              className="flex h-40 w-36 shrink-0 items-center justify-center rounded-xl border border-dashed border-white/15 bg-kitch-surface/30 text-[10px] uppercase tracking-wider text-kitch-subtle"
-            >
-              Step {i + 1}
-            </div>
-          ))}
-        </div>
+          <p className="flow-section__body">{content.description}</p>
+        </header>
 
-        <div
-          className="hidden grid-cols-5 gap-4 lg:grid"
-          data-slot="flow-desktop"
-        >
-          {Array.from({ length: FLOW_STEPS }, (_, i) => (
-            <div
-              key={i}
-              className="flex aspect-[4/5] items-center justify-center rounded-xl border border-dashed border-white/15 bg-kitch-surface/30 text-[10px] uppercase tracking-wider text-kitch-subtle"
-            >
-              Step {i + 1}
-            </div>
-          ))}
-        </div>
+        {flowMap ? <OperatingFlowMap flowMap={flowMap} /> : null}
 
-        <AnimationPlaceholder label={content.animationPlaceholder} />
-      </Container>
+        {content.footerStrip ? (
+          <SignalStrip text={content.footerStrip} />
+        ) : null}
+      </div>
     </section>
   );
 }
