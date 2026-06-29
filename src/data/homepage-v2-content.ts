@@ -78,9 +78,9 @@ const es: HomepageV2Content = {
     id: "operational-flow",
     eyebrow: "Sección 04",
     title: "Una sola orden.",
-    titleLine2: "Todo el restaurante en sincronía.",
+    titleLine2: "Un ecosistema completo en sincronía.",
     description:
-      "Desde que el cliente escanea el QR hasta que cocina y gerencia actúan sobre la misma información, Kitch mantiene cada orden viva, visible y trazable para que el servicio avance con control real.",
+      "Desde que el cliente escanea el QR en la mesa hasta que cocina, mesero y gerencia actúan sobre la misma información, Kitch conecta cada parte de la operación en un solo sistema operativo para restaurantes.",
     mediaPlaceholder: "—",
     animationPlaceholder: "—",
     footerStrip:
@@ -96,9 +96,13 @@ const es: HomepageV2Content = {
         "QR escaneado · ronda enviada · cocina y mesero sincronizados",
       descriptionMobile: "QR escaneado · ronda enviada",
     },
-    flowMap: {
-      boardLabel: "LIVE ORDER FLOW",
-      boardSublabel: "Cómo Kitch mueve una orden por el restaurante",
+    operatingSystem: {
+      systemLabel: "KITCH OPERATING SYSTEM",
+      journeyLabel: "Live order journey",
+      journeySublabel: "How one order moves through the restaurant",
+      modulesLabel: "Ecosystem modules",
+      modulesSublabel:
+        "La infraestructura conectada que sostiene cada orden viva",
       liveOrder: {
         table: "Mesa 08",
         orderId: "Orden #1284",
@@ -126,7 +130,7 @@ const es: HomepageV2Content = {
           symbol: "QR",
         },
         {
-          title: "Mesa / Orden viva",
+          title: "Mesa / QR",
           action: "Crea la orden y mantiene rondas activas.",
           badge: "Orden viva",
           symbol: "M8",
@@ -150,30 +154,6 @@ const es: HomepageV2Content = {
           symbol: "MG",
         },
       ],
-      benefits: [
-        "Menos errores de comunicación",
-        "Más visibilidad en tiempo real",
-        "Cocina con estados claros",
-        "Meseros con más control",
-        "Nuevas rondas sin fricción",
-        "Trazabilidad operativa",
-      ],
-    },
-  },
-  kitchEcosystem: {
-    id: "kitch-ecosystem",
-    eyebrow: "Sección 05",
-    title: "Un ecosistema completo",
-    titleLine2: "para operar tu restaurante.",
-    description:
-      "Kitch reúne en una sola plataforma los puntos críticos del servicio: menú, mesa, mesero, cocina, gerencia y fidelización. Cada módulo trabaja conectado para que la operación fluya con más control, menos errores y mejor experiencia para el cliente.",
-    mediaPlaceholder: "—",
-    animationPlaceholder: "—",
-    footerStrip:
-      "Menú · Mesa · Mesero · Cocina · Manager · Loyalty — Todo conectado",
-    ecosystemBoard: {
-      boardLabel: "KITCH OPERATING ECOSYSTEM",
-      boardSublabel: "Seis módulos conectados en una sola plataforma operativa",
       modules: [
         {
           title: "Menú digital",
@@ -223,6 +203,15 @@ const es: HomepageV2Content = {
           badge: "+120 pts",
           symbol: "★",
         },
+      ],
+      valueTitle: "Lo que cambia para tu restaurante",
+      benefits: [
+        "Menos errores de comunicación",
+        "Más visibilidad en tiempo real",
+        "Cocina con estados claros",
+        "Meseros con más control",
+        "Nuevas rondas sin fricción",
+        "Trazabilidad operativa",
       ],
     },
   },
@@ -345,9 +334,9 @@ const en: HomepageV2Content = {
     id: "operational-flow",
     eyebrow: "Section 04",
     title: "One live order.",
-    titleLine2: "The whole restaurant in sync.",
+    titleLine2: "A complete ecosystem in sync.",
     description:
-      "From the moment a guest scans the QR until kitchen and management act on the same information, Kitch keeps every order live, visible and traceable so service moves with real control.",
+      "From the moment a guest scans the QR at the table until kitchen, waiters and management act on the same information, Kitch connects every part of the operation in one restaurant operating system.",
     mediaPlaceholder: "—",
     animationPlaceholder: "—",
     footerStrip:
@@ -363,9 +352,13 @@ const en: HomepageV2Content = {
         "QR scanned · round sent · kitchen and waiter in sync",
       descriptionMobile: "QR scanned · round sent",
     },
-    flowMap: {
-      boardLabel: "LIVE ORDER FLOW",
-      boardSublabel: "How Kitch moves one order through the restaurant",
+    operatingSystem: {
+      systemLabel: "KITCH OPERATING SYSTEM",
+      journeyLabel: "Live order journey",
+      journeySublabel: "How one order moves through the restaurant",
+      modulesLabel: "Ecosystem modules",
+      modulesSublabel:
+        "The connected infrastructure that powers every live order",
       liveOrder: {
         table: "Table 08",
         orderId: "Order #1284",
@@ -393,7 +386,7 @@ const en: HomepageV2Content = {
           symbol: "QR",
         },
         {
-          title: "Table / Live order",
+          title: "Table / QR",
           action: "Creates the order and keeps rounds active.",
           badge: "Live order",
           symbol: "T8",
@@ -417,30 +410,6 @@ const en: HomepageV2Content = {
           symbol: "MG",
         },
       ],
-      benefits: [
-        "Fewer communication errors",
-        "More real-time visibility",
-        "Kitchen with clear states",
-        "Waiters with more control",
-        "New rounds without friction",
-        "Operational traceability",
-      ],
-    },
-  },
-  kitchEcosystem: {
-    id: "kitch-ecosystem",
-    eyebrow: "Section 05",
-    title: "A complete ecosystem",
-    titleLine2: "to run your restaurant.",
-    description:
-      "Kitch brings the critical service touchpoints into one platform: menu, table, waiter, kitchen, management and loyalty. Every module works connected so operations flow with more control, fewer errors and a better guest experience.",
-    mediaPlaceholder: "—",
-    animationPlaceholder: "—",
-    footerStrip:
-      "Menu · Table · Waiter · Kitchen · Manager · Loyalty — All connected",
-    ecosystemBoard: {
-      boardLabel: "KITCH OPERATING ECOSYSTEM",
-      boardSublabel: "Six connected modules in one operating platform",
       modules: [
         {
           title: "Digital menu",
@@ -490,6 +459,15 @@ const en: HomepageV2Content = {
           badge: "+120 pts",
           symbol: "★",
         },
+      ],
+      valueTitle: "What changes for your restaurant",
+      benefits: [
+        "Fewer communication errors",
+        "More real-time visibility",
+        "Kitchen with clear states",
+        "Waiters with more control",
+        "New rounds without friction",
+        "Operational traceability",
       ],
     },
   },

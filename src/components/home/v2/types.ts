@@ -53,6 +53,19 @@ export type HomepageV2LiveOrderBoard = {
   benefits: string[];
 };
 
+export type HomepageV2OperatingSystemBoard = {
+  systemLabel: string;
+  journeyLabel: string;
+  journeySublabel: string;
+  modulesLabel: string;
+  modulesSublabel: string;
+  liveOrder: HomepageV2LiveOrder;
+  stations: HomepageV2FlowStation[];
+  modules: HomepageV2EcosystemModule[];
+  valueTitle: string;
+  benefits: string[];
+};
+
 export type HomepageV2FlowPhoto = {
   topBadge: string;
   title: string;
@@ -87,9 +100,8 @@ export type HomepageV2SectionContent = {
   diagnosticLabel?: string;
   diagnosticSublabel?: string;
   transformationBoard?: HomepageV2TransformationBoard;
-  flowMap?: HomepageV2LiveOrderBoard;
+  operatingSystem?: HomepageV2OperatingSystemBoard;
   flowPhoto?: HomepageV2FlowPhoto;
-  ecosystemBoard?: HomepageV2EcosystemBoard;
   mediaSrc?: string;
   mediaAlt?: string;
   cta?: HomepageV2Cta;
@@ -100,7 +112,6 @@ export type HomepageV2Content = {
   operationalProblem: HomepageV2SectionContent;
   restaurantTransformation: HomepageV2SectionContent;
   operationalFlow: HomepageV2SectionContent;
-  kitchEcosystem: HomepageV2SectionContent;
   android: HomepageV2SectionContent;
   results: HomepageV2SectionContent;
   productProof: HomepageV2SectionContent;

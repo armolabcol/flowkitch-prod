@@ -99,10 +99,14 @@
 @media (min-width: 1024px) {
   .kitch-live-order-visual {
     width: min(100%, 680px);
-    min-height: 520px;
-    aspect-ratio: auto;
+    min-height: 420px;
+    aspect-ratio: 16 / 11;
     margin-inline: 0;
   }
+}
+
+.kitch-live-order-visual__img {
+  object-position: center 42%;
 }
 
 .kitch-live-order-visual:hover {
@@ -290,57 +294,61 @@
   font-size: 8px;
 }
 
-/* —— Live order board —— */
-.live-order-board {
+/* —— Kitch Operating System board (merged 04 + 05) —— */
+.kitch-operating-system-board {
   position: relative;
   width: 100%;
-  padding: 1.5rem 1.25rem 1.75rem;
-  border-radius: 36px;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border-radius: 40px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
-    radial-gradient(circle at 50% 0%, rgba(230, 57, 70, 0.08), transparent 40%),
-    linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
-    rgba(10, 10, 10, 0.88);
+    radial-gradient(circle at 50% 40%, rgba(230, 57, 70, 0.1), transparent 30%),
+    radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.04), transparent 22%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
+    rgba(10, 10, 10, 0.9);
   box-shadow:
-    0 44px 120px rgba(0, 0, 0, 0.48),
-    0 0 0 1px rgba(255, 255, 255, 0.02),
-    0 0 100px rgba(230, 57, 70, 0.05);
+    0 48px 130px rgba(0, 0, 0, 0.48),
+    0 0 100px rgba(230, 57, 70, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   overflow: hidden;
   animation: live-board-enter 1000ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
-  transition:
-    box-shadow 400ms ease,
-    transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.live-order-board::before {
-  content: "";
+.kitch-operating-system-board__mesh {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 56px 56px;
-  opacity: 0.4;
-  mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, black, transparent);
+    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.45;
+  mask-image: radial-gradient(ellipse 92% 82% at 50% 48%, black, transparent);
 }
 
-.live-order-board:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 52px 130px rgba(0, 0, 0, 0.52),
-    0 0 120px rgba(230, 57, 70, 0.07);
+.kitch-operating-system-board__pulse {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  width: min(72%, 520px);
+  height: min(40%, 280px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(230, 57, 70, 0.12), transparent 68%);
+  pointer-events: none;
+  animation: ecosystem-pulse 8s ease-in-out infinite;
 }
 
-.live-order-board__header {
+.kitch-operating-system-board__header {
   position: relative;
   z-index: 2;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  text-align: center;
 }
 
-.live-order-board__label {
+.kos-board__system-label {
   display: block;
   font-size: 10px;
   font-weight: 700;
@@ -349,7 +357,17 @@
   color: rgba(255, 255, 255, 0.94);
 }
 
-.live-order-board__sublabel {
+.kos-board__journey-label {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(230, 57, 70, 0.88);
+}
+
+.kos-board__journey-sublabel {
   display: block;
   margin-top: 5px;
   font-size: 11px;
@@ -357,6 +375,306 @@
   color: rgba(255, 255, 255, 0.42);
 }
 
+.kos-board__journey {
+  position: relative;
+  z-index: 2;
+}
+
+.kos-board__bridge {
+  position: relative;
+  z-index: 2;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  text-align: center;
+}
+
+.kos-board__bridge-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.kos-board__bridge-copy {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.46);
+}
+
+.kos-board__modules {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .kos-board__modules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .kos-board__modules {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.125rem;
+  }
+}
+
+.kos-module-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 196px;
+  padding: 1.125rem 1.125rem 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(160deg, rgba(20, 20, 20, 0.92), rgba(12, 12, 12, 0.88));
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  transition:
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 320ms ease,
+    box-shadow 320ms ease;
+  animation:
+    live-flow-fade-up 760ms cubic-bezier(0.16, 1, 0.3, 1) both,
+    kos-module-sync 10s ease-in-out infinite;
+  animation-delay: var(--enter-delay, 0ms), var(--module-sync-delay, 0s);
+}
+
+.kos-module-card:nth-child(1) {
+  --enter-delay: 720ms;
+}
+
+.kos-module-card:nth-child(2) {
+  --enter-delay: 800ms;
+}
+
+.kos-module-card:nth-child(3) {
+  --enter-delay: 880ms;
+}
+
+.kos-module-card:nth-child(4) {
+  --enter-delay: 960ms;
+}
+
+.kos-module-card:nth-child(5) {
+  --enter-delay: 1040ms;
+}
+
+.kos-module-card:nth-child(6) {
+  --enter-delay: 1120ms;
+}
+
+.kos-module-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(230, 57, 70, 0.32);
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.4),
+    0 0 32px rgba(230, 57, 70, 0.1);
+}
+
+.kos-module-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+}
+
+.kos-module-card__symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(230, 57, 70, 0.3);
+  background: rgba(230, 57, 70, 0.1);
+  font-size: 10px;
+  font-weight: 800;
+  color: #e63946;
+  transition: box-shadow 320ms ease;
+}
+
+.kos-module-card:hover .kos-module-card__symbol {
+  box-shadow: 0 0 22px rgba(230, 57, 70, 0.2);
+}
+
+.kos-module-card__badge {
+  flex-shrink: 0;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.kos-module-card__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.kos-module-card__description {
+  margin-top: 0.45rem;
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.kos-module-card__benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 0.875rem;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.kos-module-card__benefit::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  margin-top: 4px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #e63946;
+  box-shadow: 0 0 8px rgba(230, 57, 70, 0.35);
+}
+
+.kos-board__value {
+  position: relative;
+  z-index: 2;
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.kos-board__value-title {
+  margin: 0 0 1rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.kos-board__benefits {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .kos-board__benefits {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .kos-board__benefits {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.kos-board__benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0.875rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.32);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.72);
+  animation: live-flow-fade-up 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.kos-board__benefit:nth-child(1) {
+  animation-delay: 1180ms;
+}
+
+.kos-board__benefit:nth-child(2) {
+  animation-delay: 1240ms;
+}
+
+.kos-board__benefit:nth-child(3) {
+  animation-delay: 1300ms;
+}
+
+.kos-board__benefit:nth-child(4) {
+  animation-delay: 1360ms;
+}
+
+.kos-board__benefit:nth-child(5) {
+  animation-delay: 1420ms;
+}
+
+.kos-board__benefit:nth-child(6) {
+  animation-delay: 1480ms;
+}
+
+.kos-board__benefit::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-top: 5px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #e63946;
+  box-shadow: 0 0 8px rgba(230, 57, 70, 0.35);
+}
+
+@keyframes ecosystem-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes kos-module-sync {
+  0%,
+  4% {
+    border-color: rgba(230, 57, 70, 0.5);
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.32),
+      0 0 28px rgba(230, 57, 70, 0.14);
+  }
+
+  20%,
+  100% {
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  }
+}
+
+/* Legacy journey canvas (inside operating system board) */
 .live-order-board__canvas {
   position: relative;
   z-index: 2;
@@ -718,7 +1036,7 @@
   color: rgba(255, 255, 255, 0.46);
 }
 
-/* Benefits layer */
+/* Benefits layer (legacy — unused after merge) */
 .live-order-board__benefits {
   position: relative;
   z-index: 2;
@@ -925,11 +1243,18 @@
   .flow-impact-strip,
   .kitch-live-order-visual,
   .flow-photo-status,
-  .live-order-board,
+  .kitch-operating-system-board,
   .live-order-card,
   .live-flow-station,
+  .kos-module-card,
+  .kos-board__benefit,
   .live-order-board__benefit {
     animation: none !important;
+  }
+
+  .kitch-operating-system-board__pulse {
+    animation: none !important;
+    opacity: 0.55;
   }
 
   .live-order-card__status-item {
@@ -947,9 +1272,9 @@
     animation: none !important;
   }
 
-  .live-order-board:hover,
   .live-order-card:hover,
   .live-flow-station:hover,
+  .kos-module-card:hover,
   .kitch-live-order-visual:hover {
     transform: none !important;
   }

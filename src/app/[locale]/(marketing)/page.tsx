@@ -3,7 +3,6 @@ import {
   AndroidSection,
   HomeHero,
   HomepageCTA,
-  KitchEcosystem,
   OperationalFlow,
   OperationalProblem,
   ProductProof,
@@ -40,7 +39,6 @@ export default async function HomePage({ params }: Props) {
       <OperationalProblem content={v2.operationalProblem} locale={locale} />
       <RestaurantTransformation content={v2.restaurantTransformation} locale={locale} />
       <OperationalFlow content={v2.operationalFlow} locale={locale} />
-      <KitchEcosystem content={v2.kitchEcosystem} locale={locale} />
       <AndroidSection content={v2.android} locale={locale} />
       <ResultsSection content={v2.results} locale={locale} />
       <ProductProof content={v2.productProof} locale={locale} />

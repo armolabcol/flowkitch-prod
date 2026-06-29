@@ -2,7 +2,6 @@ export { HomeHero } from "@/components/home/v2/HomeHero";
 export { OperationalProblem } from "@/components/home/v2/OperationalProblem";
 export { RestaurantTransformation } from "@/components/home/v2/RestaurantTransformation";
 export { OperationalFlow } from "@/components/home/v2/OperationalFlow";
-export { KitchEcosystem } from "@/components/home/v2/KitchEcosystem";
 export { AndroidSection } from "@/components/home/v2/AndroidSection";
 export { ResultsSection } from "@/components/home/v2/ResultsSection";
 export { ProductProof } from "@/components/home/v2/ProductProof";

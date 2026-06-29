@@ -3,9 +3,11 @@
 import { useState } from "react";
 import type {
   HomepageV2FlowPhoto,
-  HomepageV2LiveOrderBoard,
+  HomepageV2OperatingSystemBoard,
   HomepageV2SectionProps,
 } from "@/components/home/v2/types";
+
+const MODULE_SYNC_DELAYS = ["0s", "2s", "4s", "6s", "8s", "9s"];
 
 const DEFAULT_FLOW_MEDIA =
   "/assets/sections/flow/KITCH_SECTION_04_TABLE_QR_FLOW_v01.webp";
@@ -64,7 +66,6 @@ function FlowSectionVisual({
       </span>
 
       <div className="flow-photo-status" aria-hidden>
-        <span className="flow-photo-status__eyebrow">{photo.topBadge}</span>
         <strong>{photo.title}</strong>
         <p className="flow-photo-status__detail flow-photo-status__detail--full">
           {photo.description}
@@ -77,82 +78,134 @@ function FlowSectionVisual({
   );
 }
 
-function LiveOrderFlowBoard({ board }: { board: HomepageV2LiveOrderBoard }) {
+function KitchOperatingSystemBoard({
+  board,
+}: {
+  board: HomepageV2OperatingSystemBoard;
+}) {
   const { liveOrder } = board;
 
   return (
     <div
-      className="live-order-board"
+      className="kitch-operating-system-board"
       role="region"
-      aria-label={`${board.boardLabel}. ${board.boardSublabel}`}
+      aria-label={`${board.systemLabel}. ${board.journeyLabel}`}
     >
-      <header className="live-order-board__header">
-        <span className="live-order-board__label">{board.boardLabel}</span>
-        <span className="live-order-board__sublabel">{board.boardSublabel}</span>
+      <div className="kitch-operating-system-board__mesh" aria-hidden />
+      <div className="kitch-operating-system-board__pulse" aria-hidden />
+
+      <header className="kitch-operating-system-board__header">
+        <span className="kos-board__system-label">{board.systemLabel}</span>
+        <span className="kos-board__journey-label">{board.journeyLabel}</span>
+        <span className="kos-board__journey-sublabel">
+          {board.journeySublabel}
+        </span>
       </header>
 
-      <div className="live-order-board__canvas">
-        <article className="live-order-card">
-          <div className="live-order-card__top">
-            <div>
-              <p className="live-order-card__table">{liveOrder.table}</p>
-              <p className="live-order-card__id">{liveOrder.orderId}</p>
-            </div>
-            <span className="live-order-card__live-badge">
-              <span className="live-order-card__live-dot" aria-hidden />
-              {liveOrder.liveBadge}
-            </span>
-          </div>
-
-          <p className="live-order-card__status-label">{liveOrder.statusLabel}</p>
-          <div className="live-order-card__status-cycle">
-            {liveOrder.statusCycle.map((status) => (
-              <span key={status} className="live-order-card__status-item">
-                {status}
-              </span>
-            ))}
-          </div>
-
-          <div className="live-order-card__meta">
-            {liveOrder.meta.map((row) => (
-              <div key={row.label} className="live-order-card__meta-item">
-                <span className="live-order-card__meta-label">{row.label}</span>
-                <span className="live-order-card__meta-value">{row.value}</span>
+      <div className="kos-board__journey">
+        <div className="live-order-board__canvas">
+          <article className="live-order-card">
+            <div className="live-order-card__top">
+              <div>
+                <p className="live-order-card__table">{liveOrder.table}</p>
+                <p className="live-order-card__id">{liveOrder.orderId}</p>
               </div>
-            ))}
-          </div>
-        </article>
+              <span className="live-order-card__live-badge">
+                <span className="live-order-card__live-dot" aria-hidden />
+                {liveOrder.liveBadge}
+              </span>
+            </div>
 
-        <div className="live-order-board__rail">
-          <div className="live-order-board__pulse-line" aria-hidden />
-          <div className="live-order-board__stations">
-            {board.stations.map((station) => (
-              <article key={station.title} className="live-flow-station">
-                <span className="live-flow-station__symbol" aria-hidden>
-                  {station.symbol}
+            <p className="live-order-card__status-label">
+              {liveOrder.statusLabel}
+            </p>
+            <div className="live-order-card__status-cycle">
+              {liveOrder.statusCycle.map((status) => (
+                <span key={status} className="live-order-card__status-item">
+                  {status}
                 </span>
-                <span className="live-flow-station__badge">{station.badge}</span>
-                <h3 className="live-flow-station__title">{station.title}</h3>
-                <p className="live-flow-station__action">{station.action}</p>
-              </article>
-            ))}
+              ))}
+            </div>
+
+            <div className="live-order-card__meta">
+              {liveOrder.meta.map((row) => (
+                <div key={row.label} className="live-order-card__meta-item">
+                  <span className="live-order-card__meta-label">
+                    {row.label}
+                  </span>
+                  <span className="live-order-card__meta-value">
+                    {row.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <div className="live-order-board__rail">
+            <div className="live-order-board__pulse-line" aria-hidden />
+            <div className="live-order-board__stations">
+              {board.stations.map((station) => (
+                <article key={station.title} className="live-flow-station">
+                  <span className="live-flow-station__symbol" aria-hidden>
+                    {station.symbol}
+                  </span>
+                  <span className="live-flow-station__badge">
+                    {station.badge}
+                  </span>
+                  <h3 className="live-flow-station__title">{station.title}</h3>
+                  <p className="live-flow-station__action">{station.action}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="live-order-board__benefits">
-        {board.benefits.map((benefit) => (
-          <div key={benefit} className="live-order-board__benefit">
-            {benefit}
-          </div>
+      <div className="kos-board__bridge">
+        <span className="kos-board__bridge-label">{board.modulesLabel}</span>
+        <p className="kos-board__bridge-copy">{board.modulesSublabel}</p>
+      </div>
+
+      <div className="kos-board__modules">
+        {board.modules.map((module, index) => (
+          <article
+            key={module.title}
+            className="kos-module-card"
+            style={
+              {
+                "--module-sync-delay": MODULE_SYNC_DELAYS[index] ?? "0s",
+              } as React.CSSProperties
+            }
+          >
+            <div className="kos-module-card__header">
+              <span className="kos-module-card__symbol" aria-hidden>
+                {module.symbol}
+              </span>
+              <span className="kos-module-card__badge">{module.badge}</span>
+            </div>
+            <h3 className="kos-module-card__title">{module.title}</h3>
+            <p className="kos-module-card__description">{module.description}</p>
+            <p className="kos-module-card__benefit">{module.benefit}</p>
+          </article>
         ))}
+      </div>
+
+      <div className="kos-board__value">
+        <h3 className="kos-board__value-title">{board.valueTitle}</h3>
+        <div className="kos-board__benefits">
+          {board.benefits.map((benefit) => (
+            <div key={benefit} className="kos-board__benefit">
+              {benefit}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
 export function OperationalFlow({ content }: HomepageV2SectionProps) {
-  const board = content.flowMap;
+  const board = content.operatingSystem;
   const mediaSrc = content.mediaSrc ?? DEFAULT_FLOW_MEDIA;
   const mediaAlt = content.mediaAlt ?? DEFAULT_FLOW_MEDIA_ALT;
   const photo = content.flowPhoto;
@@ -199,7 +252,7 @@ export function OperationalFlow({ content }: HomepageV2SectionProps) {
 
         {board ? (
           <div className="flow-section__board-wrap">
-            <LiveOrderFlowBoard board={board} />
+            <KitchOperatingSystemBoard board={board} />
           </div>
         ) : null}
       </div>
