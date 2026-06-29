@@ -18,9 +18,13 @@ export type HomepageV2SectionContent = {
   id: string;
   eyebrow?: string;
   title: string;
+  titleLine2?: string;
   description: string;
   mediaPlaceholder: string;
   animationPlaceholder: string;
+  footerStrip?: string;
+  visualBadges?: string[];
+  mediaSrc?: string;
   cta?: HomepageV2Cta;
 };
 

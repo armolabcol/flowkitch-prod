@@ -18,11 +18,20 @@ const es: HomepageV2Content = {
   operationalProblem: {
     id: "operational-problem",
     eyebrow: "Sección 02",
-    title: "[Problema operativo] Título temporal",
+    title: "La operación no falla por falta de esfuerzo.",
+    titleLine2: "Falla cuando el flujo se rompe.",
     description:
-      "Descripción temporal del problema operativo que Kitch resuelve en restaurantes.",
-    mediaPlaceholder: "Imagen / video — problema operativo",
-    animationPlaceholder: "Animación — reservado Fase 2",
+      "En horas pico, los pedidos se dispersan, la cocina pierde visibilidad, el mesero se satura y la gerencia reacciona tarde. El problema no es la intención del equipo: es la falta de un sistema que conecte cada paso del servicio.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Pedidos dispersos · Meseros saturados · Cocina sin claridad · Gerencia reactiva",
+    visualBadges: [
+      "Pedidos dispersos",
+      "Cocina sin visibilidad",
+      "Rondas perdidas",
+    ],
+    mediaSrc: "/assets/hero/RM001_WEB_HERO_DESKTOP_CLEAN_v01.webp",
   },
   restaurantTransformation: {
     id: "restaurant-transformation",
@@ -110,11 +119,20 @@ const en: HomepageV2Content = {
   operationalProblem: {
     id: "operational-problem",
     eyebrow: "Section 02",
-    title: "[Operational problem] Temporary title",
+    title: "Operations don't fail from lack of effort.",
+    titleLine2: "They fail when the flow breaks.",
     description:
-      "Temporary description of the operational problem Kitch solves in restaurants.",
-    mediaPlaceholder: "Image / video — operational problem",
-    animationPlaceholder: "Animation — Phase 2 reserved",
+      "During peak hours, orders scatter, the kitchen loses visibility, waiters get overwhelmed, and management reacts too late. The problem isn't team intent — it's the lack of a system connecting every step of service.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Scattered orders · Overwhelmed waiters · Kitchen without clarity · Reactive management",
+    visualBadges: [
+      "Scattered orders",
+      "Kitchen without visibility",
+      "Lost rounds",
+    ],
+    mediaSrc: "/assets/hero/RM001_WEB_HERO_DESKTOP_CLEAN_v01.webp",
   },
   restaurantTransformation: {
     id: "restaurant-transformation",
