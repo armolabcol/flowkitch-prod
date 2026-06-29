@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ActiveEcosystemModule } from "@/components/home/v2/ActiveEcosystemModule";
 import { KitchFlowMockupCarousel } from "@/components/home/v2/KitchFlowMockupCarousel";
 import type {
   HomepageV2FlowPhoto,
@@ -8,12 +9,8 @@ import type {
   HomepageV2SectionProps,
 } from "@/components/home/v2/types";
 
-const MODULE_SYNC_DELAYS = ["0s", "2s", "4s", "6s", "8s", "9s"];
-
 const DEFAULT_FLOW_MEDIA =
   "/assets/sections/flow/KITCH_SECTION_04_TABLE_QR_FLOW_v01.webp";
-const DEFAULT_FLOW_MEDIA_ALT =
-  "Restaurante premium con mesas activas donde inicia el flujo de pedidos mediante QR";
 
 function ImpactStrip({ text }: { text: string }) {
   const items = text.split("·").map((item) => item.trim());
@@ -81,15 +78,20 @@ function FlowSectionVisual({
 
 function KitchOperatingSystemBoard({
   board,
-  placeholderLabel,
 }: {
   board: HomepageV2OperatingSystemBoard;
-  placeholderLabel: string;
 }) {
-  const { liveOrder } = board;
+  const { liveOrder, flowSteps, ui } = board;
   const [activeSlide, setActiveSlide] = useState(0);
-  const activeSlideData = board.carouselSlides[activeSlide];
-  const activeStationIndex = activeSlideData?.stationIndex;
+  const activeStep = flowSteps[activeSlide];
+  const loyaltyStep = flowSteps[5];
+  const moduleLabels = {
+    activeModule: board.activeModuleLabel,
+    impact: board.impactLabel,
+    owner: board.ownerInsightLabel,
+  };
+
+  if (!activeStep) return null;
 
   return (
     <div
@@ -109,105 +111,110 @@ function KitchOperatingSystemBoard({
       </header>
 
       <div className="kos-board__journey">
-        <div className="kos-board__journey-stage">
-          <KitchFlowMockupCarousel
-            slides={board.carouselSlides}
-            activeIndex={activeSlide}
-            onActiveChange={setActiveSlide}
-            placeholderLabel={placeholderLabel}
-          />
+        <div className="kitch-operating-board">
+          <div className="kitch-operating-board__main">
+            <KitchFlowMockupCarousel
+              steps={flowSteps}
+              activeIndex={activeSlide}
+              onActiveChange={setActiveSlide}
+              labels={ui}
+            />
+          </div>
 
-          <article className="live-order-card live-order-card--compact">
-            <div className="live-order-card__top">
-              <div>
-                <p className="live-order-card__table">{liveOrder.table}</p>
-                <p className="live-order-card__id">{liveOrder.orderId}</p>
-              </div>
-              <span className="live-order-card__live-badge">
-                <span className="live-order-card__live-dot" aria-hidden />
-                {liveOrder.liveBadge}
-              </span>
-            </div>
-
-            <p className="live-order-card__status-label">
-              {liveOrder.statusLabel}
-            </p>
-            <div className="live-order-card__status-cycle">
-              {liveOrder.statusCycle.map((status) => (
-                <span key={status} className="live-order-card__status-item">
-                  {status}
-                </span>
-              ))}
-            </div>
-
-            <div className="live-order-card__meta">
-              {liveOrder.meta.map((row) => (
-                <div key={row.label} className="live-order-card__meta-item">
-                  <span className="live-order-card__meta-label">
-                    {row.label}
-                  </span>
-                  <span className="live-order-card__meta-value">
-                    {row.value}
-                  </span>
+          <aside className="kitch-operating-board__side">
+            <article className="live-order-card live-order-card--compact">
+              <div className="live-order-card__top">
+                <div>
+                  <p className="live-order-card__table">{liveOrder.table}</p>
+                  <p className="live-order-card__id">{liveOrder.orderId}</p>
                 </div>
-              ))}
-            </div>
-          </article>
+                <span className="live-order-card__live-badge">
+                  <span className="live-order-card__live-dot" aria-hidden />
+                  {liveOrder.liveBadge}
+                </span>
+              </div>
+
+              <p className="live-order-card__status-label">
+                {liveOrder.statusLabel}
+              </p>
+              <p
+                key={activeStep.step}
+                className="live-order-card__status-value"
+              >
+                {activeStep.orderStatus}
+              </p>
+
+              <div className="live-order-card__meta">
+                {liveOrder.meta.map((row) => (
+                  <div key={row.label} className="live-order-card__meta-item">
+                    <span className="live-order-card__meta-label">
+                      {row.label}
+                    </span>
+                    <span className="live-order-card__meta-value">
+                      {row.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <ActiveEcosystemModule
+              key={activeStep.step}
+              module={activeStep.module}
+              labels={moduleLabels}
+            />
+          </aside>
         </div>
 
         <div className="live-order-board__rail">
           <div className="live-order-board__pulse-line" aria-hidden />
           <div className="live-order-board__stations">
-            {board.stations.map((station, index) => (
+            {flowSteps.map((step, index) => {
+              const station = step.station;
+              if (!station) return null;
+
+              return (
+                <article
+                  key={step.step}
+                  className={`live-flow-station${
+                    activeSlide === index
+                      ? " live-flow-station--carousel-active"
+                      : ""
+                  }`}
+                >
+                  <span className="live-flow-station__symbol" aria-hidden>
+                    {station.symbol}
+                  </span>
+                  <span className="live-flow-station__badge">
+                    {station.badge}
+                  </span>
+                  <h3 className="live-flow-station__title">{station.title}</h3>
+                  <p className="live-flow-station__action">{station.action}</p>
+                </article>
+              );
+            })}
+            {loyaltyStep ? (
               <article
-                key={station.title}
-                className={`live-flow-station${
-                  activeStationIndex === index
-                    ? " live-flow-station--carousel-active"
-                    : ""
+                className={`live-flow-station live-flow-station--loyalty${
+                  activeSlide === 5 ? " live-flow-station--carousel-active" : ""
                 }`}
               >
                 <span className="live-flow-station__symbol" aria-hidden>
-                  {station.symbol}
+                  ★
                 </span>
-                <span className="live-flow-station__badge">{station.badge}</span>
-                <h3 className="live-flow-station__title">{station.title}</h3>
-                <p className="live-flow-station__action">{station.action}</p>
+                <span className="live-flow-station__badge">
+                  {loyaltyStep.stepLabel}
+                </span>
+                <h3 className="live-flow-station__title">
+                  {loyaltyStep.stepLabel}
+                </h3>
+                <p className="live-flow-station__action">
+                  {loyaltyStep.module.description}
+                </p>
               </article>
-            ))}
+            ) : null}
           </div>
         </div>
-      </div>
-
-      <div className="kos-board__bridge">
-        <span className="kos-board__bridge-label">{board.modulesLabel}</span>
-        <p className="kos-board__bridge-copy">{board.modulesSublabel}</p>
-      </div>
-
-      <div className="kos-board__modules">
-        {board.modules.map((module, index) => (
-          <article
-            key={module.title}
-            className={`kos-module-card${
-              activeSlide === index ? " kos-module-card--carousel-active" : ""
-            }`}
-            style={
-              {
-                "--module-sync-delay": MODULE_SYNC_DELAYS[index] ?? "0s",
-              } as React.CSSProperties
-            }
-          >
-            <div className="kos-module-card__header">
-              <span className="kos-module-card__symbol" aria-hidden>
-                {module.symbol}
-              </span>
-              <span className="kos-module-card__badge">{module.badge}</span>
-            </div>
-            <h3 className="kos-module-card__title">{module.title}</h3>
-            <p className="kos-module-card__description">{module.description}</p>
-            <p className="kos-module-card__benefit">{module.benefit}</p>
-          </article>
-        ))}
       </div>
 
       <div className="kos-board__value">
@@ -227,10 +234,12 @@ function KitchOperatingSystemBoard({
 export function OperationalFlow({ content, locale }: HomepageV2SectionProps) {
   const board = content.operatingSystem;
   const mediaSrc = content.mediaSrc ?? DEFAULT_FLOW_MEDIA;
-  const mediaAlt = content.mediaAlt ?? DEFAULT_FLOW_MEDIA_ALT;
+  const mediaAlt =
+    content.mediaAlt ??
+    (locale === "es"
+      ? "Restaurante premium con mesas activas donde inicia el flujo de pedidos mediante QR"
+      : "Premium restaurant with active tables where the QR ordering flow begins");
   const photo = content.flowPhoto;
-  const placeholderLabel =
-    locale === "es" ? "Mockup pendiente" : "Mockup pending";
 
   return (
     <section
@@ -274,10 +283,7 @@ export function OperationalFlow({ content, locale }: HomepageV2SectionProps) {
 
         {board ? (
           <div className="flow-section__board-wrap">
-            <KitchOperatingSystemBoard
-              board={board}
-              placeholderLabel={placeholderLabel}
-            />
+            <KitchOperatingSystemBoard board={board} />
           </div>
         ) : null}
       </div>

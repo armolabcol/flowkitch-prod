@@ -5,8 +5,21 @@ import type { HomepageV2SectionProps } from "@/components/home/v2/types";
 
 const DEFAULT_MEDIA =
   "/assets/sections/problem/KITCH_SECTION_02_OPERATIONAL_PROBLEM_v01.webp";
-const DEFAULT_MEDIA_ALT =
-  "Cocina de restaurante en hora pico con equipo bajo presión y pantalla KDS visible";
+const DEFAULT_MEDIA_ALT = {
+  es: "Cocina de restaurante en hora pico con equipo bajo presión y pantalla KDS visible",
+  en: "Restaurant kitchen during peak service with team under pressure and KDS screen visible",
+} as const;
+
+const DEFAULT_DIAGNOSTIC = {
+  es: {
+    label: "Estrés operativo",
+    sublabel: "Flujo de servicio en hora pico",
+  },
+  en: {
+    label: "Operational stress",
+    sublabel: "Peak-hour service flow",
+  },
+} as const;
 
 function DiagnosticCard({
   mediaSrc,
@@ -85,13 +98,14 @@ function SignalStrip({ text }: { text: string }) {
   );
 }
 
-export function OperationalProblem({ content }: HomepageV2SectionProps) {
+export function OperationalProblem({ content, locale }: HomepageV2SectionProps) {
   const mediaSrc = content.mediaSrc ?? DEFAULT_MEDIA;
-  const mediaAlt = content.mediaAlt ?? DEFAULT_MEDIA_ALT;
+  const mediaAlt = content.mediaAlt ?? DEFAULT_MEDIA_ALT[locale];
   const alerts = content.visualBadges ?? [];
-  const diagnosticLabel = content.diagnosticLabel ?? "Operational stress";
+  const diagnosticLabel =
+    content.diagnosticLabel ?? DEFAULT_DIAGNOSTIC[locale].label;
   const diagnosticSublabel =
-    content.diagnosticSublabel ?? "Peak-hour service flow";
+    content.diagnosticSublabel ?? DEFAULT_DIAGNOSTIC[locale].sublabel;
 
   return (
     <section

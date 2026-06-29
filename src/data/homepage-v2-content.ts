@@ -6,12 +6,55 @@ const es: HomepageV2Content = {
     id: "hero",
     eyebrow: "Sistema operativo digital para restaurantes",
     title: "Kitch",
-    tagline: "The flow behind great service.",
+    tagline: "El flujo detrás de un gran servicio.",
     description:
       "Conecta cliente, mesero, cocina y gerencia en una operación fluida, visible y rentable.",
     cta: {
       primaryLabel: "Agendar demo",
       secondaryLabel: "Ver cómo funciona",
+    },
+    mockups: {
+      customer: {
+        eyebrow: "Cliente · QR",
+        table: "Mesa 08",
+        badge: "Orden abierta",
+        addRound: "Agregar ronda",
+        items: [
+          { name: "Tacos al pastor", meta: "Plato fuerte" },
+          { name: "Guacamole", meta: "Entrada" },
+          { name: "Margarita", meta: "Bar" },
+        ],
+      },
+      manager: {
+        eyebrow: "Gerencia",
+        title: "Manager panel",
+        stats: [
+          { label: "Mesas activas", value: "24" },
+          { label: "Órdenes abiertas", value: "18" },
+          { label: "Rondas pendientes", value: "6" },
+        ],
+        salesLabel: "Ventas hoy",
+        salesValue: "$3,420",
+      },
+      kitchen: {
+        eyebrow: "Cocina",
+        title: "Kitchen Display",
+        table: "Mesa 08",
+        liveBadge: "En vivo",
+        tickets: [
+          { item: "Tacos al pastor", status: "En preparación" },
+          { item: "Guacamole", status: "Listo" },
+          { item: "Margarita", status: "En cola" },
+        ],
+      },
+      waiter: {
+        eyebrow: "Mesero",
+        title: "Panel mesero",
+        pendingTitle: "Rondas pendientes",
+        pendingMeta: "Mesa 08 · 3 ítems nuevos",
+        approve: "Aprobar",
+        sendToKitchen: "Enviar a cocina",
+      },
     },
   },
   operationalProblem: {
@@ -98,113 +141,32 @@ const es: HomepageV2Content = {
     },
     operatingSystem: {
       systemLabel: "KITCH OPERATING SYSTEM",
-      journeyLabel: "Live order journey",
-      journeySublabel: "How one order moves through the restaurant",
-      modulesLabel: "Ecosystem modules",
-      modulesSublabel:
-        "La infraestructura conectada que sostiene cada orden viva",
+      journeyLabel: "Recorrido de orden viva",
+      journeySublabel: "Cómo avanza una orden por el restaurante",
+      activeModuleLabel: "Módulo activo",
+      impactLabel: "Impacto",
+      ownerInsightLabel: "Para el dueño",
+      ui: {
+        placeholderLabel: "Mockup pendiente",
+        carouselAriaLabel: "Demostración del flujo operativo Kitch",
+        prevStepLabel: "Paso anterior",
+        nextStepLabel: "Paso siguiente",
+        flowStepsAriaLabel: "Pasos del flujo",
+        stepAriaTemplate: "{title} — paso {step}",
+      },
       liveOrder: {
         table: "Mesa 08",
         orderId: "Orden #1284",
         statusLabel: "Estado actual",
         liveBadge: "En vivo",
-        statusCycle: [
-          "QR escaneado",
-          "Orden viva",
-          "Aprobada",
-          "Preparing",
-          "Supervisada",
-        ],
         meta: [
           { label: "Ítems", value: "3" },
           { label: "Ronda", value: "2" },
-          { label: "Host", value: "Activo" },
+          { label: "Anfitrión", value: "Activo" },
           { label: "Abierta", value: "12 min" },
         ],
       },
-      stations: [
-        {
-          title: "Cliente",
-          action: "Escanea QR y arma su pedido.",
-          badge: "Inicia",
-          symbol: "QR",
-        },
-        {
-          title: "Mesa / QR",
-          action: "Crea la orden y mantiene rondas activas.",
-          badge: "Orden viva",
-          symbol: "M8",
-        },
-        {
-          title: "Mesero",
-          action: "Valida, aprueba y envía a cocina.",
-          badge: "Aprueba",
-          symbol: "✓",
-        },
-        {
-          title: "Cocina",
-          action: "Recibe ítems y actualiza estados.",
-          badge: "Prepara",
-          symbol: "KDS",
-        },
-        {
-          title: "Manager",
-          action: "Supervisa operación, cierres y trazabilidad.",
-          badge: "Supervisa",
-          symbol: "MG",
-        },
-      ],
-      modules: [
-        {
-          title: "Menú digital",
-          description:
-            "Tu carta siempre visible, rápida y fácil de actualizar.",
-          benefit: "Menos fricción al ordenar",
-          badge: "QR listo",
-          symbol: "QR",
-        },
-        {
-          title: "Orden viva",
-          description:
-            "Cada mesa puede crear rondas, agregar ítems y mantener el pedido activo.",
-          benefit: "Más consumo sin perder control",
-          badge: "Round 2 active",
-          symbol: "M8",
-        },
-        {
-          title: "Panel mesero",
-          description:
-            "El mesero valida, aprueba y envía pedidos sin perder visibilidad.",
-          benefit: "Menos saturación del equipo",
-          badge: "3 pendientes",
-          symbol: "✓",
-        },
-        {
-          title: "KDS cocina",
-          description:
-            "La cocina recibe ítems claros, estados por preparación y prioridad operativa.",
-          benefit: "Menos errores en cocina",
-          badge: "Preparing",
-          symbol: "KDS",
-        },
-        {
-          title: "Manager panel",
-          description:
-            "La gerencia ve mesas abiertas, órdenes activas, cierres y trazabilidad.",
-          benefit: "Control en tiempo real",
-          badge: "24 mesas activas",
-          symbol: "MG",
-        },
-        {
-          title: "Loyalty",
-          description:
-            "Puntos, historial y balance para impulsar recompra y fidelización.",
-          benefit: "Clientes que vuelven",
-          badge: "+120 pts",
-          symbol: "★",
-        },
-      ],
-      carouselSlides: [
+      flowSteps: [
         {
           step: "01",
           title: "Cliente escanea el QR",
@@ -212,8 +174,25 @@ const es: HomepageV2Content = {
             "El menú se abre desde la mesa y el cliente empieza a construir su pedido sin fricción.",
           badge: "QR listo",
           asset: "01_customer_qr_menu.webp",
-          stepLabel: "Cliente",
+          stepLabel: "Menú",
+          orderStatus: "Iniciada",
           stationIndex: 0,
+          station: {
+            title: "Cliente",
+            action: "Escanea QR y arma su pedido.",
+            badge: "Inicia",
+            symbol: "QR",
+          },
+          module: {
+            symbol: "QR",
+            title: "Menú digital",
+            description:
+              "Tu carta siempre visible, rápida y fácil de actualizar.",
+            benefit: "Menos fricción al ordenar",
+            signal: "QR listo",
+            ownerValue:
+              "El cliente puede explorar y ordenar sin esperar a que el equipo explique toda la carta.",
+          },
         },
         {
           step: "02",
@@ -222,8 +201,25 @@ const es: HomepageV2Content = {
             "La mesa mantiene una orden abierta con rondas, join code e ítems visibles para el flujo operativo.",
           badge: "Mesa 08",
           asset: "02_live_order_table.webp",
-          stepLabel: "Orden viva",
+          stepLabel: "Orden",
+          orderStatus: "Abierta",
           stationIndex: 1,
+          station: {
+            title: "Mesa / QR",
+            action: "Crea la orden y mantiene rondas activas.",
+            badge: "Orden viva",
+            symbol: "M8",
+          },
+          module: {
+            symbol: "M8",
+            title: "Orden viva",
+            description:
+              "Cada mesa puede crear rondas, agregar ítems y mantener el pedido activo.",
+            benefit: "Más consumo sin perder control",
+            signal: "Ronda 2 activa",
+            ownerValue:
+              "La mesa puede seguir consumiendo sin reiniciar el proceso ni perder trazabilidad.",
+          },
         },
         {
           step: "03",
@@ -233,7 +229,24 @@ const es: HomepageV2Content = {
           badge: "Aprobación",
           asset: "03_waiter_approval.webp",
           stepLabel: "Mesero",
+          orderStatus: "Aprobada",
           stationIndex: 2,
+          station: {
+            title: "Mesero",
+            action: "Valida, aprueba y envía a cocina.",
+            badge: "Aprueba",
+            symbol: "✓",
+          },
+          module: {
+            symbol: "✓",
+            title: "Panel mesero",
+            description:
+              "El mesero valida, aprueba y envía pedidos sin perder visibilidad.",
+            benefit: "Menos saturación del equipo",
+            signal: "3 pendientes",
+            ownerValue:
+              "El mesero conserva el control del servicio sin cargar mentalmente cada detalle.",
+          },
         },
         {
           step: "04",
@@ -242,18 +255,52 @@ const es: HomepageV2Content = {
             "El KDS organiza ítems, estados y prioridades para preparar sin depender de órdenes dispersas.",
           badge: "KDS activo",
           asset: "04_kitchen_kds.webp",
-          stepLabel: "Cocina",
+          stepLabel: "KDS",
+          orderStatus: "En preparación",
           stationIndex: 3,
+          station: {
+            title: "Cocina",
+            action: "Recibe ítems y actualiza estados.",
+            badge: "Prepara",
+            symbol: "KDS",
+          },
+          module: {
+            symbol: "KDS",
+            title: "KDS cocina",
+            description:
+              "La cocina recibe ítems claros, estados por preparación y prioridad operativa.",
+            benefit: "Menos errores en cocina",
+            signal: "En preparación",
+            ownerValue:
+              "La cocina trabaja con estados visibles y menos dependencia de tickets o mensajes sueltos.",
+          },
         },
         {
           step: "05",
-          title: "Manager ve la operación",
+          title: "La gerencia ve la operación",
           description:
             "La gerencia supervisa mesas, órdenes, estados, cierres y trazabilidad en tiempo real.",
           badge: "Vista total",
           asset: "05_manager_panel.webp",
           stepLabel: "Manager",
+          orderStatus: "Supervisada",
           stationIndex: 4,
+          station: {
+            title: "Gerencia",
+            action: "Supervisa operación, cierres y trazabilidad.",
+            badge: "Supervisa",
+            symbol: "MG",
+          },
+          module: {
+            symbol: "MG",
+            title: "Manager panel",
+            description:
+              "La gerencia ve mesas abiertas, órdenes activas, cierres y trazabilidad.",
+            benefit: "Control en tiempo real",
+            signal: "24 mesas activas",
+            ownerValue:
+              "El administrador deja de reaccionar tarde y empieza a operar con visibilidad real.",
+          },
         },
         {
           step: "06",
@@ -263,6 +310,17 @@ const es: HomepageV2Content = {
           badge: "+120 pts",
           asset: "06_loyalty_followup.webp",
           stepLabel: "Loyalty",
+          orderStatus: "Fidelizada",
+          module: {
+            symbol: "★",
+            title: "Loyalty",
+            description:
+              "Puntos, historial y balance para impulsar recompra y fidelización.",
+            benefit: "Clientes que vuelven",
+            signal: "+120 pts",
+            ownerValue:
+              "Cada visita puede convertirse en una relación medible, no solo en una venta aislada.",
+          },
         },
       ],
       valueTitle: "Lo que cambia para tu restaurante",
@@ -329,6 +387,49 @@ const en: HomepageV2Content = {
     cta: {
       primaryLabel: "Schedule demo",
       secondaryLabel: "See how it works",
+    },
+    mockups: {
+      customer: {
+        eyebrow: "Guest · QR",
+        table: "Table 08",
+        badge: "Open order",
+        addRound: "Add round",
+        items: [
+          { name: "Tacos al Pastor", meta: "Main" },
+          { name: "Guacamole", meta: "Starter" },
+          { name: "Margarita", meta: "Bar" },
+        ],
+      },
+      manager: {
+        eyebrow: "Management",
+        title: "Manager panel",
+        stats: [
+          { label: "Active tables", value: "24" },
+          { label: "Open orders", value: "18" },
+          { label: "Pending rounds", value: "6" },
+        ],
+        salesLabel: "Sales today",
+        salesValue: "$3,420",
+      },
+      kitchen: {
+        eyebrow: "Kitchen",
+        title: "Kitchen Display",
+        table: "Table 08",
+        liveBadge: "Live",
+        tickets: [
+          { item: "Tacos al Pastor", status: "Preparing" },
+          { item: "Guacamole", status: "Ready" },
+          { item: "Margarita", status: "Queued" },
+        ],
+      },
+      waiter: {
+        eyebrow: "Waiter",
+        title: "Waiter panel",
+        pendingTitle: "Pending rounds",
+        pendingMeta: "Table 08 · 3 new items",
+        approve: "Approve",
+        sendToKitchen: "Send to kitchen",
+      },
     },
   },
   operationalProblem: {
@@ -417,21 +518,22 @@ const en: HomepageV2Content = {
       systemLabel: "KITCH OPERATING SYSTEM",
       journeyLabel: "Live order journey",
       journeySublabel: "How one order moves through the restaurant",
-      modulesLabel: "Ecosystem modules",
-      modulesSublabel:
-        "The connected infrastructure that powers every live order",
+      activeModuleLabel: "Active module",
+      impactLabel: "Impact",
+      ownerInsightLabel: "For the owner",
+      ui: {
+        placeholderLabel: "Pending mockup",
+        carouselAriaLabel: "Kitch operational flow demonstration",
+        prevStepLabel: "Previous step",
+        nextStepLabel: "Next step",
+        flowStepsAriaLabel: "Flow steps",
+        stepAriaTemplate: "{title} — step {step}",
+      },
       liveOrder: {
         table: "Table 08",
         orderId: "Order #1284",
         statusLabel: "Current status",
         liveBadge: "Live",
-        statusCycle: [
-          "QR scanned",
-          "Live order",
-          "Approved",
-          "Preparing",
-          "Supervised",
-        ],
         meta: [
           { label: "Items", value: "3" },
           { label: "Round", value: "2" },
@@ -439,89 +541,7 @@ const en: HomepageV2Content = {
           { label: "Open", value: "12 min" },
         ],
       },
-      stations: [
-        {
-          title: "Guest",
-          action: "Scans QR and builds their order.",
-          badge: "Starts",
-          symbol: "QR",
-        },
-        {
-          title: "Table / QR",
-          action: "Creates the order and keeps rounds active.",
-          badge: "Live order",
-          symbol: "T8",
-        },
-        {
-          title: "Waiter",
-          action: "Validates, approves and sends to kitchen.",
-          badge: "Approves",
-          symbol: "✓",
-        },
-        {
-          title: "Kitchen",
-          action: "Receives items and updates states.",
-          badge: "Prepares",
-          symbol: "KDS",
-        },
-        {
-          title: "Manager",
-          action: "Oversees operations, closes and traceability.",
-          badge: "Oversees",
-          symbol: "MG",
-        },
-      ],
-      modules: [
-        {
-          title: "Digital menu",
-          description:
-            "Your menu always visible, fast and easy to update.",
-          benefit: "Less friction when ordering",
-          badge: "QR ready",
-          symbol: "QR",
-        },
-        {
-          title: "Live order",
-          description:
-            "Each table can create rounds, add items and keep the order active.",
-          benefit: "More spend without losing control",
-          badge: "Round 2 active",
-          symbol: "T8",
-        },
-        {
-          title: "Waiter panel",
-          description:
-            "Waiters validate, approve and send orders without losing visibility.",
-          benefit: "Less team overload",
-          badge: "3 pending",
-          symbol: "✓",
-        },
-        {
-          title: "Kitchen KDS",
-          description:
-            "Kitchen receives clear items, prep states and operational priority.",
-          benefit: "Fewer kitchen errors",
-          badge: "Preparing",
-          symbol: "KDS",
-        },
-        {
-          title: "Manager panel",
-          description:
-            "Management sees open tables, active orders, closes and traceability.",
-          benefit: "Real-time control",
-          badge: "24 active tables",
-          symbol: "MG",
-        },
-        {
-          title: "Loyalty",
-          description:
-            "Points, history and balance to drive repeat visits and loyalty.",
-          benefit: "Guests who come back",
-          badge: "+120 pts",
-          symbol: "★",
-        },
-      ],
-      carouselSlides: [
+      flowSteps: [
         {
           step: "01",
           title: "Guest scans the QR",
@@ -529,8 +549,25 @@ const en: HomepageV2Content = {
             "The menu opens from the table and the guest starts building their order without friction.",
           badge: "QR ready",
           asset: "01_customer_qr_menu.webp",
-          stepLabel: "Guest",
+          stepLabel: "Menu",
+          orderStatus: "Started",
           stationIndex: 0,
+          station: {
+            title: "Guest",
+            action: "Scans QR and builds their order.",
+            badge: "Starts",
+            symbol: "QR",
+          },
+          module: {
+            symbol: "QR",
+            title: "Digital menu",
+            description:
+              "Your menu always visible, fast and easy to update.",
+            benefit: "Less friction when ordering",
+            signal: "QR ready",
+            ownerValue:
+              "Guests can explore and order without waiting for the team to explain the full menu.",
+          },
         },
         {
           step: "02",
@@ -539,8 +576,25 @@ const en: HomepageV2Content = {
             "The table keeps an open order with rounds, join code and items visible across the operation.",
           badge: "Table 08",
           asset: "02_live_order_table.webp",
-          stepLabel: "Live order",
+          stepLabel: "Order",
+          orderStatus: "Open",
           stationIndex: 1,
+          station: {
+            title: "Table / QR",
+            action: "Creates the order and keeps rounds active.",
+            badge: "Live order",
+            symbol: "T8",
+          },
+          module: {
+            symbol: "T8",
+            title: "Live order",
+            description:
+              "Each table can create rounds, add items and keep the order active.",
+            benefit: "More consumption without losing control",
+            signal: "Round 2 active",
+            ownerValue:
+              "The table can keep ordering without restarting the process or losing traceability.",
+          },
         },
         {
           step: "03",
@@ -550,7 +604,24 @@ const en: HomepageV2Content = {
           badge: "Approval",
           asset: "03_waiter_approval.webp",
           stepLabel: "Waiter",
+          orderStatus: "Approved",
           stationIndex: 2,
+          station: {
+            title: "Waiter",
+            action: "Validates, approves and sends to kitchen.",
+            badge: "Approves",
+            symbol: "✓",
+          },
+          module: {
+            symbol: "✓",
+            title: "Waiter panel",
+            description:
+              "Waiters validate, approve and send orders without losing visibility.",
+            benefit: "Less team overload",
+            signal: "3 pending",
+            ownerValue:
+              "Waiters keep control of service without mentally tracking every detail.",
+          },
         },
         {
           step: "04",
@@ -559,8 +630,25 @@ const en: HomepageV2Content = {
             "The KDS organizes items, states and priorities without relying on scattered orders.",
           badge: "KDS active",
           asset: "04_kitchen_kds.webp",
-          stepLabel: "Kitchen",
+          stepLabel: "KDS",
+          orderStatus: "Preparing",
           stationIndex: 3,
+          station: {
+            title: "Kitchen",
+            action: "Receives items and updates states.",
+            badge: "Prepares",
+            symbol: "KDS",
+          },
+          module: {
+            symbol: "KDS",
+            title: "Kitchen KDS",
+            description:
+              "Kitchen receives clear items, prep states and operational priority.",
+            benefit: "Fewer kitchen errors",
+            signal: "Preparing",
+            ownerValue:
+              "Kitchen works with visible states and less reliance on loose tickets or messages.",
+          },
         },
         {
           step: "05",
@@ -570,7 +658,24 @@ const en: HomepageV2Content = {
           badge: "Full view",
           asset: "05_manager_panel.webp",
           stepLabel: "Manager",
+          orderStatus: "Supervised",
           stationIndex: 4,
+          station: {
+            title: "Manager",
+            action: "Oversees operations, closes and traceability.",
+            badge: "Oversees",
+            symbol: "MG",
+          },
+          module: {
+            symbol: "MG",
+            title: "Manager panel",
+            description:
+              "Management sees open tables, active orders, closes and traceability.",
+            benefit: "Real-time control",
+            signal: "24 active tables",
+            ownerValue:
+              "Managers stop reacting late and start operating with real visibility.",
+          },
         },
         {
           step: "06",
@@ -580,6 +685,17 @@ const en: HomepageV2Content = {
           badge: "+120 pts",
           asset: "06_loyalty_followup.webp",
           stepLabel: "Loyalty",
+          orderStatus: "Loyalized",
+          module: {
+            symbol: "★",
+            title: "Loyalty",
+            description:
+              "Points, history and balance to drive repeat visits and loyalty.",
+            benefit: "Customers who come back",
+            signal: "+120 pts",
+            ownerValue:
+              "Every visit can become a measurable relationship, not just a one-off sale.",
+          },
         },
       ],
       valueTitle: "What changes for your restaurant",

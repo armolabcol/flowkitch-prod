@@ -5,6 +5,38 @@ export type HomepageV2Cta = {
   secondaryLabel?: string;
 };
 
+export type HomepageV2HeroMockupContent = {
+  customer: {
+    eyebrow: string;
+    table: string;
+    badge: string;
+    addRound: string;
+    items: { name: string; meta: string }[];
+  };
+  manager: {
+    eyebrow: string;
+    title: string;
+    stats: { label: string; value: string }[];
+    salesLabel: string;
+    salesValue: string;
+  };
+  kitchen: {
+    eyebrow: string;
+    title: string;
+    table: string;
+    liveBadge: string;
+    tickets: { item: string; status: string }[];
+  };
+  waiter: {
+    eyebrow: string;
+    title: string;
+    pendingTitle: string;
+    pendingMeta: string;
+    approve: string;
+    sendToKitchen: string;
+  };
+};
+
 export type HomepageV2HeroContent = {
   id: string;
   eyebrow?: string;
@@ -13,6 +45,7 @@ export type HomepageV2HeroContent = {
   description: string;
   microcopy?: string;
   cta: HomepageV2Cta;
+  mockups?: HomepageV2HeroMockupContent;
 };
 
 export type HomepageV2TransformationPanel = {
@@ -53,18 +86,57 @@ export type HomepageV2LiveOrderBoard = {
   benefits: string[];
 };
 
+export type HomepageV2OperatingSystemUi = {
+  placeholderLabel: string;
+  carouselAriaLabel: string;
+  prevStepLabel: string;
+  nextStepLabel: string;
+  flowStepsAriaLabel: string;
+  stepAriaTemplate: string;
+};
+
 export type HomepageV2OperatingSystemBoard = {
   systemLabel: string;
   journeyLabel: string;
   journeySublabel: string;
-  modulesLabel: string;
-  modulesSublabel: string;
-  liveOrder: HomepageV2LiveOrder;
-  stations: HomepageV2FlowStation[];
-  modules: HomepageV2EcosystemModule[];
-  carouselSlides: HomepageV2FlowCarouselSlide[];
+  activeModuleLabel: string;
+  impactLabel: string;
+  ownerInsightLabel: string;
+  liveOrder: HomepageV2LiveOrderBase;
+  flowSteps: HomepageV2FlowStep[];
   valueTitle: string;
   benefits: string[];
+  ui: HomepageV2OperatingSystemUi;
+};
+
+export type HomepageV2LiveOrderBase = {
+  table: string;
+  orderId: string;
+  statusLabel: string;
+  liveBadge: string;
+  meta: { label: string; value: string }[];
+};
+
+export type HomepageV2FlowStepModule = {
+  symbol: string;
+  title: string;
+  description: string;
+  benefit: string;
+  signal: string;
+  ownerValue: string;
+};
+
+export type HomepageV2FlowStep = {
+  step: string;
+  title: string;
+  description: string;
+  badge: string;
+  asset: string;
+  stepLabel: string;
+  orderStatus: string;
+  stationIndex?: number;
+  station?: HomepageV2FlowStation;
+  module: HomepageV2FlowStepModule;
 };
 
 export type HomepageV2FlowPhoto = {

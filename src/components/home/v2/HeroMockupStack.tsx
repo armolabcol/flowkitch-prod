@@ -7,6 +7,7 @@ import {
   QrCode,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import type { HomepageV2HeroMockupContent } from "@/components/home/v2/types";
 import { cn } from "@/lib/cn";
 
 type HeroCardVariant = "client" | "manager" | "kitchen" | "waiter";
@@ -69,13 +70,28 @@ function StatusBadge({
   );
 }
 
-function CustomerMenuCard() {
-  const items = [
-    { name: "Tacos al Pastor", meta: "Main" },
-    { name: "Guacamole", meta: "Starter" },
-    { name: "Margarita", meta: "Bar" },
-  ];
+function ticketTone(status: string): "prep" | "ready" | "queued" {
+  const normalized = status.toLowerCase();
+  if (
+    normalized.includes("ready") ||
+    normalized.includes("listo")
+  ) {
+    return "ready";
+  }
+  if (
+    normalized.includes("queue") ||
+    normalized.includes("cola")
+  ) {
+    return "queued";
+  }
+  return "prep";
+}
 
+function CustomerMenuCard({
+  copy,
+}: {
+  copy: HomepageV2HeroMockupContent["customer"];
+}) {
   return (
     <HeroGlassCard variant="client" className="w-[min(100%,220px)] sm:w-[228px]">
       <div className="p-3.5 sm:p-4">
@@ -86,18 +102,18 @@ function CustomerMenuCard() {
             </span>
             <div>
               <p className="text-[10px] font-medium uppercase tracking-wider text-kitch-subtle">
-                Guest · QR
+                {copy.eyebrow}
               </p>
-              <p className="text-xs font-semibold text-white">Mesa 08</p>
+              <p className="text-xs font-semibold text-white">{copy.table}</p>
             </div>
           </div>
           <StatusBadge tone="accent" pulse>
-            Orden abierta
+            {copy.badge}
           </StatusBadge>
         </header>
 
         <ul className="space-y-1.5">
-          {items.map((item) => (
+          {copy.items.map((item) => (
             <li
               key={item.name}
               className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.03] px-2.5 py-2"
@@ -118,20 +134,18 @@ function CustomerMenuCard() {
           tabIndex={-1}
           className="mt-3 w-full rounded-xl bg-[#e63946] px-3 py-2 text-[11px] font-semibold text-white shadow-[0_0_20px_rgba(230,57,70,0.28)]"
         >
-          Agregar ronda
+          {copy.addRound}
         </button>
       </div>
     </HeroGlassCard>
   );
 }
 
-function ManagerPanelCard() {
-  const stats = [
-    { label: "Mesas activas", value: "24" },
-    { label: "Órdenes abiertas", value: "18" },
-    { label: "Rondas pendientes", value: "6" },
-  ];
-
+function ManagerPanelCard({
+  copy,
+}: {
+  copy: HomepageV2HeroMockupContent["manager"];
+}) {
   return (
     <HeroGlassCard variant="manager" className="w-[min(100%,210px)] sm:w-[218px]">
       <div className="p-3.5 sm:p-4">
@@ -141,14 +155,14 @@ function ManagerPanelCard() {
           </span>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-kitch-subtle">
-              Gerencia
+              {copy.eyebrow}
             </p>
-            <p className="text-xs font-semibold text-white">Manager Panel</p>
+            <p className="text-xs font-semibold text-white">{copy.title}</p>
           </div>
         </header>
 
         <ul className="space-y-2">
-          {stats.map((row) => (
+          {copy.stats.map((row) => (
             <li
               key={row.label}
               className="flex items-center justify-between rounded-lg bg-white/[0.03] px-2.5 py-1.5"
@@ -163,22 +177,22 @@ function ManagerPanelCard() {
 
         <div className="mt-3 rounded-xl border border-[#e63946]/25 bg-[#e63946]/10 px-2.5 py-2">
           <p className="text-[9px] uppercase tracking-wider text-kitch-subtle">
-            Ventas hoy
+            {copy.salesLabel}
           </p>
-          <p className="text-sm font-semibold tabular-nums text-white">$3,420</p>
+          <p className="text-sm font-semibold tabular-nums text-white">
+            {copy.salesValue}
+          </p>
         </div>
       </div>
     </HeroGlassCard>
   );
 }
 
-function KitchenDisplayCard() {
-  const tickets = [
-    { item: "Tacos al Pastor", status: "Preparing", tone: "prep" as const },
-    { item: "Guacamole", status: "Ready", tone: "ready" as const },
-    { item: "Margarita", status: "Queued", tone: "queued" as const },
-  ];
-
+function KitchenDisplayCard({
+  copy,
+}: {
+  copy: HomepageV2HeroMockupContent["kitchen"];
+}) {
   return (
     <HeroGlassCard variant="kitchen" className="w-[min(100%,210px)] sm:w-[218px]">
       <div className="p-3.5 sm:p-4">
@@ -188,40 +202,47 @@ function KitchenDisplayCard() {
           </span>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-kitch-subtle">
-              Cocina
+              {copy.eyebrow}
             </p>
-            <p className="text-xs font-semibold text-white">Kitchen Display</p>
+            <p className="text-xs font-semibold text-white">{copy.title}</p>
           </div>
         </header>
 
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-[10px] text-kitch-muted">Mesa 08</span>
+          <span className="text-[10px] text-kitch-muted">{copy.table}</span>
           <StatusBadge tone="accent" pulse>
-            Live
+            {copy.liveBadge}
           </StatusBadge>
         </div>
 
         <ul className="space-y-1.5">
-          {tickets.map((ticket) => (
-            <li
-              key={ticket.item}
-              className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.06] bg-white/[0.03] px-2.5 py-2"
-            >
-              <p className="min-w-0 truncate text-[10px] font-medium text-white">
-                {ticket.item}
-              </p>
-              <StatusBadge tone={ticket.tone} pulse={ticket.tone === "ready"}>
-                {ticket.status}
-              </StatusBadge>
-            </li>
-          ))}
+          {copy.tickets.map((ticket) => {
+            const tone = ticketTone(ticket.status);
+            return (
+              <li
+                key={ticket.item}
+                className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.06] bg-white/[0.03] px-2.5 py-2"
+              >
+                <p className="min-w-0 truncate text-[10px] font-medium text-white">
+                  {ticket.item}
+                </p>
+                <StatusBadge tone={tone} pulse={tone === "ready"}>
+                  {ticket.status}
+                </StatusBadge>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </HeroGlassCard>
   );
 }
 
-function WaiterPanelCard() {
+function WaiterPanelCard({
+  copy,
+}: {
+  copy: HomepageV2HeroMockupContent["waiter"];
+}) {
   return (
     <HeroGlassCard variant="waiter" className="w-[min(100%,220px)] sm:w-[232px]">
       <div className="p-3.5 sm:p-4">
@@ -231,20 +252,22 @@ function WaiterPanelCard() {
           </span>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-kitch-subtle">
-              Mesero
+              {copy.eyebrow}
             </p>
-            <p className="text-xs font-semibold text-white">Waiter Panel</p>
+            <p className="text-xs font-semibold text-white">{copy.title}</p>
           </div>
         </header>
 
         <div className="mb-2.5 rounded-xl border border-white/[0.06] bg-white/[0.03] p-2.5">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-semibold text-white">Rondas pendientes</p>
+            <p className="text-[11px] font-semibold text-white">
+              {copy.pendingTitle}
+            </p>
             <StatusBadge tone="accent" pulse>
               3
             </StatusBadge>
           </div>
-          <p className="mt-1 text-[10px] text-kitch-muted">Mesa 08 · 3 items nuevos</p>
+          <p className="mt-1 text-[10px] text-kitch-muted">{copy.pendingMeta}</p>
         </div>
 
         <div className="flex gap-2">
@@ -253,14 +276,14 @@ function WaiterPanelCard() {
             tabIndex={-1}
             className="flex-1 rounded-xl border border-white/15 bg-white/[0.04] px-2 py-2 text-[10px] font-semibold text-white"
           >
-            Aprobar
+            {copy.approve}
           </button>
           <button
             type="button"
             tabIndex={-1}
             className="flex-1 rounded-xl bg-[#e63946] px-2 py-2 text-[10px] font-semibold text-white"
           >
-            Enviar a cocina
+            {copy.sendToKitchen}
           </button>
         </div>
       </div>
@@ -268,7 +291,11 @@ function WaiterPanelCard() {
   );
 }
 
-export function HeroMockupStack() {
+export function HeroMockupStack({
+  mockups,
+}: {
+  mockups: HomepageV2HeroMockupContent;
+}) {
   return (
     <div
       className="relative mx-auto hidden h-[min(520px,58vh)] w-full max-w-[540px] md:block lg:max-w-none"
@@ -292,19 +319,19 @@ export function HeroMockupStack() {
       </svg>
 
       <div className="absolute right-0 top-0 z-[1] origin-top-right scale-[0.82] lg:scale-100">
-        <ManagerPanelCard />
+        <ManagerPanelCard copy={mockups.manager} />
       </div>
 
       <div className="absolute right-[6%] top-[28%] z-[2] origin-top-right scale-[0.84] lg:scale-100">
-        <KitchenDisplayCard />
+        <KitchenDisplayCard copy={mockups.kitchen} />
       </div>
 
       <div className="absolute bottom-[8%] left-[2%] z-[3] origin-bottom-left scale-[0.86] lg:scale-100">
-        <WaiterPanelCard />
+        <WaiterPanelCard copy={mockups.waiter} />
       </div>
 
       <div className="absolute bottom-0 left-[20%] z-[4] origin-bottom-left scale-[0.88] lg:scale-100">
-        <CustomerMenuCard />
+        <CustomerMenuCard copy={mockups.customer} />
       </div>
     </div>
   );

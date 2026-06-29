@@ -8,29 +8,52 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import type { HomepageV2FlowCarouselSlide } from "@/components/home/v2/types";
+import type {
+  HomepageV2FlowStep,
+  HomepageV2OperatingSystemUi,
+} from "@/components/home/v2/types";
 
 const CAROUSEL_BASE = "/assets/sections/operating-system/carousel/";
-const AUTOPLAY_MS = 5500;
+const AUTOPLAY_MS = 6000;
+const LIGHT_SWEEP_MS = 720;
 
 type KitchFlowMockupCarouselProps = {
-  slides: HomepageV2FlowCarouselSlide[];
+  steps: HomepageV2FlowStep[];
   activeIndex: number;
-  onActiveChange: (index: number) => void;
-  placeholderLabel?: string;
+  onActiveChange: (index: number | ((current: number) => number)) => void;
+  labels: HomepageV2OperatingSystemUi;
 };
 
+function formatStepAria(template: string, title: string, step: string) {
+  return template.replace("{title}", title).replace("{step}", step);
+}
+
+function resolveDirection(
+  from: number,
+  to: number,
+  slideCount: number,
+): 1 | -1 {
+  if (from === to) return 1;
+  const forward = (to - from + slideCount) % slideCount;
+  const backward = (from - to + slideCount) % slideCount;
+  return forward <= backward ? 1 : -1;
+}
+
 function CarouselMedia({
-  slide,
+  step,
   isActive,
+  isAnimating,
   placeholderLabel,
+  imageAlt,
 }: {
-  slide: HomepageV2FlowCarouselSlide;
+  step: HomepageV2FlowStep;
   isActive: boolean;
+  isAnimating: boolean;
   placeholderLabel: string;
+  imageAlt: string;
 }) {
   const [imageOk, setImageOk] = useState(true);
-  const src = `${CAROUSEL_BASE}${slide.asset}`;
+  const src = `${CAROUSEL_BASE}${step.asset}`;
 
   return (
     <div
@@ -38,25 +61,35 @@ function CarouselMedia({
       aria-hidden={!isActive}
     >
       <div className="kitch-flow-carousel__media">
-        {imageOk ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={src}
-            alt=""
-            className="kitch-flow-carousel__img"
-            loading="lazy"
-            onError={() => setImageOk(false)}
-          />
-        ) : (
-          <div className="kitch-flow-carousel__placeholder">
-            <span className="kitch-flow-carousel__placeholder-file">
-              {slide.asset}
-            </span>
-            <span className="kitch-flow-carousel__placeholder-label">
-              {placeholderLabel}
-            </span>
-          </div>
-        )}
+        <div
+          className={`kitch-flow-carousel__media-frame${
+            isActive && isAnimating ? " is-animating" : ""
+          }`}
+        >
+          {imageOk ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={step.step}
+              src={src}
+              alt={isActive ? imageAlt : ""}
+              className="kitch-flow-carousel__image"
+              loading="lazy"
+              onError={() => setImageOk(false)}
+            />
+          ) : (
+            <div
+              key={`placeholder-${step.step}`}
+              className="kitch-flow-carousel__placeholder kitch-flow-carousel__image"
+            >
+              <span className="kitch-flow-carousel__placeholder-file">
+                {step.asset}
+              </span>
+              <span className="kitch-flow-carousel__placeholder-label">
+                {placeholderLabel}
+              </span>
+            </div>
+          )}
+        </div>
         <div className="kitch-flow-carousel__media-overlay" aria-hidden />
       </div>
     </div>
@@ -64,29 +97,34 @@ function CarouselMedia({
 }
 
 export function KitchFlowMockupCarousel({
-  slides,
+  steps,
   activeIndex,
   onActiveChange,
-  placeholderLabel = "Mockup pendiente",
+  labels,
 }: KitchFlowMockupCarouselProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [mediaAnimating, setMediaAnimating] = useState(false);
 
-  const slideCount = slides.length;
-  const activeSlide = slides[activeIndex];
+  const slideCount = steps.length;
+  const activeStep = steps[activeIndex];
 
   const goTo = useCallback(
     (index: number) => {
       if (slideCount === 0) return;
       const next = ((index % slideCount) + slideCount) % slideCount;
+      setDirection(resolveDirection(activeIndex, next, slideCount));
       onActiveChange(next);
       setIsPaused(true);
     },
-    [onActiveChange, slideCount],
+    [activeIndex, onActiveChange, slideCount],
   );
 
   const goPrev = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo]);
+
   const goNext = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo]);
 
   useEffect(() => {
@@ -98,14 +136,40 @@ export function KitchFlowMockupCarousel({
   }, []);
 
   useEffect(() => {
-    if (reducedMotion || isPaused || slideCount < 2) return;
+    const onVisibility = () => setIsTabHidden(document.hidden);
+    onVisibility();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setMediaAnimating(false);
+      return;
+    }
+
+    setMediaAnimating(true);
+    const timer = window.setTimeout(() => setMediaAnimating(false), LIGHT_SWEEP_MS);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, reducedMotion]);
+
+  useEffect(() => {
+    if (reducedMotion || isPaused || isTabHidden || slideCount < 2) return;
 
     const timer = window.setInterval(() => {
-      onActiveChange((activeIndex + 1) % slideCount);
+      setDirection(1);
+      onActiveChange((current) => (current + 1) % slideCount);
     }, AUTOPLAY_MS);
 
     return () => window.clearInterval(timer);
-  }, [activeIndex, isPaused, onActiveChange, reducedMotion, slideCount]);
+  }, [
+    activeIndex,
+    isPaused,
+    isTabHidden,
+    onActiveChange,
+    reducedMotion,
+    slideCount,
+  ]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowLeft") {
@@ -118,7 +182,12 @@ export function KitchFlowMockupCarousel({
     }
   };
 
-  if (!activeSlide || slideCount === 0) return null;
+  if (!activeStep || slideCount === 0) return null;
+
+  const directionClass =
+    direction > 0
+      ? "kitch-flow-carousel__viewport--dir-next"
+      : "kitch-flow-carousel__viewport--dir-prev";
 
   return (
     <div
@@ -126,7 +195,7 @@ export function KitchFlowMockupCarousel({
       className="kitch-flow-carousel"
       role="region"
       aria-roledescription="carousel"
-      aria-label="Demostración del flujo operativo Kitch"
+      aria-label={labels.carouselAriaLabel}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsPaused(true)}
@@ -134,43 +203,53 @@ export function KitchFlowMockupCarousel({
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
     >
-      <div className="kitch-flow-carousel__viewport">
-        {slides.map((slide, index) => (
+      <div className={`kitch-flow-carousel__viewport ${directionClass}`}>
+        {steps.map((step, index) => (
           <CarouselMedia
-            key={slide.asset}
-            slide={slide}
+            key={step.asset}
+            step={step}
             isActive={index === activeIndex}
-            placeholderLabel={placeholderLabel}
+            isAnimating={mediaAnimating}
+            placeholderLabel={labels.placeholderLabel}
+            imageAlt={formatStepAria(
+              labels.stepAriaTemplate,
+              step.title,
+              step.step,
+            )}
           />
         ))}
       </div>
 
       <div className="kitch-flow-carousel__content">
-        <div className="kitch-flow-carousel__meta">
-          <span className="kitch-flow-carousel__step">{activeSlide.step}</span>
-          <span className="kitch-flow-carousel__badge">{activeSlide.badge}</span>
+        <div
+          key={activeIndex}
+          className="kitch-flow-carousel__content-motion"
+        >
+          <div className="kitch-flow-carousel__meta">
+            <span className="kitch-flow-carousel__step">{activeStep.step}</span>
+            <span className="kitch-flow-carousel__badge">{activeStep.badge}</span>
+          </div>
+
+          <h3 className="kitch-flow-carousel__title">{activeStep.title}</h3>
+          <p className="kitch-flow-carousel__description">
+            {activeStep.description}
+          </p>
         </div>
 
-        <h3 key={`title-${activeIndex}`} className="kitch-flow-carousel__title">
-          {activeSlide.title}
-        </h3>
-        <p
-          key={`desc-${activeIndex}`}
-          className="kitch-flow-carousel__description"
-        >
-          {activeSlide.description}
-        </p>
-
-        <div className="kitch-flow-carousel__steps" aria-hidden>
-          {slides.map((slide, index) => (
-            <span
-              key={slide.stepLabel}
+        <div className="kitch-flow-carousel__steps" role="tablist">
+          {steps.map((step, index) => (
+            <button
+              key={step.stepLabel}
+              type="button"
+              role="tab"
               className={`kitch-flow-carousel__step-pill${
                 index === activeIndex ? " is-active" : ""
               }`}
+              aria-selected={index === activeIndex}
+              onClick={() => goTo(index)}
             >
-              {slide.stepLabel}
-            </span>
+              {step.stepLabel}
+            </button>
           ))}
         </div>
 
@@ -180,7 +259,7 @@ export function KitchFlowMockupCarousel({
               type="button"
               className="kitch-flow-carousel__button"
               onClick={goPrev}
-              aria-label="Paso anterior"
+              aria-label={labels.prevStepLabel}
             >
               <ChevronLeft size={18} strokeWidth={2.25} aria-hidden />
             </button>
@@ -188,7 +267,7 @@ export function KitchFlowMockupCarousel({
               type="button"
               className="kitch-flow-carousel__button"
               onClick={goNext}
-              aria-label="Paso siguiente"
+              aria-label={labels.nextStepLabel}
             >
               <ChevronRight size={18} strokeWidth={2.25} aria-hidden />
             </button>
@@ -197,17 +276,21 @@ export function KitchFlowMockupCarousel({
           <div
             className="kitch-flow-carousel__dots"
             role="tablist"
-            aria-label="Pasos del flujo"
+            aria-label={labels.flowStepsAriaLabel}
           >
-            {slides.map((slide, index) => (
+            {steps.map((step, index) => (
               <button
-                key={slide.asset}
+                key={step.asset}
                 type="button"
                 role="tab"
                 className={`kitch-flow-carousel__dot${
                   index === activeIndex ? " is-active" : ""
                 }`}
-                aria-label={`${slide.title} — paso ${slide.step}`}
+                aria-label={formatStepAria(
+                  labels.stepAriaTemplate,
+                  step.title,
+                  step.step,
+                )}
                 aria-selected={index === activeIndex}
                 onClick={() => goTo(index)}
               />

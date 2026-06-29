@@ -109,7 +109,7 @@ export function HomeHero({ content, locale }: HomepageV2HeroProps) {
                   size="lg"
                   className="w-full border-white/15 bg-white/[0.04] sm:w-auto"
                 >
-                  <Link href={`#operationalFlow`}>
+                  <Link href="#operational-flow">
                     {content.cta.secondaryLabel}
                     <ArrowRight
                       className="ml-1.5 inline-block h-4 w-4 opacity-70"
@@ -122,7 +122,9 @@ export function HomeHero({ content, locale }: HomepageV2HeroProps) {
           </div>
 
           <div className="lg:col-span-6 lg:flex lg:items-center lg:justify-end">
-            <HeroMockupStack />
+            {content.mockups ? (
+              <HeroMockupStack mockups={content.mockups} />
+            ) : null}
           </div>
         </div>
       </Container>
