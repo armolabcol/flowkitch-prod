@@ -40,11 +40,39 @@ const es: HomepageV2Content = {
   restaurantTransformation: {
     id: "restaurant-transformation",
     eyebrow: "Sección 03",
-    title: "[Transformación del restaurante] Título temporal",
+    title: "Donde antes había fricción,",
+    titleLine2: "ahora hay flujo.",
     description:
-      "Descripción temporal de la transformación antes y después de Kitch.",
-    mediaPlaceholder: "Imagen / video — transformación",
-    animationPlaceholder: "Animación — reservado Fase 2",
+      "Kitch transforma un servicio fragmentado en una operación conectada. Cliente, mesero, cocina y gerencia comparten visibilidad en tiempo real para reducir errores, acelerar decisiones y sostener un mejor servicio incluso en horas pico.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Cliente · Mesero · Cocina · Gerencia — conectados en tiempo real",
+    transformationBoard: {
+      boardLabel: "Tablero de transformación",
+      boardSublabel: "Cambio operativo del restaurante",
+      before: {
+        title: "Antes de Kitch",
+        subcopy: "Operación fragmentada",
+        items: [
+          "Pedidos dispersos",
+          "Cocina sin visibilidad",
+          "Meseros saturados",
+          "Gerencia reactiva",
+        ],
+      },
+      after: {
+        title: "Con Kitch",
+        subcopy: "Operación conectada",
+        items: [
+          "Flujo centralizado",
+          "Estados claros",
+          "Meseros con control",
+          "Visibilidad en tiempo real",
+        ],
+      },
+      flowSteps: ["Cliente", "Mesero", "Cocina", "Gerencia"],
+    },
   },
   operationalFlow: {
     id: "operational-flow",
@@ -145,11 +173,39 @@ const en: HomepageV2Content = {
   restaurantTransformation: {
     id: "restaurant-transformation",
     eyebrow: "Section 03",
-    title: "[Restaurant transformation] Temporary title",
+    title: "Where friction once lived,",
+    titleLine2: "flow takes over.",
     description:
-      "Temporary description of transformation before and after Kitch.",
-    mediaPlaceholder: "Image / video — transformation",
-    animationPlaceholder: "Animation — Phase 2 reserved",
+      "Kitch transforms fragmented service into a connected operation. Guests, waiters, kitchen and management share real-time visibility to reduce errors, speed decisions and sustain better service even during peak hours.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Guest · Waiter · Kitchen · Management — connected in real time",
+    transformationBoard: {
+      boardLabel: "Transformation board",
+      boardSublabel: "Restaurant operational shift",
+      before: {
+        title: "Before Kitch",
+        subcopy: "Fragmented operation",
+        items: [
+          "Scattered orders",
+          "Kitchen without visibility",
+          "Overwhelmed waiters",
+          "Reactive management",
+        ],
+      },
+      after: {
+        title: "With Kitch",
+        subcopy: "Connected operation",
+        items: [
+          "Centralized flow",
+          "Clear states",
+          "Waiters in control",
+          "Real-time visibility",
+        ],
+      },
+      flowSteps: ["Guest", "Waiter", "Kitchen", "Management"],
+    },
   },
   operationalFlow: {
     id: "operational-flow",

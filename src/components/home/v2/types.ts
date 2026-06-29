@@ -15,6 +15,20 @@ export type HomepageV2HeroContent = {
   cta: HomepageV2Cta;
 };
 
+export type HomepageV2TransformationPanel = {
+  title: string;
+  subcopy: string;
+  items: string[];
+};
+
+export type HomepageV2TransformationBoard = {
+  boardLabel: string;
+  boardSublabel: string;
+  before: HomepageV2TransformationPanel;
+  after: HomepageV2TransformationPanel;
+  flowSteps: string[];
+};
+
 export type HomepageV2SectionContent = {
   id: string;
   eyebrow?: string;
@@ -27,6 +41,7 @@ export type HomepageV2SectionContent = {
   visualBadges?: string[];
   diagnosticLabel?: string;
   diagnosticSublabel?: string;
+  transformationBoard?: HomepageV2TransformationBoard;
   mediaSrc?: string;
   mediaAlt?: string;
   cta?: HomepageV2Cta;
