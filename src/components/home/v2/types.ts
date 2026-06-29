@@ -62,6 +62,7 @@ export type HomepageV2OperatingSystemBoard = {
   liveOrder: HomepageV2LiveOrder;
   stations: HomepageV2FlowStation[];
   modules: HomepageV2EcosystemModule[];
+  carouselSlides: HomepageV2FlowCarouselSlide[];
   valueTitle: string;
   benefits: string[];
 };
@@ -79,6 +80,16 @@ export type HomepageV2EcosystemModule = {
   benefit: string;
   badge: string;
   symbol: string;
+};
+
+export type HomepageV2FlowCarouselSlide = {
+  step: string;
+  title: string;
+  description: string;
+  badge: string;
+  asset: string;
+  stepLabel: string;
+  stationIndex?: number;
 };
 
 export type HomepageV2EcosystemBoard = {

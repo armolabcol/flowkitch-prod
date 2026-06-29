@@ -380,6 +380,308 @@
   z-index: 2;
 }
 
+.kos-board__journey-stage {
+  display: grid;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  .kos-board__journey-stage {
+    grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+}
+
+.live-order-card--compact {
+  width: 100%;
+  animation-delay: 340ms;
+}
+
+@media (min-width: 1024px) {
+  .live-order-card--compact {
+    margin-top: 0;
+  }
+}
+
+/* —— Flow mockup carousel —— */
+.kitch-flow-carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+    rgba(8, 8, 8, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 34px 100px rgba(0, 0, 0, 0.42),
+    0 0 70px rgba(230, 57, 70, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: live-flow-fade-up 900ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both;
+  outline: none;
+}
+
+.kitch-flow-carousel:focus-visible {
+  border-color: rgba(230, 57, 70, 0.45);
+  box-shadow:
+    0 34px 100px rgba(0, 0, 0, 0.42),
+    0 0 0 2px rgba(230, 57, 70, 0.25),
+    0 0 70px rgba(230, 57, 70, 0.1);
+}
+
+.kitch-flow-carousel__viewport {
+  position: relative;
+  min-height: 300px;
+  aspect-ratio: 16 / 10;
+}
+
+@media (min-width: 1024px) {
+  .kitch-flow-carousel__viewport {
+    min-height: 420px;
+  }
+}
+
+.kitch-flow-carousel__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateX(12px) scale(1.01);
+  transition:
+    opacity 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.kitch-flow-carousel__slide.is-active {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: auto;
+  z-index: 1;
+}
+
+.kitch-flow-carousel__media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.32);
+  margin: 12px 12px 0;
+  width: calc(100% - 24px);
+  height: calc(100% - 12px);
+}
+
+.kitch-flow-carousel__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.kitch-flow-carousel__media-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.28) 72%, rgba(0, 0, 0, 0.55) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent 42%);
+}
+
+.kitch-flow-carousel__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 50% 30%, rgba(230, 57, 70, 0.08), transparent 42%),
+    rgba(10, 10, 10, 0.92);
+  background-size: 48px 48px, 48px 48px, auto, auto;
+  text-align: center;
+}
+
+.kitch-flow-carousel__placeholder-file {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.72);
+  word-break: break-all;
+}
+
+.kitch-flow-carousel__placeholder-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(230, 57, 70, 0.8);
+}
+
+.kitch-flow-carousel__content {
+  position: relative;
+  z-index: 2;
+  padding: 20px 20px 22px;
+}
+
+.kitch-flow-carousel__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.kitch-flow-carousel__step {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.kitch-flow-carousel__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(230, 57, 70, 0.12);
+  border: 1px solid rgba(230, 57, 70, 0.34);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kitch-flow-carousel__title {
+  margin: 0;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #ffffff;
+  animation: live-flow-fade-up 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.kitch-flow-carousel__description {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.62);
+  animation: live-flow-fade-up 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.kitch-flow-carousel__steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 14px;
+}
+
+.kitch-flow-carousel__step-pill {
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.28);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.46);
+  transition:
+    border-color 220ms ease,
+    background 220ms ease,
+    color 220ms ease;
+}
+
+.kitch-flow-carousel__step-pill.is-active {
+  border-color: rgba(230, 57, 70, 0.42);
+  background: rgba(230, 57, 70, 0.14);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.kitch-flow-carousel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 18px;
+}
+
+.kitch-flow-carousel__controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kitch-flow-carousel__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease;
+}
+
+.kitch-flow-carousel__button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(230, 57, 70, 0.55);
+  background: rgba(230, 57, 70, 0.14);
+}
+
+.kitch-flow-carousel__dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.kitch-flow-carousel__dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.22);
+  cursor: pointer;
+  transition:
+    width 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 220ms ease;
+}
+
+.kitch-flow-carousel__dot.is-active {
+  width: 28px;
+  background: #e63946;
+}
+
+.live-flow-station--carousel-active {
+  border-color: rgba(230, 57, 70, 0.55) !important;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.38),
+    0 0 32px rgba(230, 57, 70, 0.18) !important;
+  transform: translateY(-2px);
+}
+
+.kos-module-card--carousel-active {
+  border-color: rgba(230, 57, 70, 0.5) !important;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.4),
+    0 0 32px rgba(230, 57, 70, 0.14) !important;
+}
+
 .kos-board__bridge {
   position: relative;
   z-index: 2;
@@ -1243,6 +1545,10 @@
   .flow-impact-strip,
   .kitch-live-order-visual,
   .flow-photo-status,
+  .kitch-flow-carousel,
+  .kitch-flow-carousel__slide,
+  .kitch-flow-carousel__title,
+  .kitch-flow-carousel__description,
   .kitch-operating-system-board,
   .live-order-card,
   .live-flow-station,
@@ -1272,10 +1578,21 @@
     animation: none !important;
   }
 
+  .kitch-flow-carousel__slide {
+    transition: none !important;
+    transform: none !important;
+    opacity: 0;
+  }
+
+  .kitch-flow-carousel__slide.is-active {
+    opacity: 1;
+  }
+
   .live-order-card:hover,
   .live-flow-station:hover,
   .kos-module-card:hover,
-  .kitch-live-order-visual:hover {
+  .kitch-live-order-visual:hover,
+  .kitch-flow-carousel__button:hover {
     transform: none !important;
   }
 }

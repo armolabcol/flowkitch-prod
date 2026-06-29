@@ -204,6 +204,67 @@ const es: HomepageV2Content = {
           symbol: "★",
         },
       ],
+      carouselSlides: [
+        {
+          step: "01",
+          title: "Cliente escanea el QR",
+          description:
+            "El menú se abre desde la mesa y el cliente empieza a construir su pedido sin fricción.",
+          badge: "QR listo",
+          asset: "01_customer_qr_menu.webp",
+          stepLabel: "Cliente",
+          stationIndex: 0,
+        },
+        {
+          step: "02",
+          title: "La orden queda viva",
+          description:
+            "La mesa mantiene una orden abierta con rondas, join code e ítems visibles para el flujo operativo.",
+          badge: "Mesa 08",
+          asset: "02_live_order_table.webp",
+          stepLabel: "Orden viva",
+          stationIndex: 1,
+        },
+        {
+          step: "03",
+          title: "El mesero valida",
+          description:
+            "El equipo aprueba rondas, corrige detalles y envía a cocina con control.",
+          badge: "Aprobación",
+          asset: "03_waiter_approval.webp",
+          stepLabel: "Mesero",
+          stationIndex: 2,
+        },
+        {
+          step: "04",
+          title: "Cocina recibe claridad",
+          description:
+            "El KDS organiza ítems, estados y prioridades para preparar sin depender de órdenes dispersas.",
+          badge: "KDS activo",
+          asset: "04_kitchen_kds.webp",
+          stepLabel: "Cocina",
+          stationIndex: 3,
+        },
+        {
+          step: "05",
+          title: "Manager ve la operación",
+          description:
+            "La gerencia supervisa mesas, órdenes, estados, cierres y trazabilidad en tiempo real.",
+          badge: "Vista total",
+          asset: "05_manager_panel.webp",
+          stepLabel: "Manager",
+          stationIndex: 4,
+        },
+        {
+          step: "06",
+          title: "La relación continúa",
+          description:
+            "Loyalty registra puntos y prepara el camino para que el cliente vuelva.",
+          badge: "+120 pts",
+          asset: "06_loyalty_followup.webp",
+          stepLabel: "Loyalty",
+        },
+      ],
       valueTitle: "Lo que cambia para tu restaurante",
       benefits: [
         "Menos errores de comunicación",
@@ -458,6 +519,67 @@ const en: HomepageV2Content = {
           benefit: "Guests who come back",
           badge: "+120 pts",
           symbol: "★",
+        },
+      ],
+      carouselSlides: [
+        {
+          step: "01",
+          title: "Guest scans the QR",
+          description:
+            "The menu opens from the table and the guest starts building their order without friction.",
+          badge: "QR ready",
+          asset: "01_customer_qr_menu.webp",
+          stepLabel: "Guest",
+          stationIndex: 0,
+        },
+        {
+          step: "02",
+          title: "The order stays live",
+          description:
+            "The table keeps an open order with rounds, join code and items visible across the operation.",
+          badge: "Table 08",
+          asset: "02_live_order_table.webp",
+          stepLabel: "Live order",
+          stationIndex: 1,
+        },
+        {
+          step: "03",
+          title: "Waiter validates",
+          description:
+            "The team approves rounds, adjusts details and sends to kitchen with control.",
+          badge: "Approval",
+          asset: "03_waiter_approval.webp",
+          stepLabel: "Waiter",
+          stationIndex: 2,
+        },
+        {
+          step: "04",
+          title: "Kitchen gets clarity",
+          description:
+            "The KDS organizes items, states and priorities without relying on scattered orders.",
+          badge: "KDS active",
+          asset: "04_kitchen_kds.webp",
+          stepLabel: "Kitchen",
+          stationIndex: 3,
+        },
+        {
+          step: "05",
+          title: "Manager sees the floor",
+          description:
+            "Management oversees tables, orders, states, closes and traceability in real time.",
+          badge: "Full view",
+          asset: "05_manager_panel.webp",
+          stepLabel: "Manager",
+          stationIndex: 4,
+        },
+        {
+          step: "06",
+          title: "The relationship continues",
+          description:
+            "Loyalty records points and sets the path for guests to return.",
+          badge: "+120 pts",
+          asset: "06_loyalty_followup.webp",
+          stepLabel: "Loyalty",
         },
       ],
       valueTitle: "What changes for your restaurant",

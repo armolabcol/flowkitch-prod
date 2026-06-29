@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { KitchFlowMockupCarousel } from "@/components/home/v2/KitchFlowMockupCarousel";
 import type {
   HomepageV2FlowPhoto,
   HomepageV2OperatingSystemBoard,
@@ -80,10 +81,15 @@ function FlowSectionVisual({
 
 function KitchOperatingSystemBoard({
   board,
+  placeholderLabel,
 }: {
   board: HomepageV2OperatingSystemBoard;
+  placeholderLabel: string;
 }) {
   const { liveOrder } = board;
+  const [activeSlide, setActiveSlide] = useState(0);
+  const activeSlideData = board.carouselSlides[activeSlide];
+  const activeStationIndex = activeSlideData?.stationIndex;
 
   return (
     <div
@@ -103,8 +109,15 @@ function KitchOperatingSystemBoard({
       </header>
 
       <div className="kos-board__journey">
-        <div className="live-order-board__canvas">
-          <article className="live-order-card">
+        <div className="kos-board__journey-stage">
+          <KitchFlowMockupCarousel
+            slides={board.carouselSlides}
+            activeIndex={activeSlide}
+            onActiveChange={setActiveSlide}
+            placeholderLabel={placeholderLabel}
+          />
+
+          <article className="live-order-card live-order-card--compact">
             <div className="live-order-card__top">
               <div>
                 <p className="live-order-card__table">{liveOrder.table}</p>
@@ -140,23 +153,28 @@ function KitchOperatingSystemBoard({
               ))}
             </div>
           </article>
+        </div>
 
-          <div className="live-order-board__rail">
-            <div className="live-order-board__pulse-line" aria-hidden />
-            <div className="live-order-board__stations">
-              {board.stations.map((station) => (
-                <article key={station.title} className="live-flow-station">
-                  <span className="live-flow-station__symbol" aria-hidden>
-                    {station.symbol}
-                  </span>
-                  <span className="live-flow-station__badge">
-                    {station.badge}
-                  </span>
-                  <h3 className="live-flow-station__title">{station.title}</h3>
-                  <p className="live-flow-station__action">{station.action}</p>
-                </article>
-              ))}
-            </div>
+        <div className="live-order-board__rail">
+          <div className="live-order-board__pulse-line" aria-hidden />
+          <div className="live-order-board__stations">
+            {board.stations.map((station, index) => (
+              <article
+                key={station.title}
+                className={`live-flow-station${
+                  activeStationIndex === index
+                    ? " live-flow-station--carousel-active"
+                    : ""
+                }`}
+              >
+                <span className="live-flow-station__symbol" aria-hidden>
+                  {station.symbol}
+                </span>
+                <span className="live-flow-station__badge">{station.badge}</span>
+                <h3 className="live-flow-station__title">{station.title}</h3>
+                <p className="live-flow-station__action">{station.action}</p>
+              </article>
+            ))}
           </div>
         </div>
       </div>
@@ -170,7 +188,9 @@ function KitchOperatingSystemBoard({
         {board.modules.map((module, index) => (
           <article
             key={module.title}
-            className="kos-module-card"
+            className={`kos-module-card${
+              activeSlide === index ? " kos-module-card--carousel-active" : ""
+            }`}
             style={
               {
                 "--module-sync-delay": MODULE_SYNC_DELAYS[index] ?? "0s",
@@ -204,11 +224,13 @@ function KitchOperatingSystemBoard({
   );
 }
 
-export function OperationalFlow({ content }: HomepageV2SectionProps) {
+export function OperationalFlow({ content, locale }: HomepageV2SectionProps) {
   const board = content.operatingSystem;
   const mediaSrc = content.mediaSrc ?? DEFAULT_FLOW_MEDIA;
   const mediaAlt = content.mediaAlt ?? DEFAULT_FLOW_MEDIA_ALT;
   const photo = content.flowPhoto;
+  const placeholderLabel =
+    locale === "es" ? "Mockup pendiente" : "Mockup pending";
 
   return (
     <section
@@ -252,7 +274,10 @@ export function OperationalFlow({ content }: HomepageV2SectionProps) {
 
         {board ? (
           <div className="flow-section__board-wrap">
-            <KitchOperatingSystemBoard board={board} />
+            <KitchOperatingSystemBoard
+              board={board}
+              placeholderLabel={placeholderLabel}
+            />
           </div>
         ) : null}
       </div>
