@@ -1,91 +1,105 @@
 import type {
-  HomepageV2FlowMap,
+  HomepageV2LiveOrderBoard,
   HomepageV2SectionProps,
 } from "@/components/home/v2/types";
 
-function SignalStrip({ text }: { text: string }) {
-  const parts = text.split("—").map((p) => p.trim());
-  const mainPart = parts[0] ?? text;
-  const suffix = parts[1];
-  const items = mainPart.split("·").map((item) => item.trim());
+function ImpactStrip({ text }: { text: string }) {
+  const items = text.split("·").map((item) => item.trim());
 
   return (
-    <div className="flow-signal-strip">
-      <ul className="flow-signal-strip__list">
+    <div className="flow-impact-strip">
+      <ul className="flow-impact-strip__list">
         {items.map((item, index) => (
           <li key={item} className="flex items-center gap-2">
             {index > 0 ? (
-              <span className="flow-signal-strip__sep" aria-hidden>
+              <span className="flow-impact-strip__sep" aria-hidden>
                 ·
               </span>
             ) : null}
-            <span className="flow-signal-strip__item">{item}</span>
+            <span className="flow-impact-strip__item">{item}</span>
           </li>
         ))}
-        {suffix ? (
-          <>
-            <span className="flow-signal-strip__sep" aria-hidden>
-              —
-            </span>
-            <span className="flow-signal-strip__item">{suffix}</span>
-          </>
-        ) : null}
       </ul>
     </div>
   );
 }
 
-function OperatingFlowMap({ flowMap }: { flowMap: HomepageV2FlowMap }) {
+function LiveOrderFlowBoard({ board }: { board: HomepageV2LiveOrderBoard }) {
+  const { liveOrder } = board;
+
   return (
-    <div className="kitch-flow-map" aria-hidden>
-      <header className="kitch-flow-map__header">
-        <div>
-          <span className="kitch-flow-map__label">{flowMap.mapLabel}</span>
-          {flowMap.mapSublabel ? (
-            <span className="kitch-flow-map__sublabel">{flowMap.mapSublabel}</span>
-          ) : null}
-        </div>
-        <span className="kitch-flow-map__core">Kitch Flow</span>
+    <div
+      className="live-order-board"
+      role="region"
+      aria-label={`${board.boardLabel}. ${board.boardSublabel}`}
+    >
+      <header className="live-order-board__header">
+        <span className="live-order-board__label">{board.boardLabel}</span>
+        <span className="live-order-board__sublabel">{board.boardSublabel}</span>
       </header>
 
-      <div className="kitch-flow-map__track">
-        <div className="kitch-flow-map__backline" aria-hidden />
-
-        <div className="kitch-flow-map__nodes">
-          {flowMap.nodes.map((node, index) => (
-            <div key={node.title} className="contents">
-              <div className="kitch-flow-node-wrap">
-                <article className="kitch-flow-node">
-                  <span className="kitch-flow-node__symbol" aria-hidden>
-                    {node.symbol}
-                  </span>
-                  <span className="kitch-flow-node__badge">{node.badge}</span>
-                  <h3 className="kitch-flow-node__title">{node.title}</h3>
-                  <p className="kitch-flow-node__subcopy">{node.subcopy}</p>
-                </article>
-              </div>
-              {index < flowMap.nodes.length - 1 ? (
-                <div className="kitch-flow-connector" aria-hidden />
-              ) : null}
+      <div className="live-order-board__canvas">
+        <article className="live-order-card">
+          <div className="live-order-card__top">
+            <div>
+              <p className="live-order-card__table">{liveOrder.table}</p>
+              <p className="live-order-card__id">{liveOrder.orderId}</p>
             </div>
-          ))}
+            <span className="live-order-card__live-badge">
+              <span className="live-order-card__live-dot" aria-hidden />
+              {liveOrder.liveBadge}
+            </span>
+          </div>
+
+          <p className="live-order-card__status-label">{liveOrder.statusLabel}</p>
+          <div className="live-order-card__status-cycle">
+            {liveOrder.statusCycle.map((status) => (
+              <span key={status} className="live-order-card__status-item">
+                {status}
+              </span>
+            ))}
+          </div>
+
+          <div className="live-order-card__meta">
+            {liveOrder.meta.map((row) => (
+              <div key={row.label} className="live-order-card__meta-item">
+                <span className="live-order-card__meta-label">{row.label}</span>
+                <span className="live-order-card__meta-value">{row.value}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <div className="live-order-board__rail">
+          <div className="live-order-board__pulse-line" aria-hidden />
+          <div className="live-order-board__stations">
+            {board.stations.map((station) => (
+              <article key={station.title} className="live-flow-station">
+                <span className="live-flow-station__symbol" aria-hidden>
+                  {station.symbol}
+                </span>
+                <span className="live-flow-station__badge">{station.badge}</span>
+                <h3 className="live-flow-station__title">{station.title}</h3>
+                <p className="live-flow-station__action">{station.action}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
 
-      <footer className="kitch-flow-map__timeline">
-        {flowMap.timeline.map((step, index) => (
-          <span key={step} className="kitch-flow-timeline-step">
-            <span className="kitch-flow-timeline-step__num">{index + 1}</span>
-            {step}
-          </span>
+      <div className="live-order-board__benefits">
+        {board.benefits.map((benefit) => (
+          <div key={benefit} className="live-order-board__benefit">
+            {benefit}
+          </div>
         ))}
-      </footer>
+      </div>
     </div>
   );
 }
 
 export function OperationalFlow({ content }: HomepageV2SectionProps) {
-  const flowMap = content.flowMap;
+  const board = content.flowMap;
 
   return (
     <section
@@ -109,13 +123,13 @@ export function OperationalFlow({ content }: HomepageV2SectionProps) {
           </h2>
 
           <p className="flow-section__body">{content.description}</p>
+
+          {content.footerStrip ? (
+            <ImpactStrip text={content.footerStrip} />
+          ) : null}
         </header>
 
-        {flowMap ? <OperatingFlowMap flowMap={flowMap} /> : null}
-
-        {content.footerStrip ? (
-          <SignalStrip text={content.footerStrip} />
-        ) : null}
+        {board ? <LiveOrderFlowBoard board={board} /> : null}
       </div>
     </section>
   );

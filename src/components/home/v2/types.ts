@@ -29,18 +29,28 @@ export type HomepageV2TransformationBoard = {
   flowSteps: string[];
 };
 
-export type HomepageV2FlowNode = {
+export type HomepageV2FlowStation = {
   title: string;
-  subcopy: string;
+  action: string;
   badge: string;
   symbol: string;
 };
 
-export type HomepageV2FlowMap = {
-  mapLabel: string;
-  mapSublabel?: string;
-  nodes: HomepageV2FlowNode[];
-  timeline: string[];
+export type HomepageV2LiveOrder = {
+  table: string;
+  orderId: string;
+  statusLabel: string;
+  liveBadge: string;
+  statusCycle: string[];
+  meta: { label: string; value: string }[];
+};
+
+export type HomepageV2LiveOrderBoard = {
+  boardLabel: string;
+  boardSublabel: string;
+  liveOrder: HomepageV2LiveOrder;
+  stations: HomepageV2FlowStation[];
+  benefits: string[];
 };
 
 export type HomepageV2SectionContent = {
@@ -56,7 +66,7 @@ export type HomepageV2SectionContent = {
   diagnosticLabel?: string;
   diagnosticSublabel?: string;
   transformationBoard?: HomepageV2TransformationBoard;
-  flowMap?: HomepageV2FlowMap;
+  flowMap?: HomepageV2LiveOrderBoard;
   mediaSrc?: string;
   mediaAlt?: string;
   cta?: HomepageV2Cta;
