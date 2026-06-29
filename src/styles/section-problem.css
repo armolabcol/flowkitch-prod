@@ -1,0 +1,171 @@
+/* Section 02 — Operational problem visual card */
+
+.section-problem-visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  min-height: 420px;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+  isolation: isolate;
+}
+
+.section-problem-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.04) 0%,
+      rgba(0, 0, 0, 0.18) 52%,
+      rgba(0, 0, 0, 0.58) 100%
+    ),
+    radial-gradient(circle at 28% 18%, rgba(230, 57, 70, 0.08), transparent 32%);
+}
+
+.section-problem-visual__img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 42% center;
+}
+
+.section-problem-visual__fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(160deg, #141414 0%, #1c1c1c 50%, #242424 100%);
+}
+
+.problem-visual-badges {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.problem-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.82),
+    rgba(8, 8, 8, 0.66)
+  );
+  border: 1px solid rgba(230, 57, 70, 0.48);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  white-space: nowrap;
+}
+
+.problem-badge__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #e63946;
+  box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.13);
+  flex: 0 0 auto;
+}
+
+.section-problem-footer {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+  padding: 0.875rem 1.125rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.section-problem-footer__item {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+@media (min-width: 640px) {
+  .section-problem-visual {
+    min-height: 480px;
+  }
+
+  .problem-visual-badges {
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+  }
+
+  .problem-badge {
+    font-size: 13px;
+  }
+
+  .section-problem-footer__item {
+    font-size: 11px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .section-problem-visual {
+    width: min(100%, 480px);
+    margin-inline: auto;
+    min-height: 520px;
+    aspect-ratio: 4 / 5;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-problem-visual {
+    width: min(100%, 520px);
+    min-height: 580px;
+    aspect-ratio: 4 / 5;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 479px) {
+  .section-problem-visual {
+    aspect-ratio: 3 / 4;
+    min-height: 380px;
+  }
+
+  .problem-badge {
+    min-height: 34px;
+    padding: 8px 12px;
+    font-size: 11px;
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .problem-badge__dot {
+    box-shadow: none;
+  }
+}

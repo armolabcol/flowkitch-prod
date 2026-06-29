@@ -25,47 +25,27 @@ function OperationalProblemVisual({
   const [imageOk, setImageOk] = useState(true);
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-white/10 shadow-[0_32px_64px_rgba(0,0,0,0.45)]">
-      <div className="relative aspect-[4/3] w-full sm:aspect-[16/11]">
-        {imageOk ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={mediaSrc}
-            alt={alt}
-            className="absolute inset-0 h-full w-full object-cover object-[center_42%] sm:object-center"
-            onError={() => setImageOk(false)}
-            loading="lazy"
-          />
-        ) : (
-          <div
-            className="absolute inset-0 bg-gradient-to-br from-[#141414] via-[#1c1c1c] to-[#242424]"
-            aria-hidden
-          />
-        )}
+    <div className="section-problem-visual">
+      {imageOk ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={mediaSrc}
+          alt={alt}
+          className="section-problem-visual__img"
+          onError={() => setImageOk(false)}
+          loading="lazy"
+        />
+      ) : (
+        <div className="section-problem-visual__fallback" aria-hidden />
+      )}
 
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-[#1c1c1c]/75 via-[#1c1c1c]/20 to-transparent"
-          aria-hidden
-        />
-        <div
-          className="absolute inset-0 bg-[#e63946]/[0.05] mix-blend-multiply"
-          aria-hidden
-        />
-        <div
-          className="absolute inset-0 bg-gradient-to-r from-black/35 via-transparent to-black/15"
-          aria-hidden
-        />
-
-        <div className="absolute inset-x-0 bottom-0 flex flex-wrap gap-2 p-4 sm:p-5">
-          {badges.map((badge) => (
-            <span
-              key={badge}
-              className="rounded-full border border-[#e63946]/35 bg-black/55 px-3 py-1.5 text-[10px] font-semibold tracking-wide text-white backdrop-blur-md sm:text-[11px]"
-            >
-              {badge}
-            </span>
-          ))}
-        </div>
+      <div className="problem-visual-badges" aria-hidden>
+        {badges.map((badge) => (
+          <span key={badge} className="problem-badge">
+            <span className="problem-badge__dot" aria-hidden />
+            {badge}
+          </span>
+        ))}
       </div>
     </div>
   );
@@ -75,18 +55,16 @@ function FooterStrip({ text }: { text: string }) {
   const items = text.split("·").map((item) => item.trim());
 
   return (
-    <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3.5 backdrop-blur-sm sm:px-5 sm:py-4">
-      <ul className="flex flex-wrap items-center gap-x-3 gap-y-2">
+    <div className="section-problem-footer">
+      <ul className="flex flex-wrap items-center gap-x-2.5 gap-y-2 sm:gap-x-3">
         {items.map((item, index) => (
-          <li key={item} className="flex items-center gap-3">
+          <li key={item} className="flex items-center gap-2.5 sm:gap-3">
             {index > 0 ? (
-              <span className="hidden text-[#e63946]/70 sm:inline" aria-hidden>
+              <span className="text-[#e63946]/55" aria-hidden>
                 ·
               </span>
             ) : null}
-            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-kitch-muted sm:text-[11px]">
-              {item}
-            </span>
+            <span className="section-problem-footer__item">{item}</span>
           </li>
         ))}
       </ul>
@@ -106,7 +84,7 @@ export function OperationalProblem({ content }: HomepageV2SectionProps) {
       aria-labelledby={`${content.id}-title`}
     >
       <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-24">
+        <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-2 lg:items-center lg:gap-14 xl:gap-20">
           <div className="flex flex-col gap-6 lg:gap-8">
             {content.eyebrow ? (
               <SectionEyebrow>{content.eyebrow}</SectionEyebrow>
@@ -131,7 +109,7 @@ export function OperationalProblem({ content }: HomepageV2SectionProps) {
             ) : null}
           </div>
 
-          <div className="w-full lg:justify-self-end">
+          <div className="flex w-full justify-center lg:justify-end">
             <OperationalProblemVisual
               mediaSrc={mediaSrc}
               badges={badges}
