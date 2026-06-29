@@ -24,6 +24,8 @@ export type HomepageV2SectionContent = {
   animationPlaceholder: string;
   footerStrip?: string;
   visualBadges?: string[];
+  diagnosticLabel?: string;
+  diagnosticSublabel?: string;
   mediaSrc?: string;
   mediaAlt?: string;
   cta?: HomepageV2Cta;

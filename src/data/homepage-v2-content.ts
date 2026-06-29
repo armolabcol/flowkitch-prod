@@ -31,6 +31,8 @@ const es: HomepageV2Content = {
       "Cocina sin visibilidad",
       "Rondas perdidas",
     ],
+    diagnosticLabel: "Estrés operativo",
+    diagnosticSublabel: "Flujo de servicio en hora pico",
     mediaSrc:
       "/assets/sections/problem/KITCH_SECTION_02_OPERATIONAL_PROBLEM_v01.webp",
     mediaAlt:
@@ -135,6 +137,8 @@ const en: HomepageV2Content = {
       "Kitchen without visibility",
       "Lost rounds",
     ],
+    diagnosticLabel: "Operational stress",
+    diagnosticSublabel: "Peak-hour service flow",
     mediaSrc:
       "/assets/sections/problem/KITCH_SECTION_02_OPERATIONAL_PROBLEM_v01.webp",
     mediaAlt:
