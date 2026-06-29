@@ -1,49 +1,120 @@
-import { Container } from "@/components/ui/Container";
-import {
-  AnimationPlaceholder,
-  SectionDescription,
-  SectionEyebrow,
-  SectionTitle,
-} from "@/components/home/v2/placeholders";
-import type { HomepageV2SectionProps } from "@/components/home/v2/types";
+import type {
+  HomepageV2EcosystemBoard,
+  HomepageV2SectionProps,
+} from "@/components/home/v2/types";
 
-const ECOSYSTEM_SLOTS = 6;
+function EcosystemSignalStrip({ text }: { text: string }) {
+  const parts = text.split("—").map((part) => part.trim());
+  const mainPart = parts[0] ?? text;
+  const suffix = parts[1];
+  const items = mainPart.split("·").map((item) => item.trim());
+
+  return (
+    <div className="ecosystem-signal-strip">
+      <ul className="ecosystem-signal-strip__list">
+        {items.map((item, index) => (
+          <li key={item} className="flex items-center gap-2">
+            {index > 0 ? (
+              <span className="ecosystem-signal-strip__sep" aria-hidden>
+                ·
+              </span>
+            ) : null}
+            <span className="ecosystem-signal-strip__item">{item}</span>
+          </li>
+        ))}
+        {suffix ? (
+          <>
+            <span className="ecosystem-signal-strip__sep" aria-hidden>
+              —
+            </span>
+            <span className="ecosystem-signal-strip__item ecosystem-signal-strip__item--accent">
+              {suffix}
+            </span>
+          </>
+        ) : null}
+      </ul>
+    </div>
+  );
+}
+
+function EcosystemBoard({
+  board,
+  footerStrip,
+}: {
+  board: HomepageV2EcosystemBoard;
+  footerStrip?: string;
+}) {
+  return (
+    <div
+      className="kitch-ecosystem-board"
+      role="region"
+      aria-label={`${board.boardLabel}. ${board.boardSublabel}`}
+    >
+      <div className="kitch-ecosystem-board__mesh" aria-hidden />
+      <div className="kitch-ecosystem-board__pulse" aria-hidden />
+
+      <header className="kitch-ecosystem-board__header">
+        <span className="kitch-ecosystem-board__label">{board.boardLabel}</span>
+        <span className="kitch-ecosystem-board__sublabel">
+          {board.boardSublabel}
+        </span>
+      </header>
+
+      <div className="kitch-ecosystem-board__grid">
+        {board.modules.map((module) => (
+          <article key={module.title} className="kitch-ecosystem-card">
+            <div className="kitch-ecosystem-card__header">
+              <span className="kitch-ecosystem-card__symbol" aria-hidden>
+                {module.symbol}
+              </span>
+              <span className="kitch-ecosystem-card__badge">{module.badge}</span>
+            </div>
+
+            <h3 className="kitch-ecosystem-card__title">{module.title}</h3>
+            <p className="kitch-ecosystem-card__description">
+              {module.description}
+            </p>
+            <p className="kitch-ecosystem-card__benefit">{module.benefit}</p>
+          </article>
+        ))}
+      </div>
+
+      {footerStrip ? <EcosystemSignalStrip text={footerStrip} /> : null}
+    </div>
+  );
+}
 
 export function KitchEcosystem({ content }: HomepageV2SectionProps) {
+  const board = content.ecosystemBoard;
+
   return (
     <section
       id={content.id}
-      className="flex min-h-[100svh] flex-col justify-center border-b border-white/[0.06] py-16 sm:py-20 lg:py-28"
+      className="ecosystem-section relative flex min-h-[100svh] flex-col justify-center"
       aria-labelledby={`${content.id}-title`}
     >
-      <Container className="flex flex-col gap-12 lg:gap-16">
-        <div className="mx-auto max-w-2xl space-y-6 text-center lg:space-y-8">
-          {content.eyebrow && <SectionEyebrow>{content.eyebrow}</SectionEyebrow>}
-          <SectionTitle>
-            <span id={`${content.id}-title`}>{content.title}</span>
-          </SectionTitle>
-          <SectionDescription>{content.description}</SectionDescription>
-        </div>
+      <div className="ecosystem-section__inner">
+        <header className="ecosystem-section__header">
+          {content.eyebrow ? (
+            <p className="ecosystem-section__eyebrow">{content.eyebrow}</p>
+          ) : null}
 
-        <div
-          className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 lg:gap-6"
-          data-slot="ecosystem-grid"
-        >
-          {Array.from({ length: ECOSYSTEM_SLOTS }, (_, i) => (
-            <div
-              key={i}
-              className="flex min-h-[140px] flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/12 bg-kitch-surface/25 p-6 sm:min-h-[180px]"
-            >
-              <span className="text-[10px] font-medium uppercase tracking-widest text-kitch-subtle">
-                {content.mediaPlaceholder}
+          <h2 id={`${content.id}-title`} className="ecosystem-section__headline">
+            <span className="block">{content.title}</span>
+            {content.titleLine2 ? (
+              <span className="ecosystem-section__headline-line2">
+                {content.titleLine2}
               </span>
-              <span className="text-xs text-kitch-muted">Module {i + 1}</span>
-            </div>
-          ))}
-        </div>
+            ) : null}
+          </h2>
 
-        <AnimationPlaceholder label={content.animationPlaceholder} />
-      </Container>
+          <p className="ecosystem-section__body">{content.description}</p>
+        </header>
+
+        {board ? (
+          <EcosystemBoard board={board} footerStrip={content.footerStrip} />
+        ) : null}
+      </div>
     </section>
   );
 }

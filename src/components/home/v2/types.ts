@@ -60,6 +60,20 @@ export type HomepageV2FlowPhoto = {
   descriptionMobile?: string;
 };
 
+export type HomepageV2EcosystemModule = {
+  title: string;
+  description: string;
+  benefit: string;
+  badge: string;
+  symbol: string;
+};
+
+export type HomepageV2EcosystemBoard = {
+  boardLabel: string;
+  boardSublabel: string;
+  modules: HomepageV2EcosystemModule[];
+};
+
 export type HomepageV2SectionContent = {
   id: string;
   eyebrow?: string;
@@ -75,6 +89,7 @@ export type HomepageV2SectionContent = {
   transformationBoard?: HomepageV2TransformationBoard;
   flowMap?: HomepageV2LiveOrderBoard;
   flowPhoto?: HomepageV2FlowPhoto;
+  ecosystemBoard?: HomepageV2EcosystemBoard;
   mediaSrc?: string;
   mediaAlt?: string;
   cta?: HomepageV2Cta;

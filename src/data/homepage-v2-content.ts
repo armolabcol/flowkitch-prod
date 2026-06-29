@@ -163,11 +163,68 @@ const es: HomepageV2Content = {
   kitchEcosystem: {
     id: "kitch-ecosystem",
     eyebrow: "Sección 05",
-    title: "[Ecosistema Kitch] Título temporal",
+    title: "Un ecosistema completo",
+    titleLine2: "para operar tu restaurante.",
     description:
-      "Descripción temporal de módulos y roles conectados en la plataforma.",
-    mediaPlaceholder: "Visual ecosistema — placeholder",
-    animationPlaceholder: "Animación ecosistema — reservado Fase 2",
+      "Kitch reúne en una sola plataforma los puntos críticos del servicio: menú, mesa, mesero, cocina, gerencia y fidelización. Cada módulo trabaja conectado para que la operación fluya con más control, menos errores y mejor experiencia para el cliente.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Menú · Mesa · Mesero · Cocina · Manager · Loyalty — Todo conectado",
+    ecosystemBoard: {
+      boardLabel: "KITCH OPERATING ECOSYSTEM",
+      boardSublabel: "Seis módulos conectados en una sola plataforma operativa",
+      modules: [
+        {
+          title: "Menú digital",
+          description:
+            "Tu carta siempre visible, rápida y fácil de actualizar.",
+          benefit: "Menos fricción al ordenar",
+          badge: "QR listo",
+          symbol: "QR",
+        },
+        {
+          title: "Orden viva",
+          description:
+            "Cada mesa puede crear rondas, agregar ítems y mantener el pedido activo.",
+          benefit: "Más consumo sin perder control",
+          badge: "Round 2 active",
+          symbol: "M8",
+        },
+        {
+          title: "Panel mesero",
+          description:
+            "El mesero valida, aprueba y envía pedidos sin perder visibilidad.",
+          benefit: "Menos saturación del equipo",
+          badge: "3 pendientes",
+          symbol: "✓",
+        },
+        {
+          title: "KDS cocina",
+          description:
+            "La cocina recibe ítems claros, estados por preparación y prioridad operativa.",
+          benefit: "Menos errores en cocina",
+          badge: "Preparing",
+          symbol: "KDS",
+        },
+        {
+          title: "Manager panel",
+          description:
+            "La gerencia ve mesas abiertas, órdenes activas, cierres y trazabilidad.",
+          benefit: "Control en tiempo real",
+          badge: "24 mesas activas",
+          symbol: "MG",
+        },
+        {
+          title: "Loyalty",
+          description:
+            "Puntos, historial y balance para impulsar recompra y fidelización.",
+          benefit: "Clientes que vuelven",
+          badge: "+120 pts",
+          symbol: "★",
+        },
+      ],
+    },
   },
   android: {
     id: "the-android",
@@ -373,11 +430,68 @@ const en: HomepageV2Content = {
   kitchEcosystem: {
     id: "kitch-ecosystem",
     eyebrow: "Section 05",
-    title: "[Kitch ecosystem] Temporary title",
+    title: "A complete ecosystem",
+    titleLine2: "to run your restaurant.",
     description:
-      "Temporary description of connected modules and roles on the platform.",
-    mediaPlaceholder: "Ecosystem visual — placeholder",
-    animationPlaceholder: "Ecosystem animation — Phase 2 reserved",
+      "Kitch brings the critical service touchpoints into one platform: menu, table, waiter, kitchen, management and loyalty. Every module works connected so operations flow with more control, fewer errors and a better guest experience.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Menu · Table · Waiter · Kitchen · Manager · Loyalty — All connected",
+    ecosystemBoard: {
+      boardLabel: "KITCH OPERATING ECOSYSTEM",
+      boardSublabel: "Six connected modules in one operating platform",
+      modules: [
+        {
+          title: "Digital menu",
+          description:
+            "Your menu always visible, fast and easy to update.",
+          benefit: "Less friction when ordering",
+          badge: "QR ready",
+          symbol: "QR",
+        },
+        {
+          title: "Live order",
+          description:
+            "Each table can create rounds, add items and keep the order active.",
+          benefit: "More spend without losing control",
+          badge: "Round 2 active",
+          symbol: "T8",
+        },
+        {
+          title: "Waiter panel",
+          description:
+            "Waiters validate, approve and send orders without losing visibility.",
+          benefit: "Less team overload",
+          badge: "3 pending",
+          symbol: "✓",
+        },
+        {
+          title: "Kitchen KDS",
+          description:
+            "Kitchen receives clear items, prep states and operational priority.",
+          benefit: "Fewer kitchen errors",
+          badge: "Preparing",
+          symbol: "KDS",
+        },
+        {
+          title: "Manager panel",
+          description:
+            "Management sees open tables, active orders, closes and traceability.",
+          benefit: "Real-time control",
+          badge: "24 active tables",
+          symbol: "MG",
+        },
+        {
+          title: "Loyalty",
+          description:
+            "Points, history and balance to drive repeat visits and loyalty.",
+          benefit: "Guests who come back",
+          badge: "+120 pts",
+          symbol: "★",
+        },
+      ],
+    },
   },
   android: {
     id: "the-android",
