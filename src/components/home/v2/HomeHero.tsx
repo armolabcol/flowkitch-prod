@@ -52,21 +52,24 @@ export function HomeHero({ content, locale }: HomepageV2HeroProps) {
             )}
           >
             {content.eyebrow ? (
-              <motion.p
-                className="text-xs font-semibold uppercase tracking-[0.22em] text-[#e63946]"
-                {...fadeIn(0.12)}
-              >
+              <motion.p className="kitch-hero-eyebrow" {...fadeIn(0.12)}>
                 {content.eyebrow}
               </motion.p>
             ) : null}
 
-            <motion.h1
-              id={`${content.id}-headline`}
-              className="font-kitch text-[clamp(2.125rem,5.5vw,3.75rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-white"
-              {...fadeUp(0.2)}
-            >
-              {content.title}
-            </motion.h1>
+            <motion.div {...fadeUp(0.2)}>
+              <h1
+                id={`${content.id}-headline`}
+                className="font-kitch text-[clamp(3rem,8vw,4.75rem)] font-semibold leading-[1] tracking-[-0.04em] text-white"
+              >
+                {content.title}
+              </h1>
+              {content.tagline ? (
+                <p className="mt-3 max-w-lg text-lg font-medium tracking-[-0.02em] text-white/88 sm:mt-4 sm:text-xl">
+                  {content.tagline}
+                </p>
+              ) : null}
+            </motion.div>
 
             <motion.p
               className="max-w-xl text-base leading-relaxed text-kitch-muted sm:text-lg sm:leading-relaxed"
@@ -75,16 +78,18 @@ export function HomeHero({ content, locale }: HomepageV2HeroProps) {
               {content.description}
             </motion.p>
 
-            <motion.p
-              className="max-w-lg text-sm leading-relaxed text-kitch-subtle sm:text-[0.95rem]"
-              {...fadeUp(0.44)}
-            >
-              {content.microcopy}
-            </motion.p>
+            {content.microcopy ? (
+              <motion.p
+                className="max-w-lg text-sm leading-relaxed text-kitch-subtle sm:text-[0.95rem]"
+                {...fadeUp(0.44)}
+              >
+                {content.microcopy}
+              </motion.p>
+            ) : null}
 
             <motion.div
               className="flex flex-col gap-3 pt-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
-              {...fadeUp(0.54)}
+              {...fadeUp(content.microcopy ? 0.54 : 0.44)}
             >
               <Button
                 asChild

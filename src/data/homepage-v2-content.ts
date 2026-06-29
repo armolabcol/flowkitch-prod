@@ -4,12 +4,11 @@ import type { Locale } from "@/lib/i18n";
 const es: HomepageV2Content = {
   hero: {
     id: "hero",
-    eyebrow: "Kitch by Armo",
-    title: "Del caos operativo al control total.",
+    eyebrow: "Sistema operativo digital para restaurantes",
+    title: "Kitch",
+    tagline: "The flow behind great service.",
     description:
-      "Kitch conecta clientes, mesas, meseros, cocina y administración en un único flujo digital trazable, para que cada orden avance con precisión incluso en las horas de mayor demanda.",
-    microcopy:
-      "No vendemos otro POS. Construimos el flujo detrás de un gran servicio.",
+      "Conecta cliente, mesero, cocina y gerencia en una operación fluida, visible y rentable.",
     cta: {
       primaryLabel: "Agendar demo",
       secondaryLabel: "Ver cómo funciona",
@@ -110,12 +109,11 @@ const es: HomepageV2Content = {
 const en: HomepageV2Content = {
   hero: {
     id: "hero",
-    eyebrow: "Kitch by Armo",
-    title: "From operational chaos to total control.",
+    eyebrow: "Digital operating system for restaurants",
+    title: "Kitch",
+    tagline: "The flow behind great service.",
     description:
-      "Kitch connects guests, tables, waiters, kitchen and management into one traceable digital flow, so every order moves with precision even during peak service.",
-    microcopy:
-      "We do not sell another POS. We build the flow behind great service.",
+      "Connects guests, waiters, kitchen and management in a fluid, visible and profitable operation.",
     cta: {
       primaryLabel: "Schedule demo",
       secondaryLabel: "See how it works",

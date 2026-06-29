@@ -248,3 +248,35 @@
     opacity: 0 !important;
   }
 }
+
+/* Hero copy — restaurant positioning eyebrow */
+.kitch-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  margin-bottom: 18px;
+  color: #e63946;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.kitch-hero-eyebrow::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #e63946;
+  box-shadow: 0 0 0 5px rgba(230, 57, 70, 0.12);
+}
+
+@media (min-width: 640px) {
+  .kitch-hero-eyebrow {
+    font-size: 12px;
+  }
+}

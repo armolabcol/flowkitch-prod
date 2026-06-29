@@ -9,8 +9,9 @@ export type HomepageV2HeroContent = {
   id: string;
   eyebrow?: string;
   title: string;
+  tagline?: string;
   description: string;
-  microcopy: string;
+  microcopy?: string;
   cta: HomepageV2Cta;
 };
 
