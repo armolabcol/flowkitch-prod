@@ -2,10 +2,6 @@
 
 import { useState } from "react";
 import { Container } from "@/components/ui/Container";
-import {
-  SectionDescription,
-  SectionEyebrow,
-} from "@/components/home/v2/placeholders";
 import type { HomepageV2SectionProps } from "@/components/home/v2/types";
 
 const DEFAULT_MEDIA =
@@ -56,11 +52,11 @@ function FooterStrip({ text }: { text: string }) {
 
   return (
     <div className="section-problem-footer">
-      <ul className="flex flex-wrap items-center gap-x-2.5 gap-y-2 sm:gap-x-3">
+      <ul className="section-problem-footer__list">
         {items.map((item, index) => (
-          <li key={item} className="flex items-center gap-2.5 sm:gap-3">
+          <li key={item} className="flex items-center gap-2 sm:gap-2.5">
             {index > 0 ? (
-              <span className="text-[#e63946]/55" aria-hidden>
+              <span className="section-problem-footer__sep" aria-hidden>
                 ·
               </span>
             ) : null}
@@ -80,36 +76,33 @@ export function OperationalProblem({ content }: HomepageV2SectionProps) {
   return (
     <section
       id={content.id}
-      className="relative flex min-h-[100svh] flex-col justify-center border-b border-white/[0.06] py-16 sm:py-20 lg:py-28"
+      className="section-problem relative flex min-h-[100svh] flex-col justify-center border-b border-white/[0.06] py-20 sm:py-24 lg:py-32"
       aria-labelledby={`${content.id}-title`}
     >
-      <Container>
-        <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-2 lg:items-center lg:gap-14 xl:gap-20">
-          <div className="flex flex-col gap-6 lg:gap-8">
+      <Container className="section-problem__inner">
+        <div className="grid items-center gap-12 sm:gap-14 lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-24">
+          <div className="section-problem__copy">
             {content.eyebrow ? (
-              <SectionEyebrow>{content.eyebrow}</SectionEyebrow>
+              <p className="section-problem__eyebrow">{content.eyebrow}</p>
             ) : null}
 
-            <h2
-              id={`${content.id}-title`}
-              className="text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]"
-            >
+            <h2 id={`${content.id}-title`} className="section-problem__headline">
               <span className="block">{content.title}</span>
               {content.titleLine2 ? (
-                <span className="mt-2 block text-kitch-muted sm:mt-3">
+                <span className="section-problem__headline-line2">
                   {content.titleLine2}
                 </span>
               ) : null}
             </h2>
 
-            <SectionDescription>{content.description}</SectionDescription>
+            <p className="section-problem__body">{content.description}</p>
 
             {content.footerStrip ? (
               <FooterStrip text={content.footerStrip} />
             ) : null}
           </div>
 
-          <div className="flex w-full justify-center lg:justify-end">
+          <div className="section-problem__visual-wrap lg:justify-end">
             <OperationalProblemVisual
               mediaSrc={mediaSrc}
               badges={badges}
