@@ -1,0 +1,250 @@
+/* Hero floating UI cards — premium motion (CSS only) */
+
+.kitch-hero-card {
+  position: relative;
+  pointer-events: auto;
+}
+
+.kitch-hero-card__enter {
+  opacity: 0;
+  animation: kitch-card-enter 860ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform, filter;
+}
+
+.kitch-hero-card__float {
+  animation: kitch-card-float var(--float-duration, 7s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0ms);
+  will-change: transform;
+}
+
+.kitch-hero-card__surface {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(18, 18, 18, 0.72);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  transition:
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 260ms ease,
+    background 260ms ease,
+    box-shadow 260ms ease;
+}
+
+.kitch-hero-card__surface::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(230, 57, 70, 0.22), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 42%);
+  opacity: 0;
+  transition: opacity 280ms ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.kitch-hero-card__surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+.kitch-hero-card:hover .kitch-hero-card__float {
+  animation-play-state: paused;
+}
+
+.kitch-hero-card:hover .kitch-hero-card__surface {
+  transform: translate3d(0, -8px, 0) scale(1.018);
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(22, 22, 22, 0.78);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.44),
+    0 0 42px rgba(230, 57, 70, 0.1);
+}
+
+.kitch-hero-card:hover .kitch-hero-card__surface::before {
+  opacity: 1;
+}
+
+/* Staggered enter + float offsets per card */
+.kitch-hero-card--client .kitch-hero-card__enter {
+  animation-delay: 120ms;
+}
+
+.kitch-hero-card--client .kitch-hero-card__float {
+  --float-duration: 6.5s;
+  --float-delay: 980ms;
+}
+
+.kitch-hero-card--manager .kitch-hero-card__enter {
+  animation-delay: 240ms;
+}
+
+.kitch-hero-card--manager .kitch-hero-card__float {
+  --float-duration: 7.8s;
+  --float-delay: 1100ms;
+  animation-direction: reverse;
+}
+
+.kitch-hero-card--kitchen .kitch-hero-card__enter {
+  animation-delay: 360ms;
+}
+
+.kitch-hero-card--kitchen .kitch-hero-card__float {
+  --float-duration: 6.8s;
+  --float-delay: 1220ms;
+}
+
+.kitch-hero-card--waiter .kitch-hero-card__enter {
+  animation-delay: 480ms;
+}
+
+.kitch-hero-card--waiter .kitch-hero-card__float {
+  --float-duration: 7.2s;
+  --float-delay: 1340ms;
+  animation-direction: reverse;
+}
+
+@keyframes kitch-card-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0) scale(0.96);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes kitch-card-float {
+  0%,
+  100% {
+    transform: translate3d(0, 4px, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+/* Status micro-animations */
+.kitch-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.kitch-status-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #e63946;
+  box-shadow: 0 0 0 rgba(230, 57, 70, 0.35);
+  animation: kitch-status-pulse 1.8s ease-in-out infinite;
+}
+
+.kitch-status-dot--ready {
+  background: #34d399;
+  box-shadow: 0 0 0 rgba(52, 211, 153, 0.35);
+  animation-name: kitch-status-pulse-ready;
+}
+
+.kitch-status-badge--preparing {
+  position: relative;
+  overflow: hidden;
+}
+
+.kitch-status-badge--preparing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.14) 50%,
+    transparent 62%
+  );
+  transform: translateX(-120%);
+  animation: kitch-status-shimmer 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes kitch-status-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.36);
+  }
+
+  70% {
+    box-shadow: 0 0 0 8px rgba(230, 57, 70, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(230, 57, 70, 0);
+  }
+}
+
+@keyframes kitch-status-pulse-ready {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.32);
+  }
+
+  70% {
+    box-shadow: 0 0 0 7px rgba(52, 211, 153, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+  }
+}
+
+@keyframes kitch-status-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  45%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kitch-hero-card__enter,
+  .kitch-hero-card__float,
+  .kitch-status-dot,
+  .kitch-status-badge--preparing::after {
+    animation: none !important;
+  }
+
+  .kitch-hero-card__enter {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .kitch-hero-card__float {
+    transform: none !important;
+  }
+
+  .kitch-hero-card__surface {
+    transition: none !important;
+  }
+
+  .kitch-hero-card:hover .kitch-hero-card__surface {
+    transform: none !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(18, 18, 18, 0.72) !important;
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42) !important;
+  }
+
+  .kitch-hero-card:hover .kitch-hero-card__surface::before {
+    opacity: 0 !important;
+  }
+}
