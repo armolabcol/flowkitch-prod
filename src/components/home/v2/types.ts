@@ -53,6 +53,13 @@ export type HomepageV2LiveOrderBoard = {
   benefits: string[];
 };
 
+export type HomepageV2FlowPhoto = {
+  topBadge: string;
+  title: string;
+  description: string;
+  descriptionMobile?: string;
+};
+
 export type HomepageV2SectionContent = {
   id: string;
   eyebrow?: string;
@@ -67,6 +74,7 @@ export type HomepageV2SectionContent = {
   diagnosticSublabel?: string;
   transformationBoard?: HomepageV2TransformationBoard;
   flowMap?: HomepageV2LiveOrderBoard;
+  flowPhoto?: HomepageV2FlowPhoto;
   mediaSrc?: string;
   mediaAlt?: string;
   cta?: HomepageV2Cta;

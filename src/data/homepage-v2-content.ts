@@ -85,6 +85,17 @@ const es: HomepageV2Content = {
     animationPlaceholder: "—",
     footerStrip:
       "Menos errores · Más visibilidad · Rondas más fáciles · Control en tiempo real",
+    mediaSrc:
+      "/assets/sections/flow/KITCH_SECTION_04_TABLE_QR_FLOW_v01.webp",
+    mediaAlt:
+      "Restaurante premium con mesas activas donde inicia el flujo de pedidos mediante QR",
+    flowPhoto: {
+      topBadge: "Mesa 08 · Orden viva",
+      title: "El flujo empieza en la mesa",
+      description:
+        "QR escaneado · ronda enviada · cocina y mesero sincronizados",
+      descriptionMobile: "QR escaneado · ronda enviada",
+    },
     flowMap: {
       boardLabel: "LIVE ORDER FLOW",
       boardSublabel: "Cómo Kitch mueve una orden por el restaurante",
@@ -284,6 +295,17 @@ const en: HomepageV2Content = {
     animationPlaceholder: "—",
     footerStrip:
       "Fewer errors · More visibility · Easier rounds · Real-time control",
+    mediaSrc:
+      "/assets/sections/flow/KITCH_SECTION_04_TABLE_QR_FLOW_v01.webp",
+    mediaAlt:
+      "Premium restaurant with active tables where the QR ordering flow begins",
+    flowPhoto: {
+      topBadge: "Table 08 · Live order",
+      title: "The flow starts at the table",
+      description:
+        "QR scanned · round sent · kitchen and waiter in sync",
+      descriptionMobile: "QR scanned · round sent",
+    },
     flowMap: {
       boardLabel: "LIVE ORDER FLOW",
       boardSublabel: "How Kitch moves one order through the restaurant",

@@ -1,7 +1,16 @@
+"use client";
+
+import { useState } from "react";
 import type {
+  HomepageV2FlowPhoto,
   HomepageV2LiveOrderBoard,
   HomepageV2SectionProps,
 } from "@/components/home/v2/types";
+
+const DEFAULT_FLOW_MEDIA =
+  "/assets/sections/flow/KITCH_SECTION_04_TABLE_QR_FLOW_v01.webp";
+const DEFAULT_FLOW_MEDIA_ALT =
+  "Restaurante premium con mesas activas donde inicia el flujo de pedidos mediante QR";
 
 function ImpactStrip({ text }: { text: string }) {
   const items = text.split("·").map((item) => item.trim());
@@ -20,6 +29,50 @@ function ImpactStrip({ text }: { text: string }) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function FlowSectionVisual({
+  mediaSrc,
+  mediaAlt,
+  photo,
+}: {
+  mediaSrc: string;
+  mediaAlt: string;
+  photo: HomepageV2FlowPhoto;
+}) {
+  const [imageOk, setImageOk] = useState(true);
+
+  return (
+    <div className="kitch-live-order-visual">
+      {imageOk ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={mediaSrc}
+          alt={mediaAlt}
+          className="kitch-live-order-visual__img"
+          loading="lazy"
+          onError={() => setImageOk(false)}
+        />
+      ) : (
+        <div className="kitch-live-order-visual__fallback" aria-hidden />
+      )}
+
+      <span className="flow-photo-badge" aria-hidden>
+        {photo.topBadge}
+      </span>
+
+      <div className="flow-photo-status" aria-hidden>
+        <span className="flow-photo-status__eyebrow">{photo.topBadge}</span>
+        <strong>{photo.title}</strong>
+        <p className="flow-photo-status__detail flow-photo-status__detail--full">
+          {photo.description}
+        </p>
+        <p className="flow-photo-status__detail flow-photo-status__detail--short">
+          {photo.descriptionMobile ?? photo.description}
+        </p>
+      </div>
     </div>
   );
 }
@@ -100,6 +153,9 @@ function LiveOrderFlowBoard({ board }: { board: HomepageV2LiveOrderBoard }) {
 
 export function OperationalFlow({ content }: HomepageV2SectionProps) {
   const board = content.flowMap;
+  const mediaSrc = content.mediaSrc ?? DEFAULT_FLOW_MEDIA;
+  const mediaAlt = content.mediaAlt ?? DEFAULT_FLOW_MEDIA_ALT;
+  const photo = content.flowPhoto;
 
   return (
     <section
@@ -108,28 +164,44 @@ export function OperationalFlow({ content }: HomepageV2SectionProps) {
       aria-labelledby={`${content.id}-title`}
     >
       <div className="flow-section__inner">
-        <header className="flow-section__copy">
-          {content.eyebrow ? (
-            <p className="flow-section__eyebrow">{content.eyebrow}</p>
-          ) : null}
-
-          <h2 id={`${content.id}-title`} className="flow-section__headline">
-            <span className="block">{content.title}</span>
-            {content.titleLine2 ? (
-              <span className="flow-section__headline-line2">
-                {content.titleLine2}
-              </span>
+        <div className="flow-section__hero-grid">
+          <header className="flow-section__copy">
+            {content.eyebrow ? (
+              <p className="flow-section__eyebrow">{content.eyebrow}</p>
             ) : null}
-          </h2>
 
-          <p className="flow-section__body">{content.description}</p>
+            <h2 id={`${content.id}-title`} className="flow-section__headline">
+              <span className="block">{content.title}</span>
+              {content.titleLine2 ? (
+                <span className="flow-section__headline-line2">
+                  {content.titleLine2}
+                </span>
+              ) : null}
+            </h2>
 
-          {content.footerStrip ? (
-            <ImpactStrip text={content.footerStrip} />
+            <p className="flow-section__body">{content.description}</p>
+
+            {content.footerStrip ? (
+              <ImpactStrip text={content.footerStrip} />
+            ) : null}
+          </header>
+
+          {photo ? (
+            <div className="flow-section__visual-wrap">
+              <FlowSectionVisual
+                mediaSrc={mediaSrc}
+                mediaAlt={mediaAlt}
+                photo={photo}
+              />
+            </div>
           ) : null}
-        </header>
+        </div>
 
-        {board ? <LiveOrderFlowBoard board={board} /> : null}
+        {board ? (
+          <div className="flow-section__board-wrap">
+            <LiveOrderFlowBoard board={board} />
+          </div>
+        ) : null}
       </div>
     </section>
   );
