@@ -170,6 +170,12 @@ export type HomepageV2EcosystemBoard = {
   modules: HomepageV2EcosystemModule[];
 };
 
+export type HomepageV2AndroidOverlay = {
+  title: string;
+  subtitle: string;
+  indicators: string[];
+};
+
 export type HomepageV2SectionContent = {
   id: string;
   eyebrow?: string;
@@ -179,6 +185,8 @@ export type HomepageV2SectionContent = {
   mediaPlaceholder: string;
   animationPlaceholder: string;
   footerStrip?: string;
+  microBenefits?: string[];
+  androidOverlay?: HomepageV2AndroidOverlay;
   visualBadges?: string[];
   diagnosticLabel?: string;
   diagnosticSublabel?: string;

@@ -337,11 +337,32 @@ const es: HomepageV2Content = {
   android: {
     id: "the-android",
     eyebrow: "Sección 06",
-    title: "[The Android] Título temporal",
+    title: "Un colaborador digital",
+    titleLine2: "que trabaja con tu equipo.",
     description:
-      "Descripción temporal del dispositivo / capa Android en operación de sala.",
-    mediaPlaceholder: "Dispositivo / hardware — placeholder",
-    animationPlaceholder: "Animación dispositivo — reservado Fase 2",
+      "Kitch acompaña el servicio sin reemplazar a las personas. Ayuda a ordenar la información, conectar áreas y reducir fricción para que meseros, cocina y gerencia trabajen con más claridad.",
+    mediaPlaceholder: "KITCH_ANDROID_COLLABORATOR_v01.webp",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Asiste · Coordina · Alerta · Conecta · No reemplaza",
+    microBenefits: [
+      "Ayuda al mesero a priorizar.",
+      "Mantiene a cocina informada.",
+      "Da visibilidad al manager.",
+    ],
+    mediaSrc: "/assets/sections/android/KITCH_ANDROID_COLLABORATOR_v01.webp",
+    mediaAlt:
+      "Android de Kitch integrado en restaurante como colaborador digital del equipo operativo",
+    androidOverlay: {
+      title: "Kitch Assistant",
+      subtitle:
+        "Coordina señales entre mesa, mesero, cocina y manager.",
+      indicators: [
+        "Nueva ronda detectada",
+        "Cocina actualizada",
+        "Mesa 08 activa",
+      ],
+    },
   },
   results: {
     id: "results",
@@ -712,11 +733,32 @@ const en: HomepageV2Content = {
   android: {
     id: "the-android",
     eyebrow: "Section 06",
-    title: "[The Android] Temporary title",
+    title: "A digital teammate",
+    titleLine2: "working with your staff.",
     description:
-      "Temporary description of the device / Android layer in floor operations.",
-    mediaPlaceholder: "Device / hardware — placeholder",
-    animationPlaceholder: "Device animation — Phase 2 reserved",
+      "Kitch supports service without replacing people. It helps organize information, connect teams, and reduce friction so waiters, kitchen, and management work with more clarity.",
+    mediaPlaceholder: "KITCH_ANDROID_COLLABORATOR_v01.webp",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Assists · Coordinates · Alerts · Connects · Does not replace",
+    microBenefits: [
+      "Helps waiters prioritize.",
+      "Keeps kitchen informed.",
+      "Gives managers visibility.",
+    ],
+    mediaSrc: "/assets/sections/android/KITCH_ANDROID_COLLABORATOR_v01.webp",
+    mediaAlt:
+      "Kitch android integrated in the restaurant as a digital teammate for the operations team",
+    androidOverlay: {
+      title: "Kitch Assistant",
+      subtitle:
+        "Coordinates signals between table, waiter, kitchen, and manager.",
+      indicators: [
+        "New round detected",
+        "Kitchen updated",
+        "Table 08 active",
+      ],
+    },
   },
   results: {
     id: "results",
