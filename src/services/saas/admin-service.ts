@@ -20,6 +20,7 @@ import type {
   ClientListItem,
   InstallationWithDetails,
   MaintenanceLog,
+  OperationHubRow,
   Restaurant,
 } from "@/types/saas";
 import type { Database } from "@/lib/supabase/types";
@@ -248,6 +249,78 @@ export async function listRestaurants(scope: StaffScope): Promise<Restaurant[]> 
     city: r.city,
     timezone: r.timezone,
   }));
+}
+
+export async function listOperationHubRows(
+  scope: StaffScope,
+): Promise<OperationHubRow[]> {
+  const [restaurants, installations, clients] = await Promise.all([
+    listRestaurants(scope),
+    listInstallationsWithDetails(scope),
+    listClientsWithMembership(scope),
+  ]);
+
+  const clientById = new Map(clients.map((client) => [client.id, client]));
+  const installationsByRestaurant = new Map<string, InstallationWithDetails[]>();
+  for (const installation of installations) {
+    const list = installationsByRestaurant.get(installation.restaurant_id) ?? [];
+    list.push(installation);
+    installationsByRestaurant.set(installation.restaurant_id, list);
+  }
+
+  const rows: OperationHubRow[] = [];
+
+  for (const restaurant of restaurants) {
+    const client = clientById.get(restaurant.client_id);
+    const restaurantInstallations =
+      installationsByRestaurant.get(restaurant.id) ?? [];
+
+    if (restaurantInstallations.length === 0) {
+      rows.push({
+        restaurantId: restaurant.id,
+        restaurantName: restaurant.name,
+        city: restaurant.city,
+        country: restaurant.country,
+        clientId: restaurant.client_id,
+        clientName: client?.name ?? "—",
+        clientEmail: client?.email ?? "",
+        siteUrl: null,
+        installationId: null,
+        membershipStatus: client?.membershipStatus ?? "license_unknown",
+        planName: client?.planName ?? null,
+        expiresAt: client?.expiresAt ?? null,
+        daysRemaining: client?.daysRemaining ?? null,
+        apiKeyLast4: null,
+      });
+      continue;
+    }
+
+    for (const installation of restaurantInstallations) {
+      rows.push({
+        restaurantId: restaurant.id,
+        restaurantName: restaurant.name,
+        city: restaurant.city,
+        country: restaurant.country,
+        clientId: restaurant.client_id,
+        clientName: client?.name ?? installation.client.name,
+        clientEmail: client?.email ?? installation.client.email,
+        siteUrl: installation.site_url,
+        installationId: installation.id,
+        membershipStatus: installation.license_status,
+        planName: client?.planName ?? null,
+        expiresAt: installation.license_expires_at,
+        daysRemaining: daysUntil(installation.license_expires_at),
+        apiKeyLast4: installation.api_key_last4,
+      });
+    }
+  }
+
+  return rows.sort((a, b) =>
+    `${a.clientName} ${a.restaurantName}`.localeCompare(
+      `${b.clientName} ${b.restaurantName}`,
+      "es",
+    ),
+  );
 }
 
 export async function listInstallationsWithDetails(

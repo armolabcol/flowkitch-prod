@@ -66,10 +66,12 @@ export function AddRestaurantForm({
   clientId,
   country,
   locale,
+  onDone,
 }: {
   clientId: string;
   country: string;
   locale: "es" | "en";
+  onDone?: () => void;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -89,6 +91,7 @@ export function AddRestaurantForm({
       }),
     });
     router.refresh();
+    onDone?.();
     setLoading(false);
   }
 
@@ -109,9 +112,11 @@ export function AddRestaurantForm({
 export function AddInstallationForm({
   restaurantId,
   locale,
+  onDone,
 }: {
   restaurantId: string;
   locale: "es" | "en";
+  onDone?: () => void;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -134,6 +139,7 @@ export function AddInstallationForm({
     const data = await res.json();
     if (data.apiKey) setNewKey(data.apiKey);
     router.refresh();
+    onDone?.();
     setLoading(false);
   }
 

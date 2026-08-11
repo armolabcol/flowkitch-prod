@@ -50,6 +50,23 @@ export interface ClientListItem extends Client {
   installationCount: number;
 }
 
+export interface OperationHubRow {
+  restaurantId: string;
+  restaurantName: string;
+  city: string;
+  country: string;
+  clientId: string;
+  clientName: string;
+  clientEmail: string;
+  siteUrl: string | null;
+  installationId: string | null;
+  membershipStatus: LicenseStatus;
+  planName: string | null;
+  expiresAt: string | null;
+  daysRemaining: number | null;
+  apiKeyLast4: string | null;
+}
+
 export interface Restaurant {
   id: string;
   client_id: string;

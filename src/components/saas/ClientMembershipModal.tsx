@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { X } from "lucide-react";
-import { withLocale } from "@/lib/i18n";
+import {
+  AddInstallationForm,
+  AddRestaurantForm,
+} from "@/components/saas/ClientDetailActions";
 import { InstallationApiKeyActions } from "@/components/saas/InstallationApiKeyActions";
 import { InstallationLicenseActions } from "@/components/saas/InstallationLicenseActions";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
@@ -37,6 +39,7 @@ type HubDetail = {
     license_status: string;
     license_expires_at: string;
     grace_until: string | null;
+    restaurant_id: string;
     restaurant_name: string;
     api_key_last4: string;
   }>;
@@ -60,15 +63,49 @@ function countdownCopy(days: number | null, locale: Locale) {
     : `${days} day${days === 1 ? "" : "s"}`;
 }
 
+function CopyableUrl({ url, locale }: { url: string; locale: Locale }) {
+  const [copied, setCopied] = useState(false);
+  const isEs = locale === "es";
+
+  return (
+    <div className="mt-2 flex min-w-0 flex-wrap items-center gap-2">
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="truncate font-mono text-xs text-kitch-accent hover:underline"
+      >
+        {url}
+      </a>
+      <button
+        type="button"
+        className="rounded-md px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-kitch-subtle hover:bg-white/5 hover:text-white"
+        onClick={() => {
+          void navigator.clipboard.writeText(url).then(() => {
+            setCopied(true);
+            window.setTimeout(() => setCopied(false), 1200);
+          });
+        }}
+      >
+        {copied ? "OK" : isEs ? "Copiar" : "Copy"}
+      </button>
+    </div>
+  );
+}
+
 export function ClientMembershipModal({
   clientId,
   locale,
   canManageLicense,
+  canWrite,
+  focusRestaurantId,
   onClose,
 }: {
   clientId: string;
   locale: Locale;
   canManageLicense: boolean;
+  canWrite: boolean;
+  focusRestaurantId?: string | null;
   onClose: () => void;
 }) {
   const dict = getSaasDictionary(locale);
@@ -139,7 +176,7 @@ export function ClientMembershipModal({
         <header className="flex items-start justify-between gap-4 border-b border-white/[0.06] px-5 py-4 sm:px-6">
           <div className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-kitch-accent">
-              {isEs ? "Ficha del cliente" : "Client file"}
+              {isEs ? "Cuenta operativa" : "Operating account"}
             </p>
             <h2
               id="client-membership-title"
@@ -224,6 +261,126 @@ export function ClientMembershipModal({
                 </div>
               </section>
 
+              <section className="space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h3 className="text-sm font-medium text-white">
+                    {isEs ? "Restaurantes e instalaciones" : "Restaurants and installations"}
+                  </h3>
+                  {canWrite ? (
+                    <AddRestaurantForm
+                      clientId={detail.client.id}
+                      country={detail.client.country}
+                      locale={locale}
+                      onDone={() => void load()}
+                    />
+                  ) : null}
+                </div>
+
+                {detail.restaurants.length === 0 ? (
+                  <p className="text-sm text-kitch-muted">
+                    {isEs ? "Sin restaurantes todavía." : "No restaurants yet."}
+                  </p>
+                ) : (
+                  detail.restaurants.map((restaurant) => {
+                    const restaurantInstallations = detail.installations.filter(
+                      (installation) => installation.restaurant_id === restaurant.id,
+                    );
+                    const focused = focusRestaurantId === restaurant.id;
+
+                    return (
+                      <article
+                        key={restaurant.id}
+                        className={`rounded-2xl border p-4 ${
+                          focused
+                            ? "border-kitch-accent/50 bg-kitch-accent/5"
+                            : "border-white/[0.06] bg-white/[0.02]"
+                        }`}
+                      >
+                        <p className="text-sm font-medium text-white">
+                          {restaurant.name}
+                        </p>
+                        <p className="text-xs text-kitch-muted">{restaurant.city}</p>
+
+                        {restaurantInstallations.length === 0 ? (
+                          <div className="mt-3 space-y-2">
+                            <p className="text-xs text-kitch-subtle">
+                              {isEs
+                                ? "Esta sede aún no tiene API / URL."
+                                : "This venue does not have an API / URL yet."}
+                            </p>
+                            {canWrite ? (
+                              <AddInstallationForm
+                                restaurantId={restaurant.id}
+                                locale={locale}
+                                onDone={() => void load()}
+                              />
+                            ) : null}
+                          </div>
+                        ) : (
+                          <div className="mt-3 space-y-3">
+                            {restaurantInstallations.map((installation) => (
+                              <div
+                                key={installation.id}
+                                className="rounded-xl border border-white/[0.06] p-3"
+                              >
+                                <p className="text-[11px] uppercase tracking-wider text-kitch-subtle">
+                                  {isEs ? "Destino de la API" : "API destination"}
+                                </p>
+                                <CopyableUrl url={installation.site_url} locale={locale} />
+                                <p className="mt-2 font-mono text-xs text-kitch-muted">
+                                  API ••••{installation.api_key_last4}
+                                </p>
+                                <div className="mt-2 flex flex-wrap items-center gap-2">
+                                  <LicenseStatusBadge
+                                    status={installation.license_status as LicenseStatus}
+                                    label={
+                                      dict.licenseStatus[
+                                        installation.license_status as LicenseStatus
+                                      ] ?? installation.license_status
+                                    }
+                                  />
+                                  <span className="text-xs text-kitch-muted">
+                                    {isEs ? "vence" : "expires"}{" "}
+                                    {formatSaasDate(
+                                      installation.license_expires_at,
+                                      locale,
+                                    )}
+                                  </span>
+                                </div>
+                                {canManageLicense ? (
+                                  <div className="mt-3 flex flex-wrap gap-3">
+                                    <InstallationLicenseActions
+                                      installationId={installation.id}
+                                      currentStatus={
+                                        installation.license_status as LicenseStatus
+                                      }
+                                      locale={locale}
+                                      statusLabels={dict.licenseStatus}
+                                      onDone={() => void load()}
+                                    />
+                                    <InstallationApiKeyActions
+                                      installationId={installation.id}
+                                      locale={locale}
+                                    />
+                                  </div>
+                                ) : null}
+                              </div>
+                            ))}
+                            {canWrite ? (
+                              <AddInstallationForm
+                                restaurantId={restaurant.id}
+                                locale={locale}
+                                onDone={() => void load()}
+                              />
+                            ) : null}
+                          </div>
+                        )}
+                      </article>
+                    );
+                  })
+                )}
+              </section>
+
               <section className="rounded-2xl border border-white/[0.06] p-4">
                 <h3 className="text-sm font-medium text-white">
                   {isEs ? "Datos del cliente" : "Client details"}
@@ -251,92 +408,14 @@ export function ClientMembershipModal({
                   </div>
                   <div>
                     <dt className="text-kitch-subtle">
-                      {isEs ? "Restaurantes" : "Restaurants"}
+                      {isEs ? "Pasarela" : "Gateway"}
                     </dt>
                     <dd className="text-kitch-muted">
-                      {detail.restaurants.length > 0
-                        ? detail.restaurants
-                            .map((restaurant) => restaurant.name)
-                            .join(", ")
-                        : "—"}
+                      {paymentProviderLabel(detail.client.payment_provider, locale)}
                     </dd>
                   </div>
                 </dl>
               </section>
-
-              <section className="space-y-3">
-                <h3 className="text-sm font-medium text-white">
-                  {isEs ? "API y licencias" : "API and licenses"}
-                </h3>
-                {detail.installations.length === 0 ? (
-                  <p className="text-sm text-kitch-muted">
-                    {isEs ? "Sin instalaciones todavía." : "No installations yet."}
-                  </p>
-                ) : (
-                  detail.installations.map((installation) => (
-                    <article
-                      key={installation.id}
-                      className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4"
-                    >
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-white">
-                            {installation.restaurant_name}
-                          </p>
-                          <p className="truncate text-xs text-kitch-muted">
-                            {installation.site_url}
-                          </p>
-                          <p className="mt-2 text-xs text-kitch-muted">
-                            API ••••{installation.api_key_last4} —{" "}
-                            {isEs ? "vence" : "expires"}{" "}
-                            {formatSaasDate(installation.license_expires_at, locale)}
-                          </p>
-                          <div className="mt-2">
-                            <LicenseStatusBadge
-                              status={installation.license_status as LicenseStatus}
-                              label={
-                                dict.licenseStatus[
-                                  installation.license_status as LicenseStatus
-                                ] ?? installation.license_status
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-3">
-                          {canManageLicense ? (
-                            <InstallationLicenseActions
-                              installationId={installation.id}
-                              currentStatus={
-                                installation.license_status as LicenseStatus
-                              }
-                              locale={locale}
-                              statusLabels={dict.licenseStatus}
-                              onDone={() => void load()}
-                            />
-                          ) : null}
-                          {canManageLicense ? (
-                            <InstallationApiKeyActions
-                              installationId={installation.id}
-                              locale={locale}
-                            />
-                          ) : null}
-                        </div>
-                      </div>
-                    </article>
-                  ))
-                )}
-              </section>
-
-              <p className="text-xs text-kitch-subtle">
-                <Link
-                  href={withLocale(locale, `/admin/clients/${detail.client.id}`)}
-                  className="text-kitch-accent hover:underline"
-                >
-                  {isEs
-                    ? "Abrir ficha completa (usuarios y restaurantes)"
-                    : "Open full file (users and restaurants)"}
-                </Link>
-              </p>
             </div>
           ) : null}
         </div>

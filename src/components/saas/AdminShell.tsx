@@ -3,11 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Building2,
   LayoutDashboard,
   Mail,
   Settings,
-  Store,
   UserPlus,
   UserCog,
   Users,
@@ -31,8 +29,6 @@ const navItems: {
   { key: "onboarding", href: "/admin/onboarding", icon: UserPlus },
   { key: "clients", href: "/admin/clients", icon: Users },
   { key: "users", href: "/admin/users", icon: UserCog },
-  { key: "restaurants", href: "/admin/restaurants", icon: Store },
-  { key: "installations", href: "/admin/installations", icon: Building2 },
   { key: "leads", href: "/admin/leads", icon: Mail },
   { key: "maintenance", href: "/admin/maintenance", icon: Wrench },
   { key: "settings", href: "/admin/settings", icon: Settings },

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AdminClientCreateForm } from "@/components/saas/AdminClientCreateForm";
 import { AdminClientHub } from "@/components/saas/AdminClientHub";
 import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { listClientsWithMembership } from "@/services/saas/admin-service";
+import { listOperationHubRows } from "@/services/saas/admin-service";
 import { getPageAdminScope } from "@/lib/auth/page-scope";
 import { canAccessAdminRoute, canRotateApiKeys } from "@/lib/auth/permissions";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
@@ -20,9 +20,9 @@ export default async function AdminClientsPage({ params, searchParams }: Props) 
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
   const { scope, session } = await getPageAdminScope(locale);
-  const clients = await listClientsWithMembership(scope);
+  const rows = await listOperationHubRows(scope);
   const canOnboard = canAccessAdminRoute(session.profile!, "onboarding");
-  const canManageLicense = canRotateApiKeys(scope);
+  const canManage = canRotateApiKeys(scope);
 
   return (
     <>
@@ -30,8 +30,8 @@ export default async function AdminClientsPage({ params, searchParams }: Props) 
         title={dict.admin.nav.clients}
         description={
           locale === "es"
-            ? "Un solo listado: abre cualquier cliente para ver membresía, API, facturación y vencimiento."
-            : "One list: open any client to see membership, API, billing, and renewal."
+            ? "Clientes, restaurantes e instalaciones en un solo lugar. La URL muestra a qué sitio apunta cada API / membresía."
+            : "Clients, restaurants, and installations in one place. The URL shows where each API / membership is installed."
         }
       />
       {canOnboard && (
@@ -49,9 +49,10 @@ export default async function AdminClientsPage({ params, searchParams }: Props) 
       )}
       <Suspense fallback={null}>
         <AdminClientHub
-          clients={clients}
+          rows={rows}
           locale={locale}
-          canManageLicense={canManageLicense}
+          canManageLicense={canManage}
+          canWrite={canManage}
           initialClientId={initialClientId}
         />
       </Suspense>

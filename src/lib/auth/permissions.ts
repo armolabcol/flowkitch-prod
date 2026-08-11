@@ -168,7 +168,7 @@ export function canAccessAdminRoute(
   }
 
   if (isSalesAgent(role)) {
-    return ["dashboard", "clients", "installations", "licenses"].includes(route);
+    return ["dashboard", "clients"].includes(route);
   }
 
   return false;

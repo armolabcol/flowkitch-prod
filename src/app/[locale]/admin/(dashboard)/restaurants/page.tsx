@@ -1,40 +1,10 @@
-import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { getClientsMap, listRestaurants } from "@/services/saas/admin-service";
-import { requireAdminRoute } from "@/lib/auth/page-scope";
-import { getSaasDictionary } from "@/lib/saas-dictionaries";
-import { defaultLocale, isLocale, type Locale } from "@/lib/i18n";
+import { redirect } from "next/navigation";
+import { defaultLocale, isLocale, withLocale } from "@/lib/i18n";
 
 type Props = { params: Promise<{ locale: string }> };
 
 export default async function AdminRestaurantsPage({ params }: Props) {
   const { locale: raw } = await params;
-  const locale: Locale = isLocale(raw) ? raw : defaultLocale;
-  const dict = getSaasDictionary(locale);
-
-  const { scope } = await requireAdminRoute(locale, "restaurants");
-
-  const [restaurants, clientMap] = await Promise.all([
-    listRestaurants(scope),
-    getClientsMap(scope),
-  ]);
-
-  return (
-    <>
-      <SaasPageHeader title={dict.admin.nav.restaurants} />
-      <SaasMockTable
-        headers={[
-          locale === "es" ? "Restaurante" : "Restaurant",
-          locale === "es" ? "Cliente" : "Client",
-          locale === "es" ? "Ciudad" : "City",
-          locale === "es" ? "País" : "Country",
-        ]}
-        rows={restaurants.map((r) => [
-          r.name,
-          clientMap[r.client_id] ?? r.client_id.slice(0, 8) + "…",
-          r.city,
-          dict.countries[r.country] ?? r.country,
-        ])}
-      />
-    </>
-  );
+  const locale = isLocale(raw) ? raw : defaultLocale;
+  redirect(withLocale(locale, "/admin/clients"));
 }
