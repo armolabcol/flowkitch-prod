@@ -367,20 +367,84 @@ const es: HomepageV2Content = {
   results: {
     id: "results",
     eyebrow: "Sección 07",
-    title: "[Resultados] Título temporal",
+    title: "Resultados que se sienten",
+    titleLine2: "en cada turno.",
     description:
-      "Descripción temporal de métricas e impacto operativo.",
-    mediaPlaceholder: "Gráficos / métricas — placeholder",
-    animationPlaceholder: "Animación resultados — reservado Fase 2",
+      "Kitch ayuda a que el restaurante opere con más visibilidad, menos fricción y mayor capacidad de respuesta. Cada pedido, ronda y estado deja de estar disperso y se convierte en información útil para tomar mejores decisiones.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Menos errores · Más control · Más rondas · Más visibilidad",
+    impactDashboard: {
+      label: "Impacto operativo",
+      sublabel: "Visibilidad del servicio en tiempo real",
+      disclaimer:
+        "Indicadores ilustrativos para visualizar impacto operativo.",
+      metrics: [
+        {
+          title: "Errores de comunicación",
+          value: "-38%",
+          caption:
+            "Menos órdenes duplicadas, perdidas o mal interpretadas.",
+          trend: "down",
+        },
+        {
+          title: "Control en horas pico",
+          value: "+42%",
+          caption:
+            "Más capacidad para priorizar mesas, rondas y cocina.",
+          trend: "up",
+        },
+        {
+          title: "Rondas adicionales",
+          value: "+27%",
+          caption: "Más facilidad para que la mesa siga consumiendo.",
+          trend: "up",
+        },
+        {
+          title: "Trazabilidad",
+          value: "100%",
+          caption: "Cada estado queda visible desde mesa hasta manager.",
+          trend: "neutral",
+        },
+      ],
+      before: {
+        label: "Antes",
+        items: ["Pedidos dispersos", "Cocina con dudas", "Gerencia reactiva"],
+      },
+      withKitch: {
+        label: "Con Kitch",
+        items: ["Flujo visible", "Estados claros", "Decisiones a tiempo"],
+      },
+      outcomeBand: {
+        label: "Lo que cambia:",
+        text: "El equipo deja de reaccionar tarde y empieza a operar con visibilidad.",
+      },
+    },
   },
-  productProof: {
-    id: "product-proof",
+  videoDemo: {
+    id: "video-demo",
     eyebrow: "Sección 08",
-    title: "[Prueba de producto] Título temporal",
+    title: "Mira cómo fluye",
+    titleLine2: "un restaurante con Kitch.",
     description:
-      "Descripción temporal de mockups, pantallas reales y evidencia del producto.",
-    mediaPlaceholder: "Mockups / capturas — placeholder",
-    animationPlaceholder: "Animación producto — reservado Fase 2",
+      "Una experiencia visual para entender cómo Kitch conecta mesa, mesero, cocina y gerencia en una operación más clara, rápida y controlada.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip: "Video demo · Flujo real · Operación conectada",
+    cta: {
+      primaryLabel: "Ver video",
+    },
+    videoDemo: {
+      poster: "/assets/sections/video-demo/KITCH_VIDEO_DEMO_POSTER_v01.webp",
+      mp4: "/assets/sections/video-demo/KITCH_VIDEO_DEMO_v01.mp4",
+      webm: "/assets/sections/video-demo/KITCH_VIDEO_DEMO_v01.webm",
+      placeholderPendingLabel: "Video demo pendiente",
+      placeholderFileLabel: "KITCH_VIDEO_DEMO_v01.mp4",
+      overlayTitle: "Kitch in action",
+      overlayFlow: "Mesa · Mesero · Cocina · Manager",
+      videoAriaLabel: "Video demo de Kitch en acción",
+    },
   },
   finalCta: {
     id: "final-cta",
@@ -763,20 +827,83 @@ const en: HomepageV2Content = {
   results: {
     id: "results",
     eyebrow: "Section 07",
-    title: "[Results] Temporary title",
+    title: "Results you can feel",
+    titleLine2: "in every shift.",
     description:
-      "Temporary description of metrics and operational impact.",
-    mediaPlaceholder: "Charts / metrics — placeholder",
-    animationPlaceholder: "Results animation — Phase 2 reserved",
+      "Kitch helps restaurants operate with more visibility, less friction, and faster response. Every order, round, and status stops being scattered and becomes useful information for better decisions.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip:
+      "Fewer errors · More control · More rounds · More visibility",
+    impactDashboard: {
+      label: "Operating impact",
+      sublabel: "Real-time service visibility",
+      disclaimer: "Illustrative indicators to visualize operational impact.",
+      metrics: [
+        {
+          title: "Communication errors",
+          value: "-38%",
+          caption:
+            "Fewer duplicated, missed, or misunderstood orders.",
+          trend: "down",
+        },
+        {
+          title: "Peak-hour control",
+          value: "+42%",
+          caption:
+            "More capacity to prioritize tables, rounds, and kitchen flow.",
+          trend: "up",
+        },
+        {
+          title: "Additional rounds",
+          value: "+27%",
+          caption: "Easier for the table to keep ordering.",
+          trend: "up",
+        },
+        {
+          title: "Traceability",
+          value: "100%",
+          caption: "Every status stays visible from table to manager.",
+          trend: "neutral",
+        },
+      ],
+      before: {
+        label: "Before",
+        items: ["Scattered orders", "Kitchen uncertainty", "Reactive management"],
+      },
+      withKitch: {
+        label: "With Kitch",
+        items: ["Visible flow", "Clear statuses", "On-time decisions"],
+      },
+      outcomeBand: {
+        label: "What changes:",
+        text: "The team stops reacting late and starts operating with visibility.",
+      },
+    },
   },
-  productProof: {
-    id: "product-proof",
+  videoDemo: {
+    id: "video-demo",
     eyebrow: "Section 08",
-    title: "[Product proof] Temporary title",
+    title: "See how a restaurant",
+    titleLine2: "flows with Kitch.",
     description:
-      "Temporary description of mockups, live screens and product evidence.",
-    mediaPlaceholder: "Mockups / screenshots — placeholder",
-    animationPlaceholder: "Product animation — Phase 2 reserved",
+      "A visual experience to understand how Kitch connects table, waiter, kitchen, and management into a clearer, faster, and more controlled operation.",
+    mediaPlaceholder: "—",
+    animationPlaceholder: "—",
+    footerStrip: "Demo video · Real flow · Connected operations",
+    cta: {
+      primaryLabel: "Watch video",
+    },
+    videoDemo: {
+      poster: "/assets/sections/video-demo/KITCH_VIDEO_DEMO_POSTER_v01.webp",
+      mp4: "/assets/sections/video-demo/KITCH_VIDEO_DEMO_v01.mp4",
+      webm: "/assets/sections/video-demo/KITCH_VIDEO_DEMO_v01.webm",
+      placeholderPendingLabel: "Demo video pending",
+      placeholderFileLabel: "KITCH_VIDEO_DEMO_v01.mp4",
+      overlayTitle: "Kitch in action",
+      overlayFlow: "Table · Waiter · Kitchen · Manager",
+      videoAriaLabel: "Kitch in action demo video",
+    },
   },
   finalCta: {
     id: "final-cta",

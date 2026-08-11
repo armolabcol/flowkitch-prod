@@ -4,7 +4,7 @@ export { RestaurantTransformation } from "@/components/home/v2/RestaurantTransfo
 export { OperationalFlow } from "@/components/home/v2/OperationalFlow";
 export { AndroidSection } from "@/components/home/v2/AndroidSection";
 export { ResultsSection } from "@/components/home/v2/ResultsSection";
-export { ProductProof } from "@/components/home/v2/ProductProof";
+export { VideoDemoSection } from "@/components/home/v2/VideoDemoSection";
 export { HomepageCTA } from "@/components/home/v2/HomepageCTA";
 
 export type {

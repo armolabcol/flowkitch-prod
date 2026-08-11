@@ -176,6 +176,42 @@ export type HomepageV2AndroidOverlay = {
   indicators: string[];
 };
 
+export type HomepageV2ImpactMetric = {
+  title: string;
+  value: string;
+  caption: string;
+  trend?: "up" | "down" | "neutral";
+};
+
+export type HomepageV2ImpactComparison = {
+  label: string;
+  items: string[];
+};
+
+export type HomepageV2ImpactDashboard = {
+  label: string;
+  sublabel: string;
+  disclaimer: string;
+  metrics: HomepageV2ImpactMetric[];
+  before: HomepageV2ImpactComparison;
+  withKitch: HomepageV2ImpactComparison;
+  outcomeBand: {
+    label: string;
+    text: string;
+  };
+};
+
+export type HomepageV2VideoDemo = {
+  poster: string;
+  mp4: string;
+  webm: string;
+  placeholderPendingLabel: string;
+  placeholderFileLabel: string;
+  overlayTitle: string;
+  overlayFlow: string;
+  videoAriaLabel: string;
+};
+
 export type HomepageV2SectionContent = {
   id: string;
   eyebrow?: string;
@@ -187,6 +223,8 @@ export type HomepageV2SectionContent = {
   footerStrip?: string;
   microBenefits?: string[];
   androidOverlay?: HomepageV2AndroidOverlay;
+  impactDashboard?: HomepageV2ImpactDashboard;
+  videoDemo?: HomepageV2VideoDemo;
   visualBadges?: string[];
   diagnosticLabel?: string;
   diagnosticSublabel?: string;
@@ -205,7 +243,7 @@ export type HomepageV2Content = {
   operationalFlow: HomepageV2SectionContent;
   android: HomepageV2SectionContent;
   results: HomepageV2SectionContent;
-  productProof: HomepageV2SectionContent;
+  videoDemo: HomepageV2SectionContent;
   finalCta: HomepageV2SectionContent;
 };
 

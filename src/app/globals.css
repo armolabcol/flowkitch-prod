@@ -5,6 +5,8 @@
 @import "../styles/section-transformation.css";
 @import "../styles/section-flow.css";
 @import "../styles/section-android.css";
+@import "../styles/section-results.css";
+@import "../styles/section-video-demo.css";
 
 @layer base {
   html {

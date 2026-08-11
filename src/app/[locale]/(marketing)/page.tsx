@@ -5,7 +5,7 @@ import {
   HomepageCTA,
   OperationalFlow,
   OperationalProblem,
-  ProductProof,
+  VideoDemoSection,
   RestaurantTransformation,
   ResultsSection,
 } from "@/components/home/v2";
@@ -41,7 +41,7 @@ export default async function HomePage({ params }: Props) {
       <OperationalFlow content={v2.operationalFlow} locale={locale} />
       <AndroidSection content={v2.android} locale={locale} />
       <ResultsSection content={v2.results} locale={locale} />
-      <ProductProof content={v2.productProof} locale={locale} />
+      <VideoDemoSection content={v2.videoDemo} locale={locale} />
       <HomepageCTA content={v2.finalCta} locale={locale} />
     </>
   );
