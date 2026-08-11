@@ -10,6 +10,7 @@ import { InstallationApiKeyActions } from "@/components/saas/InstallationApiKeyA
 import { InstallationLicenseActions } from "@/components/saas/InstallationLicenseActions";
 import { LicenseStatusBadge } from "@/components/saas/LicenseStatusBadge";
 import { formatMembershipAmount, paymentProviderLabel } from "@/lib/billing-utils";
+import { daysUntil } from "@/lib/client-membership";
 import { formatSaasDate, getSaasDictionary } from "@/lib/saas-dictionaries";
 import type { LicenseStatus } from "@/types/saas";
 import type { Locale } from "@/lib/i18n";
@@ -149,7 +150,22 @@ export function ClientMembershipModal({
     };
   }, [onClose]);
 
-  const days = detail?.membership.daysRemaining ?? null;
+  const focusedInstallation = focusRestaurantId
+    ? detail?.installations.find(
+        (installation) => installation.restaurant_id === focusRestaurantId,
+      )
+    : null;
+  const operationalExpiresAt =
+    focusedInstallation?.license_expires_at ??
+    detail?.membership.expiresAt ??
+    null;
+  const days =
+    focusedInstallation
+      ? daysUntil(focusedInstallation.license_expires_at)
+      : (detail?.membership.daysRemaining ?? null);
+  const membershipStatus =
+    (focusedInstallation?.license_status as LicenseStatus | undefined) ??
+    detail?.membership.status;
   const countdownTone =
     days === null
       ? "text-kitch-muted"
@@ -215,10 +231,11 @@ export function ClientMembershipModal({
                   </p>
                   <div className="mt-2">
                     <LicenseStatusBadge
-                      status={detail.membership.status}
+                      status={membershipStatus ?? detail.membership.status}
                       label={
-                        dict.licenseStatus[detail.membership.status] ??
-                        detail.membership.status
+                        dict.licenseStatus[
+                          membershipStatus ?? detail.membership.status
+                        ] ?? detail.membership.status
                       }
                     />
                   </div>
@@ -229,14 +246,14 @@ export function ClientMembershipModal({
 
                 <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
                   <p className="text-[11px] uppercase tracking-wider text-kitch-subtle">
-                    {isEs ? "Próxima renovación" : "Next renewal"}
+                    {isEs ? "Licencia / API" : "License / API"}
                   </p>
                   <p className={`mt-2 text-3xl font-semibold tracking-tight ${countdownTone}`}>
                     {countdownCopy(days, locale)}
                   </p>
                   <p className="mt-1 text-xs text-kitch-muted">
-                    {detail.membership.expiresAt
-                      ? formatSaasDate(detail.membership.expiresAt, locale)
+                    {operationalExpiresAt
+                      ? formatSaasDate(operationalExpiresAt, locale)
                       : "—"}
                   </p>
                 </div>
@@ -258,6 +275,12 @@ export function ClientMembershipModal({
                   <p className="mt-1 text-xs text-kitch-muted">
                     {paymentProviderLabel(detail.client.payment_provider, locale)}
                   </p>
+                  {detail.membership.periodEnd ? (
+                    <p className="mt-2 text-[11px] text-kitch-subtle">
+                      {isEs ? "Periodo de facturación" : "Billing period"}:{" "}
+                      {formatSaasDate(detail.membership.periodEnd, locale)}
+                    </p>
+                  ) : null}
                 </div>
               </section>
 

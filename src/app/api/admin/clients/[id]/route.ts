@@ -6,7 +6,7 @@ import {
 } from "@/lib/auth/admin-api-helpers";
 import {
   daysUntil,
-  earliestDate,
+  operationalExpiry,
   toMembershipStatus,
 } from "@/lib/client-membership";
 import { getClientDetail } from "@/services/saas/client-detail-service";
@@ -22,10 +22,12 @@ export async function GET(_request: Request, context: RouteContext) {
   if (!detail) return forbidden("Client out of scope");
 
   const subscription = detail.subscriptions[0] ?? null;
-  const expiresAt = earliestDate([
-    subscription?.current_period_end,
-    ...detail.installations.map((installation) => installation.license_expires_at),
-  ]);
+  const licenseExpiresAt = operationalExpiry({
+    licenseDates: detail.installations.map(
+      (installation) => installation.license_expires_at,
+    ),
+    billingPeriodEnd: subscription?.current_period_end,
+  });
 
   return NextResponse.json({
     ok: true,
@@ -46,8 +48,8 @@ export async function GET(_request: Request, context: RouteContext) {
       amountCents: subscription?.amount_cents ?? null,
       currency: subscription?.currency ?? null,
       periodEnd: subscription?.current_period_end ?? null,
-      expiresAt,
-      daysRemaining: daysUntil(expiresAt),
+      expiresAt: licenseExpiresAt,
+      daysRemaining: daysUntil(licenseExpiresAt),
       subscriptionId: subscription?.id ?? null,
     },
     restaurants: detail.restaurants.map((restaurant) => ({

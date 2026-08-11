@@ -18,6 +18,14 @@ export function daysUntil(iso: string | null | undefined): number | null {
   return Math.ceil((end - Date.now()) / 86_400_000);
 }
 
+/** Expiry the restaurant actually sees: plugin license, not billing period. */
+export function operationalExpiry(params: {
+  licenseDates: Array<string | null | undefined>;
+  billingPeriodEnd?: string | null;
+}): string | null {
+  return earliestDate(params.licenseDates) ?? params.billingPeriodEnd ?? null;
+}
+
 export function earliestDate(
   dates: Array<string | null | undefined>,
 ): string | null {

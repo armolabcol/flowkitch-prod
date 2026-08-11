@@ -12,7 +12,7 @@ import {
 import type { StaffScope } from "@/lib/auth/permissions";
 import {
   daysUntil,
-  earliestDate,
+  operationalExpiry,
   toMembershipStatus,
 } from "@/lib/client-membership";
 import type {
@@ -206,10 +206,12 @@ export async function listClientsWithMembership(
       (restaurantId) => installationsByRestaurant.get(restaurantId) ?? [],
     );
     const subscription = subscriptionByClient.get(client.id);
-    const expiresAt = earliestDate([
-      subscription?.current_period_end,
-      ...installations.map((installation) => installation.license_expires_at),
-    ]);
+    const expiresAt = operationalExpiry({
+      licenseDates: installations.map(
+        (installation) => installation.license_expires_at,
+      ),
+      billingPeriodEnd: subscription?.current_period_end,
+    });
 
     return {
       ...client,
