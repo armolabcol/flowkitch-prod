@@ -18,6 +18,7 @@ type Props = {
   currentStatus: LicenseStatus;
   locale: "es" | "en";
   statusLabels: Record<LicenseStatus, string>;
+  onDone?: () => void;
 };
 
 export function InstallationLicenseActions({
@@ -25,6 +26,7 @@ export function InstallationLicenseActions({
   currentStatus,
   locale,
   statusLabels,
+  onDone,
 }: Props) {
   const [status, setStatus] = useState(currentStatus);
   const [loading, setLoading] = useState(false);
@@ -45,6 +47,7 @@ export function InstallationLicenseActions({
       const data = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !data.ok) throw new Error(data.message);
       setMessage(data.message ?? "OK");
+      onDone?.();
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Error");
     } finally {

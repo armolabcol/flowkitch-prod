@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Building2,
-  KeyRound,
   LayoutDashboard,
   Mail,
   Settings,
@@ -34,7 +33,6 @@ const navItems: {
   { key: "users", href: "/admin/users", icon: UserCog },
   { key: "restaurants", href: "/admin/restaurants", icon: Store },
   { key: "installations", href: "/admin/installations", icon: Building2 },
-  { key: "licenses", href: "/admin/licenses", icon: KeyRound },
   { key: "leads", href: "/admin/leads", icon: Mail },
   { key: "maintenance", href: "/admin/maintenance", icon: Wrench },
   { key: "settings", href: "/admin/settings", icon: Settings },

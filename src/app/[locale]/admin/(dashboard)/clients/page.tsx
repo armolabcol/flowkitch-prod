@@ -1,21 +1,28 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { AdminClientCreateForm } from "@/components/saas/AdminClientCreateForm";
-import { SaasMockTable, SaasPageHeader } from "@/components/saas/SaasPageBlocks";
-import { listClients } from "@/services/saas/admin-service";
+import { AdminClientHub } from "@/components/saas/AdminClientHub";
+import { SaasPageHeader } from "@/components/saas/SaasPageBlocks";
+import { listClientsWithMembership } from "@/services/saas/admin-service";
 import { getPageAdminScope } from "@/lib/auth/page-scope";
-import { canAccessAdminRoute } from "@/lib/auth/permissions";
+import { canAccessAdminRoute, canRotateApiKeys } from "@/lib/auth/permissions";
 import { getSaasDictionary } from "@/lib/saas-dictionaries";
 import { withLocale, defaultLocale, isLocale, type Locale } from "@/lib/i18n";
 
-type Props = { params: Promise<{ locale: string }> };
+type Props = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ client?: string }>;
+};
 
-export default async function AdminClientsPage({ params }: Props) {
+export default async function AdminClientsPage({ params, searchParams }: Props) {
   const { locale: raw } = await params;
+  const { client: initialClientId } = await searchParams;
   const locale: Locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getSaasDictionary(locale);
   const { scope, session } = await getPageAdminScope(locale);
-  const clients = await listClients(scope);
+  const clients = await listClientsWithMembership(scope);
   const canOnboard = canAccessAdminRoute(session.profile!, "onboarding");
+  const canManageLicense = canRotateApiKeys(scope);
 
   return (
     <>
@@ -23,8 +30,8 @@ export default async function AdminClientsPage({ params }: Props) {
         title={dict.admin.nav.clients}
         description={
           locale === "es"
-            ? "Usa Alta cliente para el piloto completo, o crea solo el cliente aquí."
-            : "Use New client for full provisioning, or create client only here."
+            ? "Un solo listado: abre cualquier cliente para ver membresía, API, facturación y vencimiento."
+            : "One list: open any client to see membership, API, billing, and renewal."
         }
       />
       {canOnboard && (
@@ -40,21 +47,14 @@ export default async function AdminClientsPage({ params }: Props) {
           <AdminClientCreateForm locale={locale} />
         </>
       )}
-      <SaasMockTable
-        headers={["ID", locale === "es" ? "Nombre" : "Name", locale === "es" ? "País" : "Country", "Email"]}
-        rows={clients.map((c) => [
-          <Link
-            key={c.id}
-            href={withLocale(locale, `/admin/clients/${c.id}`)}
-            className="text-kitch-accent hover:underline"
-          >
-            {c.id.slice(0, 8) + "…"}
-          </Link>,
-          c.name,
-          dict.countries[c.country] ?? c.country,
-          c.email,
-        ])}
-      />
+      <Suspense fallback={null}>
+        <AdminClientHub
+          clients={clients}
+          locale={locale}
+          canManageLicense={canManageLicense}
+          initialClientId={initialClientId}
+        />
+      </Suspense>
     </>
   );
 }

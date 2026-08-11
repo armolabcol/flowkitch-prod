@@ -10,8 +10,14 @@ import {
   getAllowedClientIds,
 } from "@/services/saas/scope-service";
 import type { StaffScope } from "@/lib/auth/permissions";
+import {
+  daysUntil,
+  earliestDate,
+  toMembershipStatus,
+} from "@/lib/client-membership";
 import type {
   Client,
+  ClientListItem,
   InstallationWithDetails,
   MaintenanceLog,
   Restaurant,
@@ -123,6 +129,100 @@ export async function listClients(scope: StaffScope): Promise<Client[]> {
 
   if (error || !data) return [];
   return filterClientsByScope(data.map(mapClient), scope);
+}
+
+export async function listClientsWithMembership(
+  scope: StaffScope,
+): Promise<ClientListItem[]> {
+  const clients = await listClients(scope);
+  if (clients.length === 0) return [];
+
+  const supabase = await getServerSaasClient();
+  if (!supabase) {
+    return clients.map((client) => ({
+      ...client,
+      membershipStatus: "license_unknown",
+      planName: null,
+      expiresAt: null,
+      daysRemaining: null,
+      restaurantCount: 0,
+      installationCount: 0,
+    }));
+  }
+
+  const clientIds = clients.map((client) => client.id);
+  const [{ data: restaurants }, { data: subscriptions }] = await Promise.all([
+    supabase.from("restaurants").select("id, client_id").in("client_id", clientIds),
+    supabase
+      .from("subscriptions")
+      .select("client_id, status, plan_name, current_period_end")
+      .in("client_id", clientIds)
+      .order("current_period_end", { ascending: false }),
+  ]);
+
+  const restaurantsByClient = new Map<string, string[]>();
+  for (const restaurant of restaurants ?? []) {
+    const list = restaurantsByClient.get(restaurant.client_id) ?? [];
+    list.push(restaurant.id);
+    restaurantsByClient.set(restaurant.client_id, list);
+  }
+
+  const restaurantIds = (restaurants ?? []).map((restaurant) => restaurant.id);
+  const installationsByRestaurant = new Map<
+    string,
+    Array<{ license_status: string; license_expires_at: string }>
+  >();
+
+  if (restaurantIds.length > 0) {
+    const { data: installations } = await supabase
+      .from("plugin_installations")
+      .select("restaurant_id, license_status, license_expires_at")
+      .in("restaurant_id", restaurantIds);
+
+    for (const installation of installations ?? []) {
+      const list = installationsByRestaurant.get(installation.restaurant_id) ?? [];
+      list.push({
+        license_status: installation.license_status,
+        license_expires_at: installation.license_expires_at,
+      });
+      installationsByRestaurant.set(installation.restaurant_id, list);
+    }
+  }
+
+  const subscriptionByClient = new Map<
+    string,
+    { status: string; plan_name: string; current_period_end: string }
+  >();
+  for (const subscription of subscriptions ?? []) {
+    if (!subscriptionByClient.has(subscription.client_id)) {
+      subscriptionByClient.set(subscription.client_id, subscription);
+    }
+  }
+
+  return clients.map((client) => {
+    const restaurantIdsForClient = restaurantsByClient.get(client.id) ?? [];
+    const installations = restaurantIdsForClient.flatMap(
+      (restaurantId) => installationsByRestaurant.get(restaurantId) ?? [],
+    );
+    const subscription = subscriptionByClient.get(client.id);
+    const expiresAt = earliestDate([
+      subscription?.current_period_end,
+      ...installations.map((installation) => installation.license_expires_at),
+    ]);
+
+    return {
+      ...client,
+      membershipStatus: toMembershipStatus([
+        subscription?.status,
+        ...installations.map((installation) => installation.license_status),
+      ]),
+      planName: subscription?.plan_name ?? null,
+      expiresAt,
+      daysRemaining: daysUntil(expiresAt),
+      restaurantCount: restaurantIdsForClient.length,
+      installationCount: installations.length,
+    };
+  });
 }
 
 export async function listRestaurants(scope: StaffScope): Promise<Restaurant[]> {

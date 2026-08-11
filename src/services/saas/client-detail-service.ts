@@ -36,7 +36,9 @@ export async function getClientDetail(clientId: string, scope: StaffScope) {
     site_url: string;
     license_status: string;
     license_expires_at: string;
+    grace_until: string | null;
     restaurant_id: string;
+    restaurant_name: string;
     api_key_last4: string;
   }> = [];
 
@@ -61,12 +63,18 @@ export async function getClientDetail(clientId: string, scope: StaffScope) {
       keysByInst.set(k.installation_id, list);
     }
 
+    const restaurantNameById = new Map(
+      (restaurants ?? []).map((restaurant) => [restaurant.id, restaurant.name]),
+    );
+
     installations = (instRows ?? []).map((i) => ({
       id: i.id,
       site_url: i.site_url,
       license_status: i.license_status,
       license_expires_at: i.license_expires_at,
+      grace_until: i.grace_until,
       restaurant_id: i.restaurant_id,
+      restaurant_name: restaurantNameById.get(i.restaurant_id) ?? "—",
       api_key_last4: pickActiveApiKeyLast4(keysByInst.get(i.id) ?? []),
     }));
   }

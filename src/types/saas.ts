@@ -41,6 +41,15 @@ export interface Client {
   created_at: string;
 }
 
+export interface ClientListItem extends Client {
+  membershipStatus: LicenseStatus;
+  planName: string | null;
+  expiresAt: string | null;
+  daysRemaining: number | null;
+  restaurantCount: number;
+  installationCount: number;
+}
+
 export interface Restaurant {
   id: string;
   client_id: string;

@@ -19,7 +19,7 @@ export async function sendLicenseAlertEmail(
     )
     .join("\n");
 
-  const html = `<p>Licencias Kitch por vencer (30 días):</p><pre>${lines}</pre><p><a href="${env.siteUrl}/es/admin/licenses">Admin licencias</a></p>`;
+  const html = `<p>Licencias Kitch por vencer (30 días):</p><pre>${lines}</pre><p><a href="${env.siteUrl}/es/admin/clients">Admin clientes</a></p>`;
 
   try {
     const res = await fetch("https://api.resend.com/emails", {

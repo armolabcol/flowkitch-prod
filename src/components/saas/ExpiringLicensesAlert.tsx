@@ -46,10 +46,10 @@ export async function ExpiringLicensesAlert({
             ))}
           </ul>
           <Link
-            href={withLocale(locale, "/admin/licenses")}
+            href={withLocale(locale, "/admin/clients")}
             className="mt-3 inline-block text-sm text-amber-200 underline hover:text-white"
           >
-            {isEs ? "Ver licencias" : "View licenses"}
+            {isEs ? "Ver clientes" : "View clients"}
           </Link>
         </div>
       </div>
